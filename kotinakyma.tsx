@@ -3,9 +3,10 @@ import { StyleSheet, Text, View, Button, ImageBackground} from 'react-native';
 
 export default function kotinakyma() {
 
-    const eimitaan = () => {
+    const nothing = () => {
 
     }
+
     //testasin image backgroundia
     const image = { uri: "https://images.unsplash.com/photo-1531642765602-5cae8bbbf285?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1918&q=80" };
 
@@ -14,14 +15,14 @@ export default function kotinakyma() {
         <View style={styles.container}>
         
         <View style={{flex: 2, justifyContent: 'center'}}>
-        <Text style={{fontSize: 30}}>Tervetuloa!</Text>
+        <Text style={{fontSize: 30}}>Welcome!</Text>
          </View>
 
         <View style={{flexDirection: 'column', flex: 1, justifyContent: "space-between"}}>
-          <Button onPress={eimitaan} title="Kartta"></Button>
-          <Button onPress={eimitaan} title="Kortit"></Button>
-          <Button onPress={eimitaan} title="Pelaa"></Button>
-          <Button onPress={eimitaan} title="Asetukset"></Button>
+          <Button onPress={nothing} title="Map"></Button>
+          <Button onPress={nothing} title="Cards"></Button>
+          <Button onPress={nothing} title="Play"></Button>
+          <Button onPress={nothing} title="Settings"></Button>
         </View>
 
         <View style={{flex:1}}>
