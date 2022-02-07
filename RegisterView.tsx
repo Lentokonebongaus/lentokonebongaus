@@ -1,10 +1,11 @@
 import { StatusBar } from 'expo-status-bar';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import{ initializeApp } from "firebase/app";
+import { getDatabase, push, ref, onValue, update } from 'firebase/database';
 import parseErrorStack from 'react-native/Libraries/Core/Devtools/parseErrorStack';
 
 export default function RegisterView(){
-
 
     const styles = {
         textInput:{
@@ -24,10 +25,50 @@ export default function RegisterView(){
             justifyContent: 'center',
         }
     }
+
+    // -------------- FIREBASE -----------------------------------------------
+    
+    const firebaseConfig = {
+
+        apiKey: "AIzaSyD2TF3qwV0gXZ7YPvagpymcuWTMJazIGxc",
+      
+        authDomain: "lentokonebongaus.firebaseapp.com",
+      
+        databaseURL: "https://lentokonebongaus-default-rtdb.europe-west1.firebasedatabase.app",
+      
+        projectId: "lentokonebongaus",
+      
+        storageBucket: "lentokonebongaus.appspot.com",
+      
+        messagingSenderId: "313722689412",
+      
+        appId: "1:313722689412:web:5cfa1aa1fcaf68c40fafd1"
+      
+    };
+      
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+    const usersDb = ref(database, "users");
+
+    // ----------------------------------------------------------------------
+
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
     const [passwordConfirm, setPasswordConfirm] = useState("")
     const [registeredMessage, setRegisteredMessage] = useState("")
+    const [dbTestData, setDbTestData] = useState([])
+
+    useEffect(()=>{
+        onValue(usersDb, (snapshot) => {
+        console.log(snapshot)
+        /*const userIDs = Object.keys(data);
+        const usersTestData = Array()
+        userIDs.map((userID)=>{
+            usersTestData.push(userID)
+        })
+        setDbTestData(usersTestData)*/
+        })
+    },[])
 
 
     // IDE is giving a "No overload matches this call." error message for component styles. Code works though, so will look into this later.
