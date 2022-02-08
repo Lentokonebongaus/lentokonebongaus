@@ -4,7 +4,7 @@ import RegisterView from './RegisterView';
 import{ initializeApp } from "firebase/app";
 import { getDatabase, push, ref, onValue, update } from 'firebase/database';
 import { useEffect, useState } from 'react';
-import Kotinakyma from "./Kotinakyma";
+import Kotinakyma from "./kotinakyma";
 import { NavigationContainer} from '@react-navigation/native';
 import { createBottomTabNavigator } from'@react-navigation/bottom-tabs';
 import { Ionicons} from '@expo/vector-icons';  
