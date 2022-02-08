@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { useState, useEffect } from 'react';
-import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, Button, StyleSheet, Text, TextInput, View } from 'react-native';
 import{ initializeApp } from "firebase/app";
 import { getDatabase, push, ref, onValue, update } from 'firebase/database';
 import parseErrorStack from 'react-native/Libraries/Core/Devtools/parseErrorStack';
@@ -27,7 +27,7 @@ export default function RegisterView(){
     }
 
     // -------------- FIREBASE -----------------------------------------------
-    
+
     const firebaseConfig = {
 
         apiKey: "AIzaSyD2TF3qwV0gXZ7YPvagpymcuWTMJazIGxc",
@@ -56,7 +56,7 @@ export default function RegisterView(){
     const [password, setPassword] = useState("")
     const [passwordConfirm, setPasswordConfirm] = useState("")
     const [registeredMessage, setRegisteredMessage] = useState("")
-    const [dbTestData, setDbTestData] = useState([])
+
 
     useEffect(()=>{
         onValue(usersDb, (snapshot) => {
@@ -69,6 +69,24 @@ export default function RegisterView(){
         setDbTestData(usersTestData)*/
         })
     },[])
+
+    const checkRegisterForm = () => {
+        if (password != passwordConfirm){
+            Alert.alert("Passwords don't match.")
+        }
+        /*else if (usernames.includes(username)){
+            Alert.alert("Sorry, that username is already taken.")
+        }*/
+        else if (password == "" || passwordConfirm == ""){
+            Alert.alert("Please fill both password fields.")
+        }
+        else if (username == ""){
+            Alert.alert("Please give an username to register.")
+        }
+        else{
+           return true
+        }
+    }
 
 
     // IDE is giving a "No overload matches this call." error message for component styles. Code works though, so will look into this later.
@@ -103,8 +121,10 @@ export default function RegisterView(){
             <Button
                 title="register"
                 onPress={()=>{
-                    // TODO: handleFormSubmit()
-                    setRegisteredMessage("You have been registered!")
+                    if (checkRegisterForm()){
+                        push(usersDb, {username:username, password:password})
+                        Alert.alert("You have been registered!")
+                    }
                 }}
             />
             <Text>{registeredMessage}</Text>
