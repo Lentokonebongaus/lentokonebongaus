@@ -1,31 +1,35 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Button, ImageBackground} from 'react-native';
+import { StyleSheet, Text, View, Button, ImageBackground, Image} from 'react-native';
 
-export default function kotinakyma() {
+export default function Kotinakyma() {
 
     const nothing = () => {
 
     }
-
-    //testasin image backgroundia
-    const image = { uri: "https://images.unsplash.com/photo-1531642765602-5cae8bbbf285?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1918&q=80" };
+  
 
 
     return (
         <View style={styles.container}>
         
-        <View style={{flex: 2, justifyContent: 'center'}}>
+      <View style={{flex: 1, justifyContent: "flex-start", paddingTop: 40}}> 
+      
+      <Image
+        style={{width: 300, height: 200}}
+        source={{uri: "https://media.istockphoto.com/photos/airplane-isolated-on-white-picture-id831530162?k=20&m=831530162&s=612x612&w=0&h=3M4vqQQ1q2S2ugqMcJN6_kP_oDHxJhDmDEGc6u6Sr-U="}}
+        />
+
+      </View>
+
+        <View style={{flex: 1, justifyContent: 'flex-end', paddingBottom: 60}}>
         <Text style={{fontSize: 30}}>Welcome!</Text>
          </View>
 
-        <View style={{flexDirection: 'column', flex: 1, justifyContent: "space-between"}}>
-          <Button onPress={nothing} title="Map"></Button>
+        <View style={{flexDirection: 'column', flex: 2, justifyContent: "space-between", paddingBottom: 100}}>
+          <Button onPress={nothing} title="Log in"></Button>
           <Button onPress={nothing} title="Cards"></Button>
           <Button onPress={nothing} title="Play"></Button>
           <Button onPress={nothing} title="Settings"></Button>
-        </View>
-
-        <View style={{flex:1}}>
         </View>
     
           <StatusBar style="auto" />
@@ -39,5 +43,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  stretch: {
+    width: 50,
+    height: 200,
+    resizeMode: 'stretch',
   },
 });
