@@ -8,6 +8,7 @@ import * as Location from 'expo-location';
 import { async } from '@firebase/util';
 import  planesData from '../planesData';
 import Plane from "../Plane"
+import distanceBetween from '../distanceBetween';
 
 
 export default function Map() {
@@ -28,22 +29,29 @@ export default function Map() {
         return;
       }
 
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
+      let userGpsLocation = await Location.getCurrentPositionAsync({});
+      setLocation({longitude:userGpsLocation.coords.longitude, latitude:userGpsLocation.coords.latitude});
     })();
 
     // PlanesData is fetching EVERY plane from OpenSky Network. 
     // Expo is throwing an error when sorting a JSON file that large, so currently only 100 first planes are set to planes state array. -Eeli
     // PlanesData => data.states[(0...).toString] = plane data
     planesData.then((data)=>{
+      let distance = 3000
       for(let i = 0; i < 100; i++){
-        let newPlane = new Plane(data.states[i.toString()])
-        setPlanes((planes)=>([...planes, newPlane]))
+        let planeLat = data.states[i.toString()]["6"]
+        let planeLon = data.states[i.toString()]["5"]
+        if(distanceBetween(location.latitude, location.longitude, planeLat, planeLon) < distance){
+          let newPlane = new Plane(data.states[i.toString()])
+          setPlanes((planes)=>([...planes, newPlane]))
+        }
       }
     })
+    setPlanes(planes)
   }, []);
   
-
+  // Plane markers are rendered only after refreshing Expo :( 
+  // Might have something to do with conditional rendering and planes state being empty initially. 
   return (
     <View style={styles.container}>
       <MapView 
@@ -59,19 +67,20 @@ export default function Map() {
           planes.map((plane, index) => {
             if(plane.latitude && plane.longitude){
               return(
-                  <Marker
-                    key={index}
-                    coordinate={{
-                      latitude: plane.latitude,
-                      longitude: plane.longitude,
-                    }}
-                    title={plane.icao24}
-                  />
+                <Marker
+                  key={index}
+                  coordinate={{
+                    latitude: plane.latitude,
+                    longitude: plane.longitude,
+                  }}
+                  title={plane.icao24}
+                />
               )
             }
           })
         } 
       </MapView>
+      <Button title='LOG' onPress={()=>{console.log(planes)}}></Button>
     </View>
   );
 }
