@@ -13,10 +13,12 @@ import SigninView from './components/SigninView';
 import Cards from './components/Cards';
 import Play from './components/Play';
 import Settings from './components/Settings';
+import planesData from './planesData';
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+
   return (
     <NavigationContainer>
       <Stack.Navigator>
