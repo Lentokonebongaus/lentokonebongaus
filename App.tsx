@@ -22,7 +22,7 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Home" component={HomeScreenTabs}/>
+        <Stack.Screen name="Home " component={HomeScreenTabs}/>
         <Stack.Screen name="Log In" component={SigninView}/>
         <Stack.Screen name="Register" component={RegisterView}/>
         <Stack.Screen name="Cards" component={Cards}/>
