@@ -2,6 +2,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons} from '@expo/vector-icons';  
 import Kotinakyma from './Kotinakyma';
 import Map from './Map';
+import ListPlanes from './ListPlanes';
 
 const Tab = createBottomTabNavigator();
 
@@ -24,8 +25,9 @@ export default function HomeScreenTabs(){
         },
         headerShown: false         
         })}>
-            <Tab.Screen name="Homescreen" component={Kotinakyma} />
+            <Tab.Screen name="Home" component={Kotinakyma} />
             <Tab.Screen name="Map" component={Map} />
+            <Tab.Screen name="List" component={ListPlanes} />
         </Tab.Navigator>
       );
 }
