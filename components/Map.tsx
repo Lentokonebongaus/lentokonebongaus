@@ -9,6 +9,7 @@ import { async } from '@firebase/util';
 import  planesData from '../planesData';
 import Plane from "../Plane"
 import distanceBetween from '../distanceBetween';
+import fetchplanesData from '../planesData';
 
 
 export default function Map() {
@@ -19,37 +20,48 @@ export default function Map() {
   const [region, setRegion] = useState({longitude:24.9049634, latitude:60.2494251 , latitudeDelta: 0.20, longitudeDelta: 0.02});
   const [errorMsg, setErrorMsg] = useState("");
   const [planes, setPlanes] = useState<any[]>([])
+  const [fetchedPlanesArray, setFetchedPlanes] = useState<any[]>([])
 
   
   useEffect(() => {
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
+    setGPSlocation()
+  }, []);
+
+  useEffect(()=>{
+    if(location.longitude != 0 && location.latitude != 0){
+      refreshPlanes(location)
+    }
+  },[location])
+  
+  async function refreshPlanes(location: any){
+    const planesData = await fetchplanesData(location)
+
+    for(let i = 0; i < planesData.length; i++){
+      let planeInArray = false
+
+      /*
+      // For updating already existing planes in planes array. Would need to be updated through set hook, so probably needs a filtering function.
+      // Will do later, but for now this function will create duplicate markers for every plane.
+      for(let j = 0; j < planes.length; i++){
+        if(planes[i].icao24 == planesData[i][0]){}
+          planeInArray = true
+        }*/
+        let newPlane = new Plane(planesData[i])
+        setPlanes((planes)=>([...planes, newPlane]))
+    }
+  }
+
+  async function setGPSlocation(){
+    let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
         setErrorMsg('Permission to access location was denied');
-        return;
+        return false
       }
+    const userGpsLocation = await Location.getCurrentPositionAsync({});
+    console.log("LOCATION")
+    setLocation({longitude:userGpsLocation.coords.longitude, latitude:userGpsLocation.coords.latitude});
+  }
 
-      let userGpsLocation = await Location.getCurrentPositionAsync({});
-      setLocation({longitude:userGpsLocation.coords.longitude, latitude:userGpsLocation.coords.latitude});
-    })();
-
-    // PlanesData is fetching EVERY plane from OpenSky Network. 
-    // Expo is throwing an error when sorting a JSON file that large, so currently only 100 first planes are set to planes state array. -Eeli
-    // PlanesData => data.states[(0...).toString] = plane data
-    planesData.then((data)=>{
-      let distance = 3000
-      for(let i = 0; i < 100; i++){
-        let planeLat = data.states[i.toString()]["6"]
-        let planeLon = data.states[i.toString()]["5"]
-        if(distanceBetween(location.latitude, location.longitude, planeLat, planeLon) < distance){
-          let newPlane = new Plane(data.states[i.toString()])
-          setPlanes((planes)=>([...planes, newPlane]))
-        }
-      }
-    })
-    setPlanes(planes)
-  }, []);
-  
   // Plane markers are rendered only after refreshing Expo :( 
   // Might have something to do with conditional rendering and planes state being empty initially. 
   return (
@@ -60,7 +72,7 @@ export default function Map() {
         showsUserLocation={true} 
         showsCompass={true} 
         showsScale={true} 
-        showsTraffic={true}
+        showsTraffic={false}
         initialRegion={region}
       >
         {
@@ -80,7 +92,7 @@ export default function Map() {
           })
         } 
       </MapView>
-      <Button title='LOG' onPress={()=>{console.log(planes)}}></Button>
+      <Button title='log_and_refresh' onPress={()=>{console.log(planes);refreshPlanes(location)}}></Button>
     </View>
   );
 }
