@@ -20,11 +20,11 @@ export default function Map() {
   const [region, setRegion] = useState({longitude:24.9049634, latitude:60.2494251 , latitudeDelta: 0.20, longitudeDelta: 0.02});
   const [errorMsg, setErrorMsg] = useState("");
   const [planes, setPlanes] = useState<any[]>([])
-  const [fetchedPlanesArray, setFetchedPlanes] = useState<any[]>([])
 
   
   useEffect(() => {
     setGPSlocation()
+   
   }, []);
 
   useEffect(()=>{
@@ -35,19 +35,10 @@ export default function Map() {
   
   async function refreshPlanes(location: any){
     const planesData = await fetchplanesData(location)
-
+    setPlanes([])
     for(let i = 0; i < planesData.length; i++){
-      let planeInArray = false
-
-      /*
-      // For updating already existing planes in planes array. Would need to be updated through set hook, so probably needs a filtering function.
-      // Will do later, but for now this function will create duplicate markers for every plane.
-      for(let j = 0; j < planes.length; i++){
-        if(planes[i].icao24 == planesData[i][0]){}
-          planeInArray = true
-        }*/
-        let newPlane = new Plane(planesData[i])
-        setPlanes((planes)=>([...planes, newPlane]))
+      let newPlane = new Plane(planesData[i])
+      setPlanes((planes)=>([...planes, newPlane]))
     }
   }
 
@@ -58,12 +49,9 @@ export default function Map() {
         return false
       }
     const userGpsLocation = await Location.getCurrentPositionAsync({});
-    console.log("LOCATION")
     setLocation({longitude:userGpsLocation.coords.longitude, latitude:userGpsLocation.coords.latitude});
   }
 
-  // Plane markers are rendered only after refreshing Expo :( 
-  // Might have something to do with conditional rendering and planes state being empty initially. 
   return (
     <View style={styles.container}>
       <MapView 
