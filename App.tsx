@@ -34,6 +34,7 @@ export default function App() {
 }
 // MOI
 // TERVE
+// HEI
 const styles = StyleSheet.create({
   container: {
     flex: 1,
