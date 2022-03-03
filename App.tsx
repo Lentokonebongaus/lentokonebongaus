@@ -32,7 +32,7 @@ export default function App() {
     </NavigationContainer>
   );
 }
-
+// MOI
 const styles = StyleSheet.create({
   container: {
     flex: 1,
