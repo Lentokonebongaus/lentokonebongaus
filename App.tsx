@@ -14,6 +14,7 @@ import Cards from './components/Cards';
 import Play from './components/Play';
 import Settings from './components/Settings';
 import planesData from './planesData';
+import PlaneView from './components/PlaneView';
 
 const Stack = createNativeStackNavigator();
 
@@ -28,6 +29,7 @@ export default function App() {
         <Stack.Screen name="Cards" component={Cards}/>
         <Stack.Screen name="Play" component={Play}/>
         <Stack.Screen name="Settings" component={Settings}/>
+        <Stack.Screen name="Plane" component={PlaneView}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
