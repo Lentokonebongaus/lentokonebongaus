@@ -12,7 +12,7 @@ import distanceBetween from '../distanceBetween';
 import fetchplanesData from '../planesData';
 
 
-export default function Map() {
+export default function Map(props:any) {
  
   // Because MapView is rendered before user location is set, region state is used to set the initial map view to a pre-determined location.
   // A short loading screen would maybe be another, more adequate solution? -Eeli
@@ -74,6 +74,7 @@ export default function Map() {
                     longitude: plane.longitude,
                   }}
                   title={plane.icao24}
+                  onPress={()=>{props.navigation.navigate("Plane", {plane:plane})}}
                 />
               )
             }
