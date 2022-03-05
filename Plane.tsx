@@ -22,6 +22,7 @@ class Plane {
         this.latitude = planeData[6]
         this.baroAltitude = planeData[7]
         this.onGround = planeData[8]
+        // Velocity in m/s
         this.velocity = planeData[9]
 
         this.geoAltitude = planeData[13]
