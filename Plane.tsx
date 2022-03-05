@@ -8,6 +8,7 @@ class Plane {
     latitude: number
     baroAltitude: number
     onGround: boolean
+    trueTrack: number
     velocity: number
 
     geoAltitude: number
@@ -22,7 +23,7 @@ class Plane {
         this.latitude = planeData[6]
         this.baroAltitude = planeData[7]
         this.onGround = planeData[8]
-        // Velocity in m/s
+        this.trueTrack = planeData[10]
         this.velocity = planeData[9]
 
         this.geoAltitude = planeData[13]
