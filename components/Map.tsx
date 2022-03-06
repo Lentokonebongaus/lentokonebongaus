@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Button } from 'react-native';
+import { StyleSheet, Text, View, Button, Image } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import {PROVIDER_GOOGLE} from 'react-native-maps';
 // Hakee ainakin Androidilla sijainnin expo-location -kirjaston avulla. Kannattaa vielä testata, että toimii myös iOS:llä. -Eeli 
@@ -10,6 +10,7 @@ import  planesData from '../planesData';
 import Plane from "../Plane"
 import distanceBetween from '../distanceBetween';
 import fetchplanesData from '../planesData';
+import planeIcon from '../plane_icon.png'
 
 
 export default function Map(props:any) {
@@ -52,6 +53,10 @@ export default function Map(props:any) {
     setLocation({longitude:userGpsLocation.coords.longitude, latitude:userGpsLocation.coords.latitude});
   }
 
+  const renderPlaneIcon = (plane) => {
+
+  }
+
   return (
     <View style={styles.container}>
       <MapView 
@@ -68,6 +73,7 @@ export default function Map(props:any) {
             if(plane.latitude && plane.longitude){
               return(
                 <Marker
+                  icon={planeIcon}
                   key={index}
                   coordinate={{
                     latitude: plane.latitude,
@@ -75,7 +81,9 @@ export default function Map(props:any) {
                   }}
                   title={plane.icao24}
                   onPress={()=>{props.navigation.navigate("Plane", {plane:plane})}}
-                />
+                  rotation={plane.trueTrack+50}
+                >
+                </Marker>
               )
             }
           })

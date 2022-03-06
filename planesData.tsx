@@ -1,13 +1,6 @@
 // https://openskynetwork.github.io/opensky-api/rest.html
 // https://opensky-network.org/api/states/all?lamin=45.8389&lomin=5.9962&lamax=47.8229&lomax=10.5226
     
-/*const planesData = new Promise((resolve,reject) =>{
-    fetch("https://opensky-network.org/api/states/all")
-    .then(response => response.json())
-    .then(data => resolve(data))
-    .catch(err => reject(err))
-})*/
-
 async function fetchplanesData(location:any){
     const minMaxDistance = 3
     const url = "https://opensky-network.org/api/states/all"
