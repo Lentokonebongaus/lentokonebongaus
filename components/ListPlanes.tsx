@@ -1,106 +1,117 @@
 import { useEffect, useState } from "react";
 import { Button, FlatList, Text, View } from "react-native";
 import  planesData from '../planesData';
+import fetchplanesData from '../planesData';
 import Plane from "../Plane"
 import distanceBetween from '../distanceBetween';
 import * as Location from 'expo-location';
 
-export default function ListPlanes (){
-
-  // Note(markus): copypastet Map.tsx:stä + haun tunkeminen omaan funktioon
-
-  // Because MapView is rendered before user location is set, region state is used to set the initial map view to a pre-determined location.
-  // A short loading screen would maybe be another, more adequate solution? -Eeli
+export default function ListPlanes (props:any){
   const [location, setLocation] = useState({longitude:0, latitude:0});
   const [region, setRegion] = useState({longitude:24.9049634, latitude:60.2494251 , latitudeDelta: 0.20, longitudeDelta: 0.02});
   const [errorMsg, setErrorMsg] = useState("");
   const [planes, setPlanes] = useState<any[]>([])
 
-  
+  // Note(markus): copypastet Map.tsx:stä
   useEffect(() => {
-    fetchData();
+    setGPSlocation()
+   
   }, []);
 
-  const fetchData = async () => {
-    (async () => {
-        let { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== 'granted') {
-          setErrorMsg('Permission to access location was denied');
-          return;
-        }
+  useEffect(()=>{
+    if(location.longitude != 0 && location.latitude != 0){
+      refreshPlanes(location)
+    }
+  },[location])
   
-        let userGpsLocation = await Location.getCurrentPositionAsync({});
-        setLocation({longitude:userGpsLocation.coords.longitude, latitude:userGpsLocation.coords.latitude});
-      })();
-  
-      // PlanesData is fetching EVERY plane from OpenSky Network. 
-      // Expo is throwing an error when sorting a JSON file that large, so currently only 100 first planes are set to planes state array. -Eeli
-      // PlanesData => data.states[(0...).toString] = plane data
-      planesData.then((data)=>{
-        let distance = 3000
-        for(let i = 0; i < 100; i++){
-          let planeLat = data.states[i.toString()]["6"]
-          let planeLon = data.states[i.toString()]["5"]
-          if(distanceBetween(location.latitude, location.longitude, planeLat, planeLon) < distance){
-            let newPlane = new Plane(data.states[i.toString()])
-            setPlanes((planes)=>([...planes, newPlane]))
-          }
-        }
-      })
-      setPlanes(planes)
-  };
-
-  // Note(markus): end copypastet Map.tsx:stä
-
-  
-  const styles = {
-    horizontal: {
-        flexDirection: 'row',
-        alignItems: 'flex-start', 
-        justifyContent:'space-around',
-    },
-    horizontalMargin: {
-        flexDirection: 'row',
-        alignItems: 'flex-start', 
-        justifyContent:'space-around',
-        margin: 10,
-    },
-    b:{
-        fontSize: 20,
-        fontWeight: "bold"
+  async function refreshPlanes(location: any){
+    const planesData = await fetchplanesData(location)
+    setPlanes([])
+    for(let i = 0; i < planesData.length; i++){
+      let newPlane = new Plane(planesData[i])
+      setPlanes((planes)=>([...planes, newPlane]))
     }
   }
 
-    if (!planes){
-        return (
-            <View>
-                <Text>Loading List</Text>
-            </View>
-        );
-    } else {
-        return (
-            <View>
-                <Button title='refresh' onPress={fetchData}/>
-                <View style={styles.horizontalMargin}>
-                    <Text style={styles.b}>icao24</Text>
-                    <Text style={styles.b}>callsign</Text>
-                    <Text style={styles.b}>originCountry</Text>
-                    <Text style={styles.b}>longitude</Text>
-                    <Text style={styles.b}>latitude</Text>
-                </View>
-                <FlatList 
-                    keyExtractor={(item, index) => index.toString()} 
-                    renderItem={ ({item}) => 
-                    <View style={styles.horizontal}>
-                        <Text>{item.icao24}</Text>
-                        <Text>{item.callsign}</Text>
-                        <Text>{item.originCountry}</Text>
-                        <Text>{item.longitude}</Text>
-                        <Text>{item.latitude}</Text>
-                    </View> }
-                    data={planes}
-                />
-            </View>
-        );
-    }
+  async function setGPSlocation(){
+    let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        setErrorMsg('Permission to access location was denied');
+        return false
+      }
+    const userGpsLocation = await Location.getCurrentPositionAsync({});
+    setLocation({longitude:userGpsLocation.coords.longitude, latitude:userGpsLocation.coords.latitude});
+  }
+  // Note(markus): end copypastet Map.tsx:stä
+
+  
+  
+
+  if (!planes){
+    return (
+      <View>
+        <Text>Loading List</Text>
+      </View>
+    );
+  } else {
+    return (
+      <View>
+        <View style={styles.refreshbutton}>
+          <Button title='refresh' onPress={() => refreshPlanes(location)}/>
+        </View>
+        <View style={styles.horizontalMargin}>
+          <Text style={styles.b}>icao24</Text>
+          <Text style={styles.b}>callsign</Text>
+          <Text style={styles.b2}>originCountry</Text>
+          <Text style={styles.b}>longitude</Text>
+          <Text style={styles.b}>latitude</Text>
+        </View>
+        <FlatList 
+          keyExtractor={(item, index) => index.toString()} 
+          renderItem={ ({item}) => 
+          <View style={styles.horizontal}>
+            <Text onPress={()=>{props.navigation.navigate("Plane", {plane:item})}}
+              style={styles.planelink}>{item.icao24}</Text>
+            <Text style={{flex:1}}>{item.callsign}</Text>
+            <Text style={{flex:2}}>{item.originCountry}</Text>
+            <Text style={{flex:1}}>{item.longitude}</Text>
+            <Text style={{flex:1, marginRight:10}}>{item.latitude}</Text>
+          </View> }
+          data={planes}
+        />
+      </View>
+    );
+  }
+}
+
+const styles = {
+  horizontal: {
+    flexDirection: 'row',
+    alignItems: 'flex-start', 
+    justifyContent:'space-around',
+  },
+  horizontalMargin: {
+    flexDirection: 'row',
+    alignItems: 'flex-start', 
+    justifyContent:'space-around',
+    margin: 10,
+  },
+  b:{
+    fontWeight: "bold",
+    flex: 1
+  },
+  b2:{
+    fontWeight: "bold",
+    flex: 2
+  },
+  planelink:{
+    color: '#0000aa',
+    flex: 1,
+    marginLeft: 10,
+    marginTop: 5
+  },
+  refreshbutton:{
+    width: 150,
+    margin: 5,
+  }
 }
