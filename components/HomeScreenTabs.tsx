@@ -18,7 +18,8 @@ export default function HomeScreenTabs(){
                 iconName = 'md-home';            
             } else if (route.name === 'Map') {
                 iconName = 'md-map';            
-            }
+            } else if (route.name === 'List')
+                iconName = 'md-list'
             // näyttää punaista mutta toimii
             return <Ionicons name={iconName}size={size}color={color} />;   
                 
