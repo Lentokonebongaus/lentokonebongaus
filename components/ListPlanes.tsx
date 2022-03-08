@@ -11,6 +11,7 @@ export default function ListPlanes (props:any){
   const [region, setRegion] = useState({longitude:24.9049634, latitude:60.2494251 , latitudeDelta: 0.20, longitudeDelta: 0.02});
   const [errorMsg, setErrorMsg] = useState("");
   const [planes, setPlanes] = useState<any[]>([])
+  const [test, setTest] = useState(planes);
 
   // Note(markus): copypastet Map.tsx:stä
   useEffect(() => {
@@ -44,6 +45,26 @@ export default function ListPlanes (props:any){
   }
   // Note(markus): end copypastet Map.tsx:stä
 
+  const clearPlanes = () => {
+    setPlanes([]);
+  }
+
+  // Clear Data -> Refresh -> Sort napit = Ei tuplia + sort
+  // Refresh -> Sort napit = tupla koneet + sort, t. Iida
+  const sortIcao = () => {
+    let test2 = planes.sort((a, b) => (a.icao24 < b.icao24 ? -1 : 1));
+    setTest(test2);
+  }
+
+  const sortCall = () => {
+    let test3 = planes.sort((a, b) => (a.callsign < b.callsign ? -1 : 1));
+    setTest(test3);
+  }
+
+  const sortCountry = () => {
+    let test4 = planes.sort((a, b) => (a.originCountry < b.originCountry ? -1 : 1));
+    setTest(test4);
+  }
   
   
 
