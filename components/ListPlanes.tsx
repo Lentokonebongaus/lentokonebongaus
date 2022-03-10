@@ -25,6 +25,7 @@ export default function ListPlanes (props:any){
     }
   },[location])
   
+<<<<<<< HEAD
   async function refreshPlanes(location: any){
     const planesData = await fetchplanesData(location)
     setPlanes([])
@@ -33,6 +34,25 @@ export default function ListPlanes (props:any){
       setPlanes((planes)=>([...planes, newPlane]))
     }
   }
+=======
+      // PlanesData is fetching EVERY plane from OpenSky Network. 
+      // Expo is throwing an error when sorting a JSON file that large, so currently only 100 first planes are set to planes state array. -Eeli
+      // PlanesData => data.states[(0...).toString] = plane data
+      planesData.then((data)=>{
+        let distance = 3000
+        for(let i = 0; i < 100; i++){
+          let planeLat = data.states[i.toString()]["6"]
+          let planeLon = data.states[i.toString()]["5"]
+          if(distanceBetween(location.latitude, location.longitude, planeLat, planeLon) < distance){
+            let newPlane = new Plane(data.states[i.toString()])
+            setPlanes((planes)=>([...planes, newPlane]))
+          }
+        }
+      })
+      setPlanes(planes)
+      console.log(planes);
+  };
+>>>>>>> 5184c5a (nätimmät napit)
 
   async function setGPSlocation(){
     let { status } = await Location.requestForegroundPermissionsAsync();
@@ -51,19 +71,23 @@ export default function ListPlanes (props:any){
 
   // Clear Data -> Refresh -> Sort napit = Ei tuplia + sort
   // Refresh -> Sort napit = tupla koneet + sort, t. Iida
+  //todo: await niin vähemmän kikkailua
   const sortIcao = () => {
     let test2 = planes.sort((a, b) => (a.icao24 < b.icao24 ? -1 : 1));
     setTest(test2);
+    console.log("icao24"); 
   }
 
   const sortCall = () => {
     let test3 = planes.sort((a, b) => (a.callsign < b.callsign ? -1 : 1));
     setTest(test3);
+    console.log("callsign"); 
   }
 
   const sortCountry = () => {
     let test4 = planes.sort((a, b) => (a.originCountry < b.originCountry ? -1 : 1));
     setTest(test4);
+    console.log("country"); 
   }
   
   
