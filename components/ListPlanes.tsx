@@ -11,7 +11,8 @@ export default function ListPlanes (props:any){
   const [region, setRegion] = useState({longitude:24.9049634, latitude:60.2494251 , latitudeDelta: 0.20, longitudeDelta: 0.02});
   const [errorMsg, setErrorMsg] = useState("");
   const [planes, setPlanes] = useState<any[]>([])
-  const [test, setTest] = useState(planes);
+
+  
 
   // Note(markus): copypastet Map.tsx:stä
   useEffect(() => {
@@ -25,7 +26,6 @@ export default function ListPlanes (props:any){
     }
   },[location])
   
-<<<<<<< HEAD
   async function refreshPlanes(location: any){
     const planesData = await fetchplanesData(location)
     setPlanes([])
@@ -34,25 +34,6 @@ export default function ListPlanes (props:any){
       setPlanes((planes)=>([...planes, newPlane]))
     }
   }
-=======
-      // PlanesData is fetching EVERY plane from OpenSky Network. 
-      // Expo is throwing an error when sorting a JSON file that large, so currently only 100 first planes are set to planes state array. -Eeli
-      // PlanesData => data.states[(0...).toString] = plane data
-      planesData.then((data)=>{
-        let distance = 3000
-        for(let i = 0; i < 100; i++){
-          let planeLat = data.states[i.toString()]["6"]
-          let planeLon = data.states[i.toString()]["5"]
-          if(distanceBetween(location.latitude, location.longitude, planeLat, planeLon) < distance){
-            let newPlane = new Plane(data.states[i.toString()])
-            setPlanes((planes)=>([...planes, newPlane]))
-          }
-        }
-      })
-      setPlanes(planes)
-      console.log(planes);
-  };
->>>>>>> 5184c5a (nätimmät napit)
 
   async function setGPSlocation(){
     let { status } = await Location.requestForegroundPermissionsAsync();
@@ -65,29 +46,32 @@ export default function ListPlanes (props:any){
   }
   // Note(markus): end copypastet Map.tsx:stä
 
-  const clearPlanes = () => {
-    setPlanes([]);
-  }
+  
 
-  // Clear Data -> Refresh -> Sort napit = Ei tuplia + sort
-  // Refresh -> Sort napit = tupla koneet + sort, t. Iida
-  //todo: await niin vähemmän kikkailua
-  const sortIcao = () => {
+  async function  sortIcao(){
+    setPlanes([])
+    await refreshPlanes(location);
     let test2 = planes.sort((a, b) => (a.icao24 < b.icao24 ? -1 : 1));
-    setTest(test2);
-    console.log("icao24"); 
+    setPlanes(test2);
+    //console.log("icao24"); 
+    
   }
 
-  const sortCall = () => {
+  async function  sortCall(){
+    setPlanes([])
+    await refreshPlanes(location);
     let test3 = planes.sort((a, b) => (a.callsign < b.callsign ? -1 : 1));
-    setTest(test3);
-    console.log("callsign"); 
+    setPlanes(test3);
+    //console.log("callsign"); 
   }
 
-  const sortCountry = () => {
+  async function sortCountry(){
+    setPlanes([])
+    await refreshPlanes(location);
     let test4 = planes.sort((a, b) => (a.originCountry < b.originCountry ? -1 : 1));
-    setTest(test4);
-    console.log("country"); 
+    setPlanes(test4);
+    //console.log("country"); 
+    
   }
   
   
@@ -101,15 +85,20 @@ export default function ListPlanes (props:any){
   } else {
     return (
       <View>
+        {/*
         <View style={styles.refreshbutton}>
           <Button title='refresh' onPress={() => refreshPlanes(location)}/>
         </View>
+          */}
         <View style={styles.horizontalMargin}>
-          <Text style={styles.b}>icao24</Text>
-          <Text style={styles.b}>callsign</Text>
-          <Text style={styles.b2}>originCountry</Text>
-          <Text style={styles.b}>longitude</Text>
-          <Text style={styles.b}>latitude</Text>
+          {/*<Button title="icao24" onPress={sortIcao}></Button>*/}
+          <Text style={styles.bLink} onPress={sortIcao}>Icao24</Text>
+          {/*<Button title="callsign" onPress={sortCall}></Button>*/}
+          <Text style={styles.bLink} onPress={sortCall}>Callsign</Text>
+          {/*<Button title="country" onPress={sortCountry}></Button>*/}
+          <Text style={styles.b2Link} onPress={sortCountry}>Origin Country</Text>
+          <Text style={styles.b}>Longitude</Text>
+          <Text style={styles.b}>Latitude</Text>
         </View>
         <FlatList 
           keyExtractor={(item, index) => index.toString()} 
@@ -117,10 +106,10 @@ export default function ListPlanes (props:any){
           <View style={styles.horizontal}>
             <Text onPress={()=>{props.navigation.navigate("Plane", {plane:item})}}
               style={styles.planelink}>{item.icao24}</Text>
-            <Text style={{flex:1}}>{item.callsign}</Text>
-            <Text style={{flex:2}}>{item.originCountry}</Text>
-            <Text style={{flex:1}}>{item.longitude}</Text>
-            <Text style={{flex:1, marginRight:10}}>{item.latitude}</Text>
+            <Text style={styles.listText}>{item.callsign}</Text>
+            <Text style={styles.listText2}>{item.originCountry}</Text>
+            <Text style={styles.listText}>{item.longitude}</Text>
+            <Text style={{...styles.listText, marginRight:10}}>{item.latitude}</Text>
           </View> }
           data={planes}
         />
@@ -149,11 +138,29 @@ const styles = {
     fontWeight: "bold",
     flex: 2
   },
+  bLink:{
+    fontWeight: "bold",
+    flex: 1,
+    color: '#006adb'
+  },
+  b2Link:{
+    fontWeight: "bold",
+    flex: 2,
+    color: '#006adb'
+  },
   planelink:{
     color: '#0000aa',
     flex: 1,
     marginLeft: 10,
     marginTop: 5
+  },
+  listText:{
+    flex:1,
+    marginTop:5
+  },
+  listText2:{
+    flex:2,
+    marginTop:5
   },
   refreshbutton:{
     width: 150,
