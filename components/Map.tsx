@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Button, Image } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker, Circle } from 'react-native-maps';
 import {PROVIDER_GOOGLE} from 'react-native-maps';
 // Hakee ainakin Androidilla sijainnin expo-location -kirjaston avulla. Kannattaa vielä testata, että toimii myös iOS:llä. -Eeli 
 import * as Location from 'expo-location';
@@ -87,7 +87,24 @@ export default function Map(props:any) {
               )
             }
           })
-        } 
+        }
+        <Circle 
+          center={{latitude:location.latitude, longitude:location.longitude}} 
+          radius={10000}
+          options={{
+            strokeColor: "#FF0000",
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            fillColor: "#e6e600",
+            fillOpacity: 0.35,
+            clickable: false,
+            draggable: false,
+            editable: false,
+            visible: true,
+            zIndex: 1
+          }}
+          >
+        </Circle>
       </MapView>
       <Button title='log_and_refresh' onPress={()=>{console.log(planes);refreshPlanes(location)}}></Button>
     </View>
