@@ -12,6 +12,8 @@ export default function ListPlanes (props:any){
   const [errorMsg, setErrorMsg] = useState("");
   const [planes, setPlanes] = useState<any[]>([])
 
+  
+
   // Note(markus): copypastet Map.tsx:stä
   useEffect(() => {
     setGPSlocation()
@@ -45,6 +47,33 @@ export default function ListPlanes (props:any){
   // Note(markus): end copypastet Map.tsx:stä
 
   
+
+  async function  sortIcao(){
+    setPlanes([])
+    await refreshPlanes(location);
+    let test2 = planes.sort((a, b) => (a.icao24 < b.icao24 ? -1 : 1));
+    setPlanes(test2);
+    //console.log("icao24"); 
+    
+  }
+
+  async function  sortCall(){
+    setPlanes([])
+    await refreshPlanes(location);
+    let test3 = planes.sort((a, b) => (a.callsign < b.callsign ? -1 : 1));
+    setPlanes(test3);
+    //console.log("callsign"); 
+  }
+
+  async function sortCountry(){
+    setPlanes([])
+    await refreshPlanes(location);
+    let test4 = planes.sort((a, b) => (a.originCountry < b.originCountry ? -1 : 1));
+    setPlanes(test4);
+    //console.log("country"); 
+    
+  }
+  
   
 
   if (!planes){
@@ -56,15 +85,20 @@ export default function ListPlanes (props:any){
   } else {
     return (
       <View>
+        {/*
         <View style={styles.refreshbutton}>
           <Button title='refresh' onPress={() => refreshPlanes(location)}/>
         </View>
+          */}
         <View style={styles.horizontalMargin}>
-          <Text style={styles.b}>icao24</Text>
-          <Text style={styles.b}>callsign</Text>
-          <Text style={styles.b2}>originCountry</Text>
-          <Text style={styles.b}>longitude</Text>
-          <Text style={styles.b}>latitude</Text>
+          {/*<Button title="icao24" onPress={sortIcao}></Button>*/}
+          <Text style={styles.bLink} onPress={sortIcao}>Icao24</Text>
+          {/*<Button title="callsign" onPress={sortCall}></Button>*/}
+          <Text style={styles.bLink} onPress={sortCall}>Callsign</Text>
+          {/*<Button title="country" onPress={sortCountry}></Button>*/}
+          <Text style={styles.b2Link} onPress={sortCountry}>Origin Country</Text>
+          <Text style={styles.b}>Longitude</Text>
+          <Text style={styles.b}>Latitude</Text>
         </View>
         <FlatList 
           keyExtractor={(item, index) => index.toString()} 
@@ -72,10 +106,10 @@ export default function ListPlanes (props:any){
           <View style={styles.horizontal}>
             <Text onPress={()=>{props.navigation.navigate("Plane", {plane:item})}}
               style={styles.planelink}>{item.icao24}</Text>
-            <Text style={{flex:1}}>{item.callsign}</Text>
-            <Text style={{flex:2}}>{item.originCountry}</Text>
-            <Text style={{flex:1}}>{item.longitude}</Text>
-            <Text style={{flex:1, marginRight:10}}>{item.latitude}</Text>
+            <Text style={styles.listText}>{item.callsign}</Text>
+            <Text style={styles.listText2}>{item.originCountry}</Text>
+            <Text style={styles.listText}>{item.longitude}</Text>
+            <Text style={{...styles.listText, marginRight:10}}>{item.latitude}</Text>
           </View> }
           data={planes}
         />
@@ -104,11 +138,29 @@ const styles = {
     fontWeight: "bold",
     flex: 2
   },
+  bLink:{
+    fontWeight: "bold",
+    flex: 1,
+    color: '#006adb'
+  },
+  b2Link:{
+    fontWeight: "bold",
+    flex: 2,
+    color: '#006adb'
+  },
   planelink:{
     color: '#0000aa',
     flex: 1,
     marginLeft: 10,
     marginTop: 5
+  },
+  listText:{
+    flex:1,
+    marginTop:5
+  },
+  listText2:{
+    flex:2,
+    marginTop:5
   },
   refreshbutton:{
     width: 150,
