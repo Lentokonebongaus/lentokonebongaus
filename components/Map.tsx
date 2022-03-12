@@ -25,7 +25,6 @@ export default function Map(props:any) {
   
   useEffect(() => {
     setGPSlocation()
-   
   }, []);
 
   useEffect(()=>{
@@ -34,6 +33,7 @@ export default function Map(props:any) {
     }
   },[location])
   
+
   async function refreshPlanes(location: any){
     const planesData = await fetchplanesData(location)
     setPlanes([])
@@ -53,10 +53,7 @@ export default function Map(props:any) {
     setLocation({longitude:userGpsLocation.coords.longitude, latitude:userGpsLocation.coords.latitude});
   }
 
-  const renderPlaneIcon = (plane) => {
-
-  }
-
+  
   return (
     <View style={styles.container}>
       <MapView 
@@ -81,6 +78,8 @@ export default function Map(props:any) {
                   }}
                   title={plane.icao24}
                   onPress={()=>{props.navigation.navigate("Plane", {plane:plane})}}
+                  // plane_icon.png isn't currently aligned with Plane object's trueTrack attribute, so even though trueTrack is measured in degrees
+                  // similar to Marker component's rotation prop, png file's unalignment needs to be taken into account. 
                   rotation={plane.trueTrack+50}
                 >
                 </Marker>
@@ -106,7 +105,7 @@ export default function Map(props:any) {
           >
         </Circle>
       </MapView>
-      <Button title='log_and_refresh' onPress={()=>{console.log(planes);refreshPlanes(location)}}></Button>
+      {/*<Button title='log_and_refresh' onPress={()=>{console.log(planes);refreshPlanes(location)}}></Button>*/}
     </View>
   );
 }
