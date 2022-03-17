@@ -18,29 +18,44 @@ export default function Map(props:any) {
   // Because MapView is rendered before user location is set, region state is used to set the initial map view to a pre-determined location.
   // A short loading screen would maybe be another, more adequate solution? -Eeli
   const [location, setLocation] = useState({longitude:0, latitude:0});
+  const [initialLocationChanged, setInitialLocationChanged] = useState(false)
   const [region, setRegion] = useState({longitude:24.9049634, latitude:60.2494251 , latitudeDelta: 0.20, longitudeDelta: 0.02});
   const [errorMsg, setErrorMsg] = useState("");
   const [planes, setPlanes] = useState<any[]>([])
-
   
   useEffect(() => {
     setGPSlocation()
   }, []);
 
+  // refreshLoop can't be executed on inital load, as it would use unset GPS location (0,0) for every loop.
+  // Also, a new refreshLoop can't be ran everytime location state changes, as it would create multiple concurrent loops that never break.
+  // Therefore initialLocationChanged is used to run refreshLoop only once after a location is set. 
+  useEffect(() => {
+    if(initialLocationChanged == true){
+      refreshLoop(location)
+    }
+  }, [initialLocationChanged])
+
   useEffect(()=>{
     if(location.longitude != 0 && location.latitude != 0){
       refreshPlanes(location)
+      setInitialLocationChanged(true)
     }
   },[location])
   
 
+  const refreshLoop = (location: any) =>{
+    setInterval(()=>{refreshPlanes(location)},7000)
+  }
+
   async function refreshPlanes(location: any){
     const planesData = await fetchplanesData(location)
-    setPlanes([])
+    let tmpPlanesArr = []
     for(let i = 0; i < planesData.length; i++){
       let newPlane = new Plane(planesData[i])
-      setPlanes((planes)=>([...planes, newPlane]))
+      tmpPlanesArr.push(newPlane)
     }
+    setPlanes(tmpPlanesArr)
   }
 
   async function setGPSlocation(){
