@@ -8,10 +8,14 @@ class Plane {
     latitude: number
     baroAltitude: number
     onGround: boolean
-    trueTrack: number
     velocity: number
-
+    trueTrack: number
+    verticalRate: number
+    // sensors: array
     geoAltitude: number
+    squawk: string
+    spi: boolean
+    positionSource: number
 
     constructor(planeData) {
         this.icao24 = planeData[0]
@@ -23,10 +27,14 @@ class Plane {
         this.latitude = planeData[6]
         this.baroAltitude = planeData[7]
         this.onGround = planeData[8]
-        this.trueTrack = planeData[10]
         this.velocity = planeData[9]
-
+        this.trueTrack = planeData[10]
+        this.verticalRate = planeData[11]
+        //this.sensors = planeData[12]
         this.geoAltitude = planeData[13]
+        this.squawk = planeData[14]
+        this.spi = planeData[15]
+        this.positionSource = planeData[16]
     }
 }
 
