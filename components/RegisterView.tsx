@@ -4,27 +4,9 @@ import { Alert, Button, StyleSheet, Text, TextInput, View } from 'react-native';
 import{ initializeApp } from "firebase/app";
 import { getDatabase, push, ref, onValue, update } from 'firebase/database';
 import parseErrorStack from 'react-native/Libraries/Core/Devtools/parseErrorStack';
+import { styles } from '../util/styles';
 
 export default function RegisterView(){
-
-    const styles = {
-        textInput:{
-            width: 200,
-            height: 50,
-            backgroundColor:"white",
-            borderStyle:"solid",
-            borderColor:"black",
-            borderRadius:10,
-            borderWidth: 2,
-            marginBottom: 10
-        },
-        viewMain:{
-            backgroundColor:"deepskyblue",
-            flex:1,
-            alignItems: 'center',
-            justifyContent: 'center',
-        }
-    }
 
     // -------------- FIREBASE -----------------------------------------------
 
