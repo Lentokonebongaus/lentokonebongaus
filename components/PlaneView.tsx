@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Alert, Button, StyleSheet, Text, TextInput, View, FlatList } from 'react-native';
-import Plane from '../Plane';
+import Plane from '../util/Plane';
 
 export default function PlaneView({route, navigation}){
     const plane = route.params.plane

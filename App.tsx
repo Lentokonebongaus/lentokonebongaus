@@ -13,8 +13,9 @@ import SigninView from './components/SigninView';
 import Cards from './components/Cards';
 import Play from './components/Play';
 import Settings from './components/Settings';
-import planesData from './planesData';
+import planesData from './util/planesData';
 import PlaneView from './components/PlaneView';
+import { styles } from './util/styles';
 
 const Stack = createNativeStackNavigator();
 
@@ -34,13 +35,3 @@ export default function App() {
     </NavigationContainer>
   );
 }
-// MOI
-// TERVE
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
