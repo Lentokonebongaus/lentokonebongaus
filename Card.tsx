@@ -4,6 +4,7 @@ class Card {
     planePicture: string
     planeManufacturer: string
     planeModel: string
+    // Operator, opratorCallSign or owner values can be an empty string!
     planeOperator: string
     planeOperatorCallSign: string
     planeOwner: string
