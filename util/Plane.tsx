@@ -1,4 +1,5 @@
 class Plane {
+    //------------ From OpenSky API --------------
     icao24: string
     callsign: string
     originCountry: string
@@ -16,8 +17,37 @@ class Plane {
     squawk: string
     spi: boolean
     positionSource: number
+    // ----------- From Backend -------------------
+    manufacturerName: string 
+    model: string
+    operator: string
+    operatorCallsign: string
+    owner: string
+    /*
+    registration: string 
+    manufacturericao: string
+    typecode: string
+    serialnumber: string 
+    linenumber: string
+    icaoaircrafttype : string
+    operatoricao: string
+    operatoriata: string
+    testreg: string
+    registered: string
+    reguntil: string
+    status: string
+    built: string
+    firstflightdate: string
+    seatconfiguration: string
+    engines: string
+    modes: string
+    adsb: string
+    acars: string
+    notes: string
+    categoryDescription: string
+    */
 
-    constructor(planeData) {
+    constructor(planeData:any) {
         this.icao24 = planeData[0]
         this.callsign = planeData[1]
         this.originCountry = planeData[2]
@@ -35,6 +65,20 @@ class Plane {
         this.squawk = planeData[14]
         this.spi = planeData[15]
         this.positionSource = planeData[16]
+        this.manufacturerName = ""
+        this.model = ""
+        this.operator = ""
+        this.operatorCallsign = ""
+        this.owner = ""
+    }
+
+    getBackendData(){
+        // TODO
+        this.manufacturerName = "Airbus"
+        this.model = "A319-115"
+        this.operator = ""  // Not every plane has operator value. Value could be "Iberia Airlines", for example.
+        this.operatorCallsign = "AMERICAN"
+        this.owner = "American Airlines Inc"
     }
 }
 
