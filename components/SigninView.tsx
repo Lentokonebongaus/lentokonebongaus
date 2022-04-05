@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import parseErrorStack from 'react-native/Libraries/Core/Devtools/parseErrorStack';
+import { styles } from '../util/styles';
 
 type Props = {
     navigation: any
@@ -10,24 +11,6 @@ type Props = {
 
 export default function SigninView(Props: Props){
 
-    const styles = {
-        textInput:{
-            width: 200,
-            height: 50,
-            backgroundColor:"white",
-            borderStyle:"solid",
-            borderColor:"black",
-            borderRadius:10,
-            borderWidth: 2,
-            marginBottom: 10
-        },
-        viewMain:{
-            backgroundColor:"deepskyblue",
-            flex:1,
-            alignItems: 'center',
-            justifyContent: 'center',
-        }
-    }
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
 

@@ -1,10 +1,11 @@
 import { Text, View, FlatList, Image} from "react-native";
 import testCard from '../testCard';
-import star from "../star4.png";
-import star2 from "../2star.png";
-import star3 from "../3star.png";
-import star4 from "../4star.png";
-import star5 from "../5star.png";
+import star from "../assets/star4.png";
+import star2 from "../assets/2star.png";
+import star3 from "../assets/3star.png";
+import star4 from "../assets/4star.png";
+import star5 from "../assets/5star.png";
+import { styles } from '../util/styles';
 
 export default function Cards(){
 
@@ -18,7 +19,7 @@ export default function Cards(){
           <FlatList 
             keyExtractor={(item, index) => index.toString()} 
             renderItem={ ({item}) => 
-            <View style={styles.horizontal}>
+            <View style={styles.horizontalCard}>
 
                 <View style={styles.card}>
 
@@ -53,45 +54,4 @@ export default function Cards(){
         </View>
       );
 
-}
-
-const styles = {
-    horizontal: {
-      flexDirection: 'column',
-      alignItems: 'center', 
-      justifyContent:'space-around',
-      padding: 20
-    },
-    horizontalMargin: {
-      flexDirection: 'row',
-      alignItems: 'flex-start', 
-      justifyContent:'space-around',
-      margin: 10,
-    }, 
-    card: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingTop: 40,
-        backgroundColor: '#75c9fa', 
-        borderRadius: 5, 
-        borderWidth: 5,
-        borderColor: "#0285d1",
-        padding: 20, 
-        shadowColor: 'black',
-        shadowOffset: { width: 0, height: 2 },
-        shadowRadius: 6,
-        shadowOpacity: 0.26,
-        elevation: 8
-    }, 
-    cardText: {
-        fontSize: 15, 
-        color: "#005485"
-    }, 
-    cardTextHeader: {
-        fontSize: 20, 
-        color: "#00273d", 
-        fontWeight: "bold"
-
-    }
 }
