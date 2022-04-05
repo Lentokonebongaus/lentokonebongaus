@@ -6,11 +6,13 @@ import {PROVIDER_GOOGLE} from 'react-native-maps';
 // Hakee ainakin Androidilla sijainnin expo-location -kirjaston avulla. Kannattaa vielä testata, että toimii myös iOS:llä. -Eeli 
 import * as Location from 'expo-location';
 import { async } from '@firebase/util';
-import  planesData from '../planesData';
-import Plane from "../Plane"
-import distanceBetween from '../distanceBetween';
-import fetchplanesData from '../planesData';
-import planeIcon from '../plane_icon.png'
+import  planesData from '../util/planesData';
+import Plane from "../util/Plane"
+import distanceBetween from '../util/distanceBetween';
+import fetchplanesData from '../util/planesData';
+import planeIcon from '../assets/plane_icon.png'
+import { refreshPlanes, setGPSlocation } from '../util/locationFunctions';
+import { styles } from '../util/styles';
 
 
 export default function Map(props:any) {
@@ -24,7 +26,7 @@ export default function Map(props:any) {
   const [planes, setPlanes] = useState<any[]>([])
   
   useEffect(() => {
-    setGPSlocation()
+    setGPSlocation(setLocation, setErrorMsg)
   }, []);
 
   // refreshLoop can't be executed on inital load, as it would use unset GPS location (0,0) for every loop.
@@ -38,36 +40,15 @@ export default function Map(props:any) {
 
   useEffect(()=>{
     if(location.longitude != 0 && location.latitude != 0){
-      refreshPlanes(location)
+      refreshPlanes(location, setPlanes)
       setInitialLocationChanged(true)
     }
   },[location])
   
 
   const refreshLoop = (location: any) =>{
-    setInterval(()=>{refreshPlanes(location)},7000)
+    setInterval(()=>{refreshPlanes(location, setPlanes)},7000)
   }
-
-  async function refreshPlanes(location: any){
-    const planesData = await fetchplanesData(location)
-    let tmpPlanesArr = []
-    for(let i = 0; i < planesData.length; i++){
-      let newPlane = new Plane(planesData[i])
-      tmpPlanesArr.push(newPlane)
-    }
-    setPlanes(tmpPlanesArr)
-  }
-
-  async function setGPSlocation(){
-    let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        setErrorMsg('Permission to access location was denied');
-        return false
-      }
-    const userGpsLocation = await Location.getCurrentPositionAsync({});
-    setLocation({longitude:userGpsLocation.coords.longitude, latitude:userGpsLocation.coords.latitude});
-  }
-
   
   return (
     <View style={styles.container}>
@@ -124,12 +105,3 @@ export default function Map(props:any) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

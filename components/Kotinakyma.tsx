@@ -1,5 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Button, ImageBackground, Image} from 'react-native';
+import { styles } from '../util/styles';
 
 type Props = {
   navigation: any
@@ -39,17 +40,3 @@ export default function Kotinakyma(Props: Props) {
       </View>
     );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  stretch: {
-    width: 50,
-    height: 200,
-    resizeMode: 'stretch',
-  },
-});

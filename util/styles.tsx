@@ -1,0 +1,114 @@
+import { StyleSheet } from 'react-native';
+
+// import { styles } from '../util/styles';
+
+export const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  stretch: {
+    width: 50,
+    height: 200,
+    resizeMode: 'stretch',
+  },
+  horizontal: {
+    flexDirection: 'row',
+    alignItems: 'flex-start', 
+    justifyContent:'space-around',
+  },
+  horizontalMargin: {
+    flexDirection: 'row',
+    alignItems: 'flex-start', 
+    justifyContent:'space-around',
+    margin: 10,
+  },
+  textInput:{
+      width: 200,
+      height: 50,
+      backgroundColor:"white",
+      borderStyle:"solid",
+      borderColor:"black",
+      borderRadius:10,
+      borderWidth: 2,
+      marginBottom: 10
+  },
+  viewMain:{
+      backgroundColor:"deepskyblue",
+      flex:1,
+      alignItems: 'center',
+      justifyContent: 'center',
+  },
+  b:{
+    fontWeight: "bold",
+    flex: 1
+  },
+  b2:{
+    fontWeight: "bold",
+    flex: 2
+  },
+  bLink:{
+    fontWeight: "bold",
+    flex: 1,
+    color: '#006adb'
+  },
+  b2Link:{
+    fontWeight: "bold",
+    flex: 2,
+    color: '#006adb'
+  },
+  planelink:{
+    color: '#0000aa',
+    flex: 1,
+    marginLeft: 10,
+    marginTop: 5
+  },
+  listText:{
+    flex:1,
+    marginTop:5
+  },
+  listText2:{
+    flex:2,
+    marginTop:5
+  },
+  refreshbutton:{
+    width: 150,
+    margin: 5,
+  },
+  card: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: 40,
+    backgroundColor: '#75c9fa', 
+    borderRadius: 5, 
+    borderWidth: 5,
+    borderColor: "#0285d1",
+    padding: 20, 
+    shadowColor: 'black',
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 6,
+    shadowOpacity: 0.26,
+    elevation: 8
+}, 
+cardText: {
+    fontSize: 15, 
+    color: "#005485"
+}, 
+cardTextHeader: {
+    fontSize: 20, 
+    color: "#00273d", 
+    fontWeight: "bold"
+}, 
+horizontalCard: {
+  flexDirection: 'column',
+  alignItems: 'center', 
+  justifyContent:'space-around',
+  padding: 20
+},
+
+});
+
+// import { styles } from '../util/styles';
