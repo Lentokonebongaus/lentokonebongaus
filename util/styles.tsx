@@ -77,6 +77,38 @@ export const styles = StyleSheet.create({
     width: 150,
     margin: 5,
   },
+  card: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: 40,
+    backgroundColor: '#75c9fa', 
+    borderRadius: 5, 
+    borderWidth: 5,
+    borderColor: "#0285d1",
+    padding: 20, 
+    shadowColor: 'black',
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 6,
+    shadowOpacity: 0.26,
+    elevation: 8
+}, 
+cardText: {
+    fontSize: 15, 
+    color: "#005485"
+}, 
+cardTextHeader: {
+    fontSize: 20, 
+    color: "#00273d", 
+    fontWeight: "bold"
+}, 
+horizontalCard: {
+  flexDirection: 'column',
+  alignItems: 'center', 
+  justifyContent:'space-around',
+  padding: 20
+},
+
 });
 
 // import { styles } from '../util/styles';
