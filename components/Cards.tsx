@@ -10,9 +10,8 @@ export default function Cards(){
 
     // for testing purposes
     let manyCardsTest = [testCard, testCard, testCard, testCard]; 
-
-    //"graphic design is my passion"
-    // TODO: prettier cards, sorting
+    
+    // TODO: prettier cards, sorting, single card view?
     return (
         <View style={{padding: 20}}>
 
