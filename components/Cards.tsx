@@ -1,4 +1,4 @@
-import { Text, View, FlatList, Image} from "react-native";
+import { Text, View, FlatList, Image, TouchableOpacity} from "react-native";
 import testCard from '../testCard';
 import star from "../assets/star4.png";
 import star2 from "../assets/2star.png";
@@ -7,7 +7,11 @@ import star4 from "../assets/4star.png";
 import star5 from "../assets/5star.png";
 import { styles } from '../util/styles';
 
-export default function Cards(){
+type Props = {
+    navigation: any
+  }
+
+export default function Cards(Props: Props){
 
     // for testing purposes
     let manyCardsTest = [testCard, testCard, testCard, testCard]; 
@@ -21,7 +25,8 @@ export default function Cards(){
             renderItem={ ({item}) => 
             <View style={styles.horizontalCard}>
 
-                <View style={styles.card}>
+            <TouchableOpacity style={styles.card} 
+            onPress={ () => Props.navigation.navigate('Card')}>
 
                 <Text style={styles.cardTextHeader}>{item.planeModel}</Text>
                 
@@ -45,7 +50,7 @@ export default function Cards(){
                 <Text style={styles.cardText}>Operator CallSign: {item.planeOperatorCallSign}</Text>
                 <Text style={styles.cardText}>Owner: {item.planeOwner}</Text>
 
-                </View>
+                </TouchableOpacity>
 
 
             </View> }
