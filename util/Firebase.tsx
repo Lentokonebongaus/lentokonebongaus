@@ -22,5 +22,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 const usersDb = ref(database, "users");
+const cardsDb = ref(database, "cards");
 
-export { usersDb }
+export { usersDb, cardsDb }
