@@ -39,12 +39,6 @@ export default function PlaneView({route, navigation}){
             <Text>icao24: {plane.icao24}</Text>
             <Text>Callsign: {plane.callsign}</Text>
             <Text>Country: {plane.originCountry}</Text>
-<<<<<<< HEAD
-            <Text>Velocity: {plane.velocity}</Text>
-            <Text>Barometric altitude: {plane.baroAltitude}</Text>
-            <Text>Geometric altitude: {plane.geoAltitude}</Text>
-            <Button title="log" onPress={()=>{printPlaneData(plane.icao24)}}></Button>
-=======
             <Text>Velocity: {plane.velocity} m/s</Text>
             <Text>Barometric altitude: {plane.baroAltitude} m</Text>
             <Text>Geometric altitude: {plane.geoAltitude} m</Text>
@@ -59,7 +53,6 @@ export default function PlaneView({route, navigation}){
             <Button title="log backend details" onPress={()=>{printPlaneDetails(plane.icao24)}}></Button>
 
 
->>>>>>> development
         </View>
     )
 }
