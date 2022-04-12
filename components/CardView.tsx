@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { Text, View, FlatList, Image, TouchableOpacity, Animated} from "react-native";
 import {useEffect, useRef, useState} from "react";
 import testCard from '../testCard';
@@ -13,6 +14,15 @@ import  {PanGestureHandler, PinchGestureHandler} from 'react-native-gesture-hand
 
 type Props = {
     // card id 
+=======
+import { StyleSheet, Text, View, Button, ImageBackground, Image} from 'react-native'
+import React, { useRef, useEffect } from 'react'
+import { useSpring, animated, to } from '@react-spring/native'
+
+export default function CardView(){
+
+    return(<View><Text>Card view</Text></View>)
+>>>>>>> development
 }
 
 export default function CardView(Props: Props){

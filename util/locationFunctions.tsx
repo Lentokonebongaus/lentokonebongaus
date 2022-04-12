@@ -6,7 +6,7 @@ export async function refreshPlanes(location: any, setPlanes: Function){
     const planesData = await fetchplanesData(location)
     setPlanes([])
     for(let i = 0; i < planesData.length; i++){
-        let newPlane = new Plane(planesData[i])
+        let newPlane = new Plane(planesData[i], location)
         setPlanes((planes)=>([...planes, newPlane]))
     }
 }

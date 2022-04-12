@@ -73,7 +73,7 @@ export default function Map(props:any) {
                     longitude: plane.longitude,
                   }}
                   title={plane.icao24}
-                  onPress={()=>{props.navigation.navigate("Plane", {plane:plane})}}
+                  onPress={()=>{props.navigation.navigate("Plane", {plane:plane, location:location})}}
                   // plane_icon.png isn't currently aligned with Plane object's trueTrack attribute, so even though trueTrack is measured in degrees
                   // similar to Marker component's rotation prop, png file's unalignment needs to be taken into account. 
                   rotation={plane.trueTrack+50}
