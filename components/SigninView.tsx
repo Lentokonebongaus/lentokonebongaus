@@ -1,35 +1,58 @@
 import { StatusBar } from 'expo-status-bar';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import parseErrorStack from 'react-native/Libraries/Core/Devtools/parseErrorStack';
 import { styles } from '../util/styles';
+import { useContext } from 'react';
+import { LoggedUsernameContext } from '../util/LoggedUsernameProvider';
+import { usersDb } from '../util/Firebase'
+import { getDatabase, push, ref, onValue, update } from 'firebase/database';
+
 
 type Props = {
     navigation: any
 }
 
-export default function SigninView(Props: Props){
+export default function SigninView(props: Props){
 
-    const [username, setUsername] = useState("")
-    const [password, setPassword] = useState("")
+    const [usernameInput, setUsernameInput] = useState("")
+    const [passwordInput, setPasswordInput] = useState("")
+    const {loggedUsername, setLoggedUsername} = useContext(LoggedUsernameContext)
+    
+    const userAuthenticated = (databaseSnapshot:Object, usernameInput:String, passwordInput:String) =>{
+        // Getting key-value-pairs from Firebase snapshot object with val() method.
+        // [RANDOM_ID{username: STRING, password: STRING}]
+        console.log("AAAA")
+        console.log( databaseSnapshot.val())
+        const usersArray = databaseSnapshot.val()
+        const userIds =  Object.keys(usersArray)
+        for (let i = 0; i < userIds.length; i++){
+            if(usernameInput == usersArray[userIds[i]].username){
+                if(passwordInput == usersArray[userIds[i]].password){
+                    return true
+                } else{
+                    return false
+                }
+            }
+        }
+        return false
+    }
 
-
-    // IDE is giving a "No overload matches this call." error message for component styles. Code works though, so will look into this later.
     return(
         <View style={styles.viewMain}>
             <Text>Type in your credentials</Text>
             <TextInput
                 style={styles.textInput}
-                onChangeText={(text)=>(setUsername(text))}
-                value={username}
+                onChangeText={(text)=>(setUsernameInput(text))}
+                value={usernameInput}
                 placeholder="username"
                 textAlign="center"
             />
             <TextInput
                 style={styles.textInput}
-                onChangeText={(text)=>(setPassword(text))}
-                value={password}
+                onChangeText={(text)=>(setPasswordInput(text))}
+                value={passwordInput}
                 placeholder="password"
                 textAlign="center"
                 secureTextEntry={true}
@@ -37,13 +60,29 @@ export default function SigninView(Props: Props){
             <Button
                 title="Sign in"
                 onPress={()=>{
-                    // TODO: handleFormSubmit()
+                    console.log("FETCHING...")
+                    onValue(usersDb, (databaseSnapshot) => {
+                    console.log(databaseSnapshot)
+                    if(userAuthenticated(databaseSnapshot, usernameInput, passwordInput) == true){
+                        setLoggedUsername(usernameInput)
+                        props.navigation.navigate("Home")
+                    } else{
+                        // TODO: Ehkä vähän hienovaraisemmin teksti tonne näkymään ku alertilla? Esim. <Text>-tagin sisälle.
+                        alert("WRONG")
+                    }
+                    /*const userIDs = Object.keys(data);
+                    const usersTestData = Array()
+                    userIDs.map((userID)=>{
+                        usersTestData.push(userID)
+                    })
+                    setDbTestData(usersTestData)*/
+                    })
                 }}
             />
             <Text>Don't have an account? Register here!</Text>
             <Button
                 title="Register"
-                onPress={ () => Props.navigation.navigate('Register') }
+                onPress={ () => props.navigation.navigate("Register") }
             />
         </View>
     )

@@ -12,13 +12,14 @@ export default function PlaneView({route, navigation}){
     }
 
     return(
-    <View>
-        <Text>icao24: {plane.icao24}</Text>
-        <Text>Callsign: {plane.callsign}</Text>
-        <Text>Country: {plane.originCountry}</Text>
-        <Text>Velocity: {plane.velocity}</Text>
-        <Text>Barometric altitude: {plane.baroAltitude}</Text>
-        <Text>Geometric altitude: {plane.geoAltitude}</Text>
-        <Button title="log" onPress={()=>{printPlaneData(plane.icao24)}}></Button>
-    </View>)
+        <View>
+            <Text>icao24: {plane.icao24}</Text>
+            <Text>Callsign: {plane.callsign}</Text>
+            <Text>Country: {plane.originCountry}</Text>
+            <Text>Velocity: {plane.velocity}</Text>
+            <Text>Barometric altitude: {plane.baroAltitude}</Text>
+            <Text>Geometric altitude: {plane.geoAltitude}</Text>
+            <Button title="log" onPress={()=>{printPlaneData(plane.icao24)}}></Button>
+        </View>
+    )
 }

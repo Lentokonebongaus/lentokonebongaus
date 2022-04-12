@@ -1,44 +1,27 @@
 import { StatusBar } from 'expo-status-bar';
 import { useState, useEffect } from 'react';
 import { Alert, Button, StyleSheet, Text, TextInput, View } from 'react-native';
-import{ initializeApp } from "firebase/app";
-import { getDatabase, push, ref, onValue, update } from 'firebase/database';
 import parseErrorStack from 'react-native/Libraries/Core/Devtools/parseErrorStack';
 import { styles } from '../util/styles';
+import { usersDb } from '../util/Firebase'
+import { getDatabase, push, ref, onValue, update } from 'firebase/database';
+import { useContext } from 'react';
+import { LoggedUsernameContext } from '../util/LoggedUsernameProvider';
+// Siirsin noi Firebase-jutut util kansioon. Täällä tarvii vielä ainakin tota Firebase-kirjaston onValue-funktiota useEffectin yhteydessä.
 
-export default function RegisterView(){
 
-    // -------------- FIREBASE -----------------------------------------------
+type Props = {
+    navigation: any
+}
 
-    const firebaseConfig = {
+export default function RegisterView(props: Props){
 
-        apiKey: "AIzaSyD2TF3qwV0gXZ7YPvagpymcuWTMJazIGxc",
-      
-        authDomain: "lentokonebongaus.firebaseapp.com",
-      
-        databaseURL: "https://lentokonebongaus-default-rtdb.europe-west1.firebasedatabase.app",
-      
-        projectId: "lentokonebongaus",
-      
-        storageBucket: "lentokonebongaus.appspot.com",
-      
-        messagingSenderId: "313722689412",
-      
-        appId: "1:313722689412:web:5cfa1aa1fcaf68c40fafd1"
-      
-    };
-      
-    const app = initializeApp(firebaseConfig);
-    const database = getDatabase(app);
-    const usersDb = ref(database, "users");
-
-    // ----------------------------------------------------------------------
 
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
     const [passwordConfirm, setPasswordConfirm] = useState("")
     const [registeredMessage, setRegisteredMessage] = useState("")
-
+    const {loggedUsername, setLoggedUsername} = useContext(LoggedUsernameContext)
 
     useEffect(()=>{
         onValue(usersDb, (snapshot) => {
@@ -70,8 +53,6 @@ export default function RegisterView(){
         }
     }
 
-
-    // IDE is giving a "No overload matches this call." error message for component styles. Code works though, so will look into this later.
     return(
         <View style={styles.viewMain}>
             <Text>Username: {username}</Text>
@@ -106,6 +87,8 @@ export default function RegisterView(){
                     if (checkRegisterForm()){
                         push(usersDb, {username:username, password:password})
                         Alert.alert("You have been registered!")
+                        setLoggedUsername(username)
+                        setTimeout(()=>{props.navigation.navigate("Home")},2000)
                     }
                 }}
             />

@@ -1,6 +1,8 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Button, ImageBackground, Image} from 'react-native';
 import { styles } from '../util/styles';
+import { useContext } from "react"
+import {LoggedUsernameContext} from "../util/LoggedUsernameProvider"
 
 type Props = {
   navigation: any
@@ -11,7 +13,8 @@ export default function Kotinakyma(Props: Props) {
     const nothing = () => {
 
     }
-  
+    const { loggedUsername, setLoggedUsername } = useContext(LoggedUsernameContext)
+
     return (
       <View style={styles.container}>
         <View style={{flex: 1, justifyContent: "flex-start", paddingTop: 40}}>
@@ -22,7 +25,7 @@ export default function Kotinakyma(Props: Props) {
         </View>
 
         <View style={{flex: 1, justifyContent: 'flex-end', paddingBottom: 60}}>
-          <Text style={{fontSize: 30}}>Welcome!</Text>
+          <Text style={{fontSize: 30}}>Welcome {loggedUsername}</Text>
         </View>
 
         <View style={{flexDirection: 'column', flex: 2, justifyContent: "space-between", paddingBottom: 100}}>
