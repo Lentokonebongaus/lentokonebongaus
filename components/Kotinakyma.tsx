@@ -37,6 +37,12 @@ export default function Kotinakyma(Props: Props) {
             () => Props.navigation.navigate('Play')} />
           <Button title="Settings" onPress={
             () => Props.navigation.navigate('Settings')} />
+          
+            
+          <Button title="Card view test" onPress={
+            () => Props.navigation.navigate('Card view')
+          } />
+
         </View>
       
         <StatusBar style="auto" />
