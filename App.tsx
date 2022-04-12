@@ -15,6 +15,7 @@ import Play from './components/Play';
 import Settings from './components/Settings';
 import planesData from './util/planesData';
 import PlaneView from './components/PlaneView';
+import CardView from './components/CardView';
 import { styles } from './util/styles';
 import CardView from './components/CardView';
 
@@ -32,7 +33,7 @@ export default function App() {
         <Stack.Screen name="Play" component={Play}/>
         <Stack.Screen name="Settings" component={Settings}/>
         <Stack.Screen name="Plane" component={PlaneView}/>
-        <Stack.Screen name="Card" component={CardView}/>
+        <Stack.Screen name="Card view" component={CardView}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
