@@ -23,8 +23,6 @@ export default function SigninView(props: Props){
     const userAuthenticated = (databaseSnapshot:Object, usernameInput:String, passwordInput:String) =>{
         // Getting key-value-pairs from Firebase snapshot object with val() method.
         // [RANDOM_ID{username: STRING, password: STRING}]
-        console.log("AAAA")
-        console.log( databaseSnapshot.val())
         const usersArray = databaseSnapshot.val()
         const userIds =  Object.keys(usersArray)
         for (let i = 0; i < userIds.length; i++){
