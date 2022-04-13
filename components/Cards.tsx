@@ -12,7 +12,7 @@ export default function Cards(Props: Props){
     // for testing purposes
     let manyCardsTest = [testCard, testCard, testCard, testCard]; 
     
-    // TODO: prettier cards, sorting, single card view?
+    // sorting ? 
     return (
         <View style={{padding: 20}}>
 

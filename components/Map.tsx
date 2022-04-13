@@ -11,6 +11,7 @@ import Plane from "../util/Plane"
 import distanceBetween from '../util/distanceBetween';
 import fetchplanesData from '../util/planesData';
 import planeIcon from '../assets/plane_icon.png'
+import planeIconGrounded from '../assets/plane_icon_grounded.png'
 import { refreshPlanes, setGPSlocation } from '../util/locationFunctions';
 import { styles } from '../util/styles';
 
@@ -28,6 +29,10 @@ export default function Map(props:any) {
   useEffect(() => {
     setGPSlocation(setLocation, setErrorMsg)
   }, []);
+
+  //useEffect(()=>{
+  //  console.log(planes)
+  //},[planes])
 
   // refreshLoop can't be executed on inital load, as it would use unset GPS location (0,0) for every loop.
   // Also, a new refreshLoop can't be ran everytime location state changes, as it would create multiple concurrent loops that never break.
@@ -66,7 +71,7 @@ export default function Map(props:any) {
             if(plane.latitude && plane.longitude){
               return(
                 <Marker
-                  icon={planeIcon}
+                  icon={plane.onGround==true?planeIconGrounded:planeIcon}
                   key={index}
                   coordinate={{
                     latitude: plane.latitude,

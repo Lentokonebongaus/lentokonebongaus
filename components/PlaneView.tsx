@@ -3,6 +3,7 @@ import { Alert, Button, StyleSheet, Text, TextInput, View, FlatList } from 'reac
 import Plane from '../util/Plane';
 import Card from '../util/Card';
 import fetchPlaneDetails from "../util/planeDetails"
+import { cardsDb } from "../util/Firebase"
 
 export default function PlaneView({route, navigation}){
     const plane = route.params.plane
@@ -27,7 +28,7 @@ export default function PlaneView({route, navigation}){
 
     const createCard = (plane:Plane) => {
         const newCard = new Card(plane, "testuser")
-        // TODO: Add card to database
+        // TODO: Add card to database: cardsDb.push(###)
         console.log("PLANE:")
         console.log(plane)
         console.log("CARD:")
