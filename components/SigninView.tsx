@@ -6,6 +6,7 @@ import parseErrorStack from 'react-native/Libraries/Core/Devtools/parseErrorStac
 import { styles } from '../util/styles';
 import { useContext } from 'react';
 import { LoggedUsernameContext } from '../util/LoggedUsernameProvider';
+import { UserCardsContext } from '../util/UserCardsProvider';
 import { usersDb } from '../util/Firebase'
 import { getDatabase, push, ref, onValue, update } from 'firebase/database';
 
@@ -18,7 +19,8 @@ export default function SigninView(props: Props){
 
     const [usernameInput, setUsernameInput] = useState("")
     const [passwordInput, setPasswordInput] = useState("")
-    const {loggedUsername, setLoggedUsername} = useContext(LoggedUsernameContext)
+    const { loggedUsername, setLoggedUsername } = useContext(LoggedUsernameContext)
+    const { userCards, setUserCards } = useContext(UserCardsContext)
     
     const userAuthenticated = (databaseSnapshot:Object, usernameInput:String, passwordInput:String) =>{
         // Getting key-value-pairs from Firebase snapshot object with val() method.
