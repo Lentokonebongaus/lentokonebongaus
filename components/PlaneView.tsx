@@ -1,13 +1,18 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { Alert, Button, StyleSheet, Text, TextInput, View, FlatList } from 'react-native';
 import Plane from '../util/Plane';
 import Card from '../util/Card';
 import fetchPlaneDetails from "../util/planeDetails"
 import { cardsDb } from "../util/Firebase"
+import { LoggedUsernameContext } from '../util/LoggedUsernameProvider';
+import { getDatabase, push, ref, onValue, update } from 'firebase/database';
+
+
 
 export default function PlaneView({route, navigation}){
     const plane = route.params.plane
     const [planeDetailsState, setPlaneDetailsState] = useState({owner:"", manufacturername:"", model:""})
+    const { loggedUsername, setLoggedUsername } = useContext(LoggedUsernameContext)
 
     useEffect(()=>{
         setPlaneBackendDetails()
@@ -27,12 +32,13 @@ export default function PlaneView({route, navigation}){
     }
 
     const createCard = (plane:Plane) => {
-        const newCard = new Card(plane, "testuser")
+        const newCard = new Card(plane, loggedUsername)
         // TODO: Add card to database: cardsDb.push(###)
         console.log("PLANE:")
         console.log(plane)
         console.log("CARD:")
         console.log(newCard)
+        push(cardsDb, newCard)
     }
 
     return(

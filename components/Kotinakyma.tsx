@@ -2,18 +2,44 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Button, ImageBackground, Image} from 'react-native';
 import { styles } from '../util/styles';
 import { useContext } from "react"
-import {LoggedUsernameContext} from "../util/LoggedUsernameProvider"
+import { LoggedUsernameContext } from "../util/LoggedUsernameProvider"
+import { UserCardsContext } from "../util/UserCardsProvider"
+import { fetchUserCards } from "../util/fetchCards"
+import { useEffect } from 'react';
+import { cardsDb } from "../util/Firebase"
+import { getDatabase, push, ref, onValue, update } from 'firebase/database';
 
 type Props = {
   navigation: any
 }
+
 
 export default function Kotinakyma(Props: Props) {
 
     const nothing = () => {
 
     }
+
     const { loggedUsername, setLoggedUsername } = useContext(LoggedUsernameContext)
+    const { userCards, setUserCards } = useContext(UserCardsContext)
+
+    useEffect(()=>{
+      console.log("UserCards:")
+      console.log(userCards)
+    },[userCards])
+
+    // Laitoin tän tähän yhteyteen ku asynkronisuus ja contextin päivittäminen tuotti ongelmia erillisessä tiedostossa.
+    async function fetchCards () {
+      onValue(cardsDb, (databaseSnapshot) => {
+        const fetchedCards = databaseSnapshot.val()
+        const userCardIds = Object.keys(fetchedCards).filter(cardId => fetchedCards[cardId].cardOwner == loggedUsername)
+        let sortedUserCards = []
+        for(let i = 0; i < userCardIds.length; i++){
+          sortedUserCards.push(fetchedCards[userCardIds[i]])
+        }
+        setUserCards(sortedUserCards)
+      })
+    }
 
     return (
       <View style={styles.container}>
@@ -41,6 +67,11 @@ export default function Kotinakyma(Props: Props) {
             
           <Button title="Card view test" onPress={
             () => Props.navigation.navigate('Card view')
+          } />
+          <Button title="Fetch user cards" onPress={
+            () => {
+              fetchCards()
+            }
           } />
 
         </View>
