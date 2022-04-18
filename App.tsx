@@ -18,6 +18,7 @@ import PlaneView from './components/PlaneView';
 import CardView from './components/CardView';
 import { styles } from './util/styles';
 import {LoggedUsernameProvider} from './util/LoggedUsernameProvider';
+import { UserCardsProvider } from './util/UserCardsProvider';
 import { useContext } from 'react';
 
 const Stack = createNativeStackNavigator();
@@ -26,18 +27,20 @@ export default function App() {
 
   return (
     <LoggedUsernameProvider>
-      <NavigationContainer>
-        <Stack.Navigator>
-          <Stack.Screen name="Home " component={HomeScreenTabs}/>
-          <Stack.Screen name="Log In" component={SigninView}/>
-          <Stack.Screen name="Register" component={RegisterView}/>
-          <Stack.Screen name="Cards" component={Cards}/>
-          <Stack.Screen name="Play" component={Play}/>
-          <Stack.Screen name="Settings" component={Settings}/>
-          <Stack.Screen name="Plane" component={PlaneView}/>
-          <Stack.Screen name="Card" component={CardView}/>
-        </Stack.Navigator>
-      </NavigationContainer>
+      <UserCardsProvider>
+        <NavigationContainer>
+          <Stack.Navigator>
+            <Stack.Screen name="Home " component={HomeScreenTabs}/>
+            <Stack.Screen name="Log In" component={SigninView}/>
+            <Stack.Screen name="Register" component={RegisterView}/>
+            <Stack.Screen name="Cards" component={Cards}/>
+            <Stack.Screen name="Play" component={Play}/>
+            <Stack.Screen name="Settings" component={Settings}/>
+            <Stack.Screen name="Plane" component={PlaneView}/>
+            <Stack.Screen name="Card" component={CardView}/>
+          </Stack.Navigator>
+        </NavigationContainer>
+      </UserCardsProvider>
     </LoggedUsernameProvider>
   );
 }
