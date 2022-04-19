@@ -6,17 +6,30 @@ import fetchPlaneDetails from "../util/planeDetails"
 import { cardsDb } from "../util/Firebase"
 import { LoggedUsernameContext } from '../util/LoggedUsernameProvider';
 import { getDatabase, push, ref, onValue, update } from 'firebase/database';
-
+import { LinearGradient } from 'expo-linear-gradient';
+import { Wave } from 'react-native-animated-spinkit'
 
 
 export default function PlaneView({route, navigation}){
     const plane = route.params.plane
-    const [planeDetailsState, setPlaneDetailsState] = useState({owner:"", manufacturername:"", model:""})
+    const [planeDetailsState, setPlaneDetailsState] = useState({owner:"", manufacturername:"", model:"", operator:""})
     const { loggedUsername, setLoggedUsername } = useContext(LoggedUsernameContext)
 
     useEffect(()=>{
         setPlaneBackendDetails()
     },[])
+
+    useEffect(()=>{
+        if(planeDetailsState.owner && !planeDetailsState.operator){
+            setPlaneDetailsState(planeDetailsState=>({...planeDetailsState, operator:"Unknown"}))
+        }
+        for (const [key, value] of Object.entries(planeDetailsState)){
+            console.log(value)
+            if(value==undefined){
+                setPlaneDetailsState(planeDetailsState=>({...planeDetailsState, key:"NO DATA"}))
+            }
+        }
+    },[planeDetailsState])
 
     async function printPlaneDetails(icao24:String){
         const planeDetails = await fetchPlaneDetails(icao24)
@@ -27,8 +40,13 @@ export default function PlaneView({route, navigation}){
         const planeDetails = await fetchPlaneDetails(plane.icao24).catch(error => {
             console.error("Error fetching plane details from backend. Backend most likely offline or in a different address.");
         });
-        plane.setBackendDetails(planeDetails)
-        setPlaneDetailsState(planeDetails)
+
+        if(planeDetails.ok != false){
+            setPlaneDetailsState(planeDetails)
+            plane.setBackendDetails(planeDetails)
+        } else{
+            setPlaneDetailsState({owner:"NO DATA", manufacturername: "NO DATA", model: "NO DATA", operator: "NO DATA"})
+        }
     }
 
     const createCard = (plane:Plane) => {
@@ -36,26 +54,87 @@ export default function PlaneView({route, navigation}){
         // TODO: Add card to database: cardsDb.push(###)
         console.log("PLANE:")
         console.log(plane)
-        console.log("CARD:")
+        console.log("Saved card to DB:")
         console.log(newCard)
         push(cardsDb, newCard)
     }
 
+
+    const styles = {
+        divider:{
+            
+            height: 10
+        },
+        planeData:{
+            backgroundColor: "deepskyblue",
+            flex: 1,
+        },
+        planeDataText:{
+            fontSize: 20,
+        },
+        background: {
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            top: 0,
+            height: 300,
+          },
+        loadingWave: {
+            position: "absolute",
+            marginLeft: 1000,
+        }
+    }
+
+    const renderLoading = () =>{
+        return(<Wave size={25} color="#FFF" style={styles.loadingWave}/>)
+    }
     return(
-        <View>
-            <Text>icao24: {plane.icao24}</Text>
-            <Text>Callsign: {plane.callsign}</Text>
-            <Text>Country: {plane.originCountry}</Text>
-            <Text>Velocity: {plane.velocity} m/s</Text>
-            <Text>Barometric altitude: {plane.baroAltitude} m</Text>
-            <Text>Geometric altitude: {plane.geoAltitude} m</Text>
-            <Text>Plane distance: {plane.distance} km</Text>
-            <Text>Owner: {planeDetailsState.owner}</Text>
-            <Text>Manufacturer: {planeDetailsState.manufacturername}</Text>
-            <Text>Model: {planeDetailsState.model}</Text>
-
+        <View style={{flex: 1, flexDirection: "column"}}>
+            <View style={styles.planeData}>
+                <Text style={styles.planeDataText}>icao24: {plane.icao24}</Text>
+            </View>
+            <LinearGradient colors={["rgba(0,0,200,10)", 'transparent']} style={styles.divider} />
+            <View style={styles.planeData}>
+                <Text style={styles.planeDataText}>Callsign: {plane.callsign}</Text>
+            </View>
+            <LinearGradient colors={["rgba(0,0,200,10)", 'transparent']} style={styles.divider} />
+            <View style={styles.planeData}>
+                <Text style={styles.planeDataText}>Country: {plane.originCountry}</Text>
+            </View>
+            <LinearGradient colors={["rgba(0,0,200,10)", 'transparent']} style={styles.divider} />
+            <View style={styles.planeData}>
+                <Text style={styles.planeDataText}>Velocity: {plane.velocity} m/s</Text>
+            </View>
+            <LinearGradient colors={["rgba(0,0,200,10)", 'transparent']} style={styles.divider} />
+            <View style={styles.planeData}>
+                <Text style={styles.planeDataText}>Barometric altitude: {plane.baroAltitude} m</Text>
+            </View>
+            <LinearGradient colors={["rgba(0,0,200,10)", 'transparent']} style={styles.divider} />
+            <View style={styles.planeData}>
+                <Text style={styles.planeDataText}>Geometric altitude: {plane.geoAltitude} m</Text>
+            </View>
+            <LinearGradient colors={["rgba(0,0,200,10)", 'transparent']} style={styles.divider} />
+            <View style={styles.planeData}>
+                <Text style={styles.planeDataText}>Plane distance: {plane.distance} km</Text>
+            </View>
+            <LinearGradient colors={["rgba(0,0,200,10)", 'transparent']} style={styles.divider} />
+            <View style={styles.planeData}>
+                <Text style={styles.planeDataText}>Owner: {planeDetailsState.owner?planeDetailsState.owner:renderLoading()}</Text>
+            </View>
+            <LinearGradient colors={["rgba(0,0,200,10)", 'transparent']} style={styles.divider} />
+            <View style={styles.planeData}>
+                <Text style={styles.planeDataText}>Operator: {planeDetailsState.operator?planeDetailsState.operator:renderLoading()}</Text>
+            </View>
+            <LinearGradient colors={["rgba(0,0,200,10)", 'transparent']} style={styles.divider} />
+            <View style={styles.planeData}>
+                <Text style={styles.planeDataText}>Manufacturer: {planeDetailsState.manufacturername?planeDetailsState.manufacturername:renderLoading()}</Text>
+            </View>
+            <LinearGradient colors={["rgba(0,0,200,10)", 'transparent']} style={styles.divider} />
+            <View style={styles.planeData}>
+                <Text style={styles.planeDataText}>Model: {planeDetailsState.model?planeDetailsState.model:renderLoading()}</Text>
+            </View>
+            
             <Button title="SAVE CARD" onPress={()=>{createCard(plane)}}></Button>
-
             <Button title="log current plane" onPress={()=>{console.log(plane)}}></Button>
             <Button title="log backend details" onPress={()=>{printPlaneDetails(plane.icao24)}}></Button>
 
