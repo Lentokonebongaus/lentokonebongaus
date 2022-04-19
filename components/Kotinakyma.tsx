@@ -50,9 +50,9 @@ export default function Kotinakyma(Props: Props) {
           
         <View style={{flex: 1, justifyContent: "center", paddingTop: 40}}>
           
-        <Text style={{fontWeight: "bold", fontSize: 50, paddingLeft: 90, paddingBottom: 30, color: "white"}}>
+        <Text style={{fontWeight: "bold", fontSize: 50, paddingBottom: 30, color: "white", textAlign: "center"}}>
           Welcome</Text>
-          <Text style={{fontWeight: "bold", fontSize: 28, paddingLeft: 110, color: "white"}}>
+          <Text style={{fontWeight: "bold", fontSize: 28, color: "white", textAlign: "center"}}>
           {loggedUsername}</Text>
         </View>
 
