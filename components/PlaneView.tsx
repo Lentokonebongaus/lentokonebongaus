@@ -6,6 +6,7 @@ import fetchPlaneDetails from "../util/planeDetails"
 import { cardsDb } from "../util/Firebase"
 import { LoggedUsernameContext } from '../util/LoggedUsernameProvider';
 import { getDatabase, push, ref, onValue, update } from 'firebase/database';
+import { notDuplicateCard } from '../util/duplicateVerifier'
 
 
 
@@ -33,12 +34,16 @@ export default function PlaneView({route, navigation}){
 
     const createCard = (plane:Plane) => {
         const newCard = new Card(plane, loggedUsername)
-        // TODO: Add card to database: cardsDb.push(###)
         console.log("PLANE:")
         console.log(plane)
         console.log("CARD:")
         console.log(newCard)
-        push(cardsDb, newCard)
+        if(newCard.planeModel){
+            if(notDuplicateCard(newCard)){
+                push(cardsDb, newCard);
+                Alert.alert("Card saved to collection!");
+            }
+        }
     }
 
     return(

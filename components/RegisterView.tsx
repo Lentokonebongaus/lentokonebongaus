@@ -7,6 +7,7 @@ import { usersDb } from '../util/Firebase'
 import { getDatabase, push, ref, onValue, update } from 'firebase/database';
 import { useContext } from 'react';
 import { LoggedUsernameContext } from '../util/LoggedUsernameProvider';
+import { notDuplicateUser } from '../util/duplicateVerifier';
 // Siirsin noi Firebase-jutut util kansioon. Täällä tarvii vielä ainakin tota Firebase-kirjaston onValue-funktiota useEffectin yhteydessä.
 
 
@@ -53,6 +54,19 @@ export default function RegisterView(props: Props){
         }
     }
 
+    const handleRegisterButton = () => {
+        if (checkRegisterForm()){
+            if (notDuplicateUser(username)){
+                push(usersDb, {username:username, password:password})
+                Alert.alert("You have been registered!")
+                setLoggedUsername(username)
+                setTimeout(()=>{props.navigation.navigate("Home")},2000)
+            } else {
+                Alert.alert("Username not available")
+            }
+        }
+    }
+
     return(
         <View style={styles.viewMain}>
             <Text>Username: {username}</Text>
@@ -83,14 +97,7 @@ export default function RegisterView(props: Props){
             />
             <Button
                 title="register"
-                onPress={()=>{
-                    if (checkRegisterForm()){
-                        push(usersDb, {username:username, password:password})
-                        Alert.alert("You have been registered!")
-                        setLoggedUsername(username)
-                        setTimeout(()=>{props.navigation.navigate("Home")},2000)
-                    }
-                }}
+                onPress={handleRegisterButton}
             />
             <Text>{registeredMessage}</Text>
 
