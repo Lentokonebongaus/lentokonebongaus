@@ -22,7 +22,9 @@ export default function RegisterView(props: Props){
     const [passwordConfirm, setPasswordConfirm] = useState("")
     const [registeredMessage, setRegisteredMessage] = useState("")
     const {loggedUsername, setLoggedUsername} = useContext(LoggedUsernameContext)
+    const [firebaseUsers, setFirebaseUsers] = useState({});
 
+    /*
     useEffect(()=>{
         onValue(usersDb, (snapshot) => {
         console.log(snapshot)
@@ -31,9 +33,10 @@ export default function RegisterView(props: Props){
         userIDs.map((userID)=>{
             usersTestData.push(userID)
         })
-        setDbTestData(usersTestData)*/
+        setDbTestData(usersTestData)*//*
         })
     },[])
+    */
 
     const checkRegisterForm = () => {
         if (password != passwordConfirm){
@@ -50,6 +53,35 @@ export default function RegisterView(props: Props){
         }
         else{
            return true
+        }
+    }
+
+    function usernameFree(userSnapshot:Object) {
+        
+        const usersArray = userSnapshot.val()
+        const userIds =  Object.keys(usersArray)
+        for (let i = 0; i < userIds.length; i++){
+            if(username == usersArray[userIds[i]].username){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    const handleRegisterButton = () => {
+        if (checkRegisterForm() && loggedUsername == "Not logged in"){
+            onValue(usersDb, (snapshot) => {
+                if(usernameFree(snapshot) == true){
+                    push(usersDb, {username:username, password:password})
+                    Alert.alert("You have been registered!")
+                    setLoggedUsername(username)
+                    //setTimeout(()=>{props.navigation.navigate("Home")},2000)
+                    props.navigation.navigate("Home")
+                } else {
+                    // FIXME: se eksyy tänne vaikka rekisteröityminen onnistuukin
+                    //Alert.alert("Username not available") 
+                }
+            })
         }
     }
 
@@ -83,14 +115,7 @@ export default function RegisterView(props: Props){
             />
             <Button
                 title="register"
-                onPress={()=>{
-                    if (checkRegisterForm()){
-                        push(usersDb, {username:username, password:password})
-                        Alert.alert("You have been registered!")
-                        setLoggedUsername(username)
-                        setTimeout(()=>{props.navigation.navigate("Home")},2000)
-                    }
-                }}
+                onPress={handleRegisterButton}
             />
             <Text>{registeredMessage}</Text>
 

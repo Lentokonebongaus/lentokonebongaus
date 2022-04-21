@@ -31,14 +31,40 @@ export default function PlaneView({route, navigation}){
         setPlaneDetailsState(planeDetails)
     }
 
+    //---
+    function notDuplicateCard(cardSnapshot:Object, newCard:Card) {
+        
+        const cardsArray = cardSnapshot.val()
+        const cardIds =  Object.keys(cardsArray)
+        for (let i = 0; i < cardIds.length; i++){
+            if(loggedUsername == cardsArray[cardIds[i]].cardOwner){
+                if(cardsArray[cardIds[i]].planeIcao24 == newCard.planeIcao24){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    const saveNewCard = (newCard:Card) => {
+        if (newCard.planeModel){
+            onValue(cardsDb, (snapshot) => {
+                if(notDuplicateCard(snapshot, newCard) == true){
+                    push(cardsDb, newCard)
+                    Alert.alert("Card saved to collection!")
+                }
+            })
+        }
+    }
+    //----
+
     const createCard = (plane:Plane) => {
         const newCard = new Card(plane, loggedUsername)
-        // TODO: Add card to database: cardsDb.push(###)
         console.log("PLANE:")
         console.log(plane)
         console.log("CARD:")
         console.log(newCard)
-        push(cardsDb, newCard)
+        saveNewCard(newCard);
     }
 
     return(
