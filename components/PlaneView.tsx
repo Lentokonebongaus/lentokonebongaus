@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext} from 'react';
 import { Alert, Button, StyleSheet, Text, TextInput, View, FlatList, Image } from 'react-native';
-import { SvgUri } from "react-native-svg";
+// import { SvgUri } from "react-native-svg";
 import Plane from '../util/Plane';
 import Card from '../util/Card';
 import { cardsDb } from "../util/Firebase"
@@ -9,7 +9,8 @@ import { getDatabase, push, ref, onValue, update } from 'firebase/database';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Wave, Grid } from 'react-native-animated-spinkit';
 import {fetchPlaneDetails, fetchPlaneImageUrl} from '../util/planeDetails';
-import getFlagPath from '../util/getFlagPath';
+// import getFlagPath from '../util/getFlagPath';
+import getFlagEmoji from '../util/getFlagEmoji';
 
 
 
@@ -18,26 +19,19 @@ export default function PlaneView({route, navigation}){
     const [planeDetailsState, setPlaneDetailsState] = useState({owner:"", manufacturername:"", model:"", operator:""})
     const [planeImageUrl, setPlaneImageUrl] = useState("")
     const [flagPath, setFlagPath] = useState("")
+    const [flagEmoji, setFlagEmoji] = useState("")
     const { loggedUsername, setLoggedUsername } = useContext(LoggedUsernameContext)
 
     useEffect(()=>{
         setPlaneBackendDetails()
-        setFlagPath(getFlagPath(plane.originCountry))
+        // Currently using emojis instead of SVGs.
+        // setFlagPath(getFlagPath(plane.originCountry))
+        setFlagEmoji(getFlagEmoji(plane.originCountry))
     },[])
 
-    useEffect(()=>{
-        console.log("FLAGPATH:")
-        console.log(flagPath)
-    },[flagPath])
 
     useEffect(()=>{
 
-        console.log("Owner:")
-        console.log(planeDetailsState.owner)
-        console.log("Manufacturer:")
-        console.log(planeDetailsState.manufacturername)
-        console.log("Model:")
-        console.log(planeDetailsState.model)
         if(planeDetailsState.owner && planeDetailsState.manufacturername && planeDetailsState.model){
             fetchAndSetPlaneImg()
         }
@@ -54,15 +48,8 @@ export default function PlaneView({route, navigation}){
         
     },[planeDetailsState])
 
-    useEffect(()=>{
-        console.log("URL:")
-        console.log(planeImageUrl)
-    },[planeImageUrl])
-
     async function fetchAndSetPlaneImg(){
         const imgUrl = await fetchPlaneImageUrl(planeDetailsState.manufacturername, planeDetailsState.model, planeDetailsState.owner)
-        console.log("ImgUrl:")
-        console.log(imgUrl)
         setPlaneImageUrl(imgUrl)
     }
 
@@ -94,10 +81,9 @@ export default function PlaneView({route, navigation}){
         push(cardsDb, newCard)
     }
 
-
+    // TODO: move styles to styles.tsx
     const styles = {
-        divider:{
-            
+        divider:{ 
             height: 10
         },
         planeData:{
@@ -127,7 +113,7 @@ export default function PlaneView({route, navigation}){
             width: "100%",
             display: "flex",
             justifyContent: "center",
-            backgroundColor: "red"
+            backgroundColor: "deepskyblue"
         },
         grid: {
             
@@ -158,18 +144,17 @@ export default function PlaneView({route, navigation}){
         )
     }
 
-    const renderFlag = () =>{
+    /* const renderFlag = () =>{
         console.log("Rendering flag")
         return(
             <SvgUri source={{ uri: "../assets/flag_svgs/FI.svg"}} width="100%"
             height="100%"/>
         )
-    }
+    }*/
 
     return(
         <View style={{flex: 1, flexDirection: "column"}}>
             <View style={styles.imageFrame}>
-                {renderFlag()}
                 {planeImageUrl == "" && renderImageLoading()}
                 {planeImageUrl != "" && <Image source={{uri: planeImageUrl}} style={styles.planeImage}></Image>}
             </View>
@@ -182,7 +167,7 @@ export default function PlaneView({route, navigation}){
             </View>
             <LinearGradient colors={["rgba(0,0,200,10)", 'transparent']} style={styles.divider} />
             <View style={styles.planeData}>
-                <Text style={styles.planeDataText}>Country: {plane.originCountry}</Text>
+                <Text style={styles.planeDataText}>Country: {plane.originCountry} {flagEmoji}</Text>
             </View>
             <LinearGradient colors={["rgba(0,0,200,10)", 'transparent']} style={styles.divider} />
             <View style={styles.planeData}>
