@@ -7,7 +7,6 @@ import { usersDb } from '../util/Firebase'
 import { getDatabase, push, ref, onValue, update } from 'firebase/database';
 import { useContext } from 'react';
 import { LoggedUsernameContext } from '../util/LoggedUsernameProvider';
-import { notDuplicateUser } from '../util/duplicateVerifier';
 // Siirsin noi Firebase-jutut util kansioon. Täällä tarvii vielä ainakin tota Firebase-kirjaston onValue-funktiota useEffectin yhteydessä.
 
 
@@ -23,7 +22,9 @@ export default function RegisterView(props: Props){
     const [passwordConfirm, setPasswordConfirm] = useState("")
     const [registeredMessage, setRegisteredMessage] = useState("")
     const {loggedUsername, setLoggedUsername} = useContext(LoggedUsernameContext)
+    const [firebaseUsers, setFirebaseUsers] = useState({});
 
+    /*
     useEffect(()=>{
         onValue(usersDb, (snapshot) => {
         console.log(snapshot)
@@ -32,9 +33,10 @@ export default function RegisterView(props: Props){
         userIDs.map((userID)=>{
             usersTestData.push(userID)
         })
-        setDbTestData(usersTestData)*/
+        setDbTestData(usersTestData)*//*
         })
     },[])
+    */
 
     const checkRegisterForm = () => {
         if (password != passwordConfirm){
@@ -54,16 +56,32 @@ export default function RegisterView(props: Props){
         }
     }
 
-    const handleRegisterButton = () => {
-        if (checkRegisterForm()){
-            if (notDuplicateUser(username)){
-                push(usersDb, {username:username, password:password})
-                Alert.alert("You have been registered!")
-                setLoggedUsername(username)
-                setTimeout(()=>{props.navigation.navigate("Home")},2000)
-            } else {
-                Alert.alert("Username not available")
+    function usernameFree(userSnapshot:Object) {
+        
+        const usersArray = userSnapshot.val()
+        const userIds =  Object.keys(usersArray)
+        for (let i = 0; i < userIds.length; i++){
+            if(username == usersArray[userIds[i]].username){
+                return false;
             }
+        }
+        return true;
+    }
+
+    const handleRegisterButton = () => {
+        if (checkRegisterForm() && loggedUsername == "Not logged in"){
+            onValue(usersDb, (snapshot) => {
+                if(usernameFree(snapshot) == true){
+                    push(usersDb, {username:username, password:password})
+                    Alert.alert("You have been registered!")
+                    setLoggedUsername(username)
+                    //setTimeout(()=>{props.navigation.navigate("Home")},2000)
+                    props.navigation.navigate("Home")
+                } else {
+                    // FIXME: se eksyy tänne vaikka rekisteröityminen onnistuukin
+                    //Alert.alert("Username not available") 
+                }
+            })
         }
     }
 
