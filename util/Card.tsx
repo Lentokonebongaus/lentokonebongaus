@@ -10,6 +10,7 @@ class Card {
     planeOperatorCallSign: string
     planeOwner: string
     planeDistance: number
+    planeIcao24: string
 
     constructor(plane:any, cardOwner:string="default user"){
         this.cardOwner = cardOwner
@@ -22,6 +23,7 @@ class Card {
         this.cardId = Date.now().toString()+this.planeModel+this.cardQuality
         this.planeDistance = plane.distance
         this.planePicture = ""
+        this.planeIcao24 = plane["icao24"]
     }
 
     getCardQuality(plane:any){
