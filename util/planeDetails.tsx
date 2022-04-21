@@ -5,4 +5,26 @@ async function fetchPlaneDetails(icao24:String){
     return planeDetails
 }
 
-export default fetchPlaneDetails
+async function fetchPlaneImageUrl(manufacturer, model, owner){
+
+    console.log("fetchPlaneImage()!!!!")
+    const urlParameterManufacturer = manufacturer.replace(" ", "_")
+    const urlParameterModel = model.replace(" ", "_")
+    const urlParameterOwner = owner.replace(" ", "_")
+
+    const totallyNotTheAvainInEnglish = "***REMOVED***"
+    const resourceUrl = `https://api.bing.microsoft.com/v7.0/images/search?q=${urlParameterManufacturer}+${urlParameterModel}+${urlParameterOwner}`
+    console.log(resourceUrl)
+
+    const response = await fetch(resourceUrl, {headers:{"Ocp-Apim-Subscription-Key":totallyNotTheAvainInEnglish}})
+    if(response.status == 200){
+        const apiData = await response.json()
+        const apiDataValues = apiData.value
+        const firstImgJson = apiDataValues[0]
+        console.log("Fetched image url:")
+        console.log(firstImgJson.contentUrl)
+        return firstImgJson.contentUrl
+    }
+}
+
+export { fetchPlaneDetails, fetchPlaneImageUrl }

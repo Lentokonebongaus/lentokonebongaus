@@ -52,7 +52,7 @@ export default function RegisterView(props: Props){
            return true
         }
     }
-
+    
     return(
         <View style={styles.viewMain}>
             <Text>Username: {username}</Text>
