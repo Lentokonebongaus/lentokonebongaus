@@ -36,6 +36,7 @@ export default function PlaneView({route, navigation}){
         
         const cardsArray = cardSnapshot.val()
         const cardIds =  Object.keys(cardsArray)
+        console.log("Not duplicate?")
         for (let i = 0; i < cardIds.length; i++){
             if(loggedUsername == cardsArray[cardIds[i]].cardOwner){
                 if(cardsArray[cardIds[i]].planeIcao24 == newCard.planeIcao24){
