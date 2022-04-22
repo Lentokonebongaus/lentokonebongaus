@@ -4,7 +4,7 @@ import { Alert, Button, StyleSheet, Text, TextInput, View } from 'react-native';
 import parseErrorStack from 'react-native/Libraries/Core/Devtools/parseErrorStack';
 import { styles } from '../util/styles';
 import { usersDb } from '../util/Firebase'
-import { getDatabase, push, ref, onValue, update } from 'firebase/database';
+import { getDatabase, push, ref, onValue, get, update } from 'firebase/database';
 import { useContext } from 'react';
 import { LoggedUsernameContext } from '../util/LoggedUsernameProvider';
 // Siirsin noi Firebase-jutut util kansioon. Täällä tarvii vielä ainakin tota Firebase-kirjaston onValue-funktiota useEffectin yhteydessä.
@@ -23,7 +23,13 @@ export default function RegisterView(props: Props){
     const [registeredMessage, setRegisteredMessage] = useState("")
     const {loggedUsername, setLoggedUsername} = useContext(LoggedUsernameContext)
     const [firebaseUsers, setFirebaseUsers] = useState({});
+    const [usernameFreeFlag, setUsernameFreeflag] = useState(false)
 
+    useEffect(()=>{
+        if(usernameFreeFlag == true){
+           
+        }
+    },[usernameFreeFlag])
     /*
     useEffect(()=>{
         onValue(usersDb, (snapshot) => {
@@ -56,31 +62,30 @@ export default function RegisterView(props: Props){
         }
     }
 
-    function usernameFree(userSnapshot:Object) {
-        
-        const usersArray = userSnapshot.val()
-        const userIds =  Object.keys(usersArray)
+
+    function usernameFree(usersSnapshot:Object) {
+        const userIds =  Object.keys(usersSnapshot)
         for (let i = 0; i < userIds.length; i++){
-            if(username == usersArray[userIds[i]].username){
+            if(username == usersSnapshot[userIds[i]].username){
                 return false;
             }
         }
         return true;
     }
 
-    const handleRegisterButton = () => {
+    async function handleRegisterButton () {
         if (checkRegisterForm() && loggedUsername == "Not logged in"){
-            onValue(usersDb, (snapshot) => {
-                if(usernameFree(snapshot) == true){
-                    push(usersDb, {username:username, password:password})
+            get(usersDb).then((snapshot)=>{
+                if(usernameFree(snapshot.val()) == true){
                     Alert.alert("You have been registered!")
                     setLoggedUsername(username)
                     //setTimeout(()=>{props.navigation.navigate("Home")},2000)
                     props.navigation.navigate("Home")
-                } else {
-                    // FIXME: se eksyy tänne vaikka rekisteröityminen onnistuukin
-                    //Alert.alert("Username not available") 
-                }
+                    push(usersDb, {username:username, password:password})
+                 } else {
+                     // FIXME: se eksyy tänne vaikka rekisteröityminen onnistuukin
+                     Alert.alert("Username not available") 
+                 }
             })
         }
     }
@@ -115,7 +120,7 @@ export default function RegisterView(props: Props){
             />
             <Button
                 title="register"
-                onPress={handleRegisterButton}
+                onPress={()=>{handleRegisterButton()}}
             />
             <Text>{registeredMessage}</Text>
 

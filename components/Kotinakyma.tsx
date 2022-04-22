@@ -9,6 +9,8 @@ import { useEffect } from 'react';
 import { cardsDb } from "../util/Firebase"
 import { getDatabase, push, ref, onValue, update } from 'firebase/database';
 
+
+
 type Props = {
   navigation: any
 }
@@ -22,6 +24,7 @@ export default function Kotinakyma(Props: Props) {
 
     const { loggedUsername, setLoggedUsername } = useContext(LoggedUsernameContext)
     const { userCards, setUserCards } = useContext(UserCardsContext)
+    
 
     useEffect(()=>{
       console.log("UserCards:")
@@ -73,7 +76,9 @@ export default function Kotinakyma(Props: Props) {
               fetchCards()
             }
           } />
-
+          <Button title="Log out" onPress={
+            ()=>setLoggedUsername("Not logged in")
+          } />
         </View>
       
         <StatusBar style="auto" />
