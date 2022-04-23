@@ -34,6 +34,8 @@ export default function Kotinakyma(Props: Props) {
     },[userCards])
 
     // Laitoin tän tähän yhteyteen ku asynkronisuus ja contextin päivittäminen tuotti ongelmia erillisessä tiedostossa.
+    // - kortit haetaan nykyään Card näkymän useEffectissä firebasen get() funktiolla
+    /*
     async function fetchCards () {
       onValue(cardsDb, (databaseSnapshot) => {
         const fetchedCards = databaseSnapshot.val()
@@ -45,6 +47,7 @@ export default function Kotinakyma(Props: Props) {
         setUserCards(sortedUserCards)
       })
     }
+    */
 
     return (
       <View style={styles.container}>
@@ -183,7 +186,7 @@ export default function Kotinakyma(Props: Props) {
               iconContainerStyle={{ marginLeft: 10, marginRight: -10 }}
               onPress={() => Props.navigation.navigate('Settings')}
             />
-
+          {/*
             <Button
                TouchableComponent={TouchableScale}
                friction={90} 
@@ -211,8 +214,9 @@ export default function Kotinakyma(Props: Props) {
               }}
               iconRight
               iconContainerStyle={{ marginLeft: 10, marginRight: -10 }}
-              onPress={() => {fetchCards}}
+              onPress={fetchCards}
             />
+          */}
 
         </View>
 
