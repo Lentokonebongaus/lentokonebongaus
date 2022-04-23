@@ -60,11 +60,10 @@ export default function SigninView(props: Props){
             <Button
                 title="Sign in"
                 onPress={()=>{
-                    console.log("FETCHING...")
                     onValue(usersDb, (databaseSnapshot) => {
-                    console.log(databaseSnapshot)
                     if(userAuthenticated(databaseSnapshot, usernameInput, passwordInput) == true){
                         setLoggedUsername(usernameInput)
+                        setUserCards([])
                         props.navigation.navigate("Home")
                     } else{
                         // TODO: Ehkä vähän hienovaraisemmin teksti tonne näkymään ku alertilla? Esim. <Text>-tagin sisälle.

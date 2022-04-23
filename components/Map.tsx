@@ -40,18 +40,6 @@ export default function Map(props:any) {
     updateUserCardsContext(setUserCards, loggedUsername)
   }, []);
 
-  useEffect(()=>{
-    //console.log(planes)
-  },[planes])
-
-  useEffect(()=>{
-    console.log(userCardIcaos)
-  },[userCardIcaos])
-
-  //useEffect(()=>{
-  //  console.log(planes)
-  //},[planes])
-
   // refreshLoop can't be executed on inital load, as it would use unset GPS location (0,0) for every loop.
   // Also, a new refreshLoop can't be ran everytime location state changes, as it would create multiple concurrent loops that never break.
   // Therefore initialLocationChanged is used to run refreshLoop only once after a location is set. 
@@ -69,21 +57,16 @@ export default function Map(props:any) {
   },[location])
   
 
-  
   const refreshLoop = (location: any) =>{
     setInterval(()=>{refreshPlanes(location, setPlanes)},7000)
   }
   
-  
-
   const getPlaneIcon = (plane:Plane) => {
 
     const planeInUserCards = icao24NotInUsersCards(plane.icao24)
-    //console.log(plane.onGround)
-    //console.log(planeInUserCards)
-    if(plane.onGround && planeInUserCards){
+    if(plane.onGround && !planeInUserCards){
       return planeIconGrounded
-    } else if (plane.onGround && !planeInUserCards){
+    } else if (plane.onGround && planeInUserCards){
       return planeIconGroundedCollected
     } else if (!plane.onGround && planeInUserCards){
       return planeIconCollected
@@ -97,17 +80,12 @@ export default function Map(props:any) {
     const cardIds = Object.keys(userCards)
       for (let i = 0; i < cardIds.length; i++){
         if(userCards[cardIds[i]].planeIcao24 == icao24){
-          console.log(userCards[cardIds[i]])
-          //console.log(userCards[cardIds[i]].planeIcao24)
-          //console.log(`Plane ${icao24} in usercard`)
           return true
         }
       }
       return false
   }
     
- 
-
   return (
     <View style={styles.container}>
       <MapView 
@@ -124,7 +102,7 @@ export default function Map(props:any) {
             if(plane.latitude && plane.longitude){
               return(
                 <Marker
-                  icon={getPlaneIcon(plane.icao24)}
+                  icon={getPlaneIcon(plane)}
                   key={index}
                   coordinate={{
                     latitude: plane.latitude,
@@ -135,8 +113,7 @@ export default function Map(props:any) {
                   // plane_icon.png isn't currently aligned with Plane object's trueTrack attribute, so even though trueTrack is measured in degrees
                   // similar to Marker component's rotation prop, png file's unalignment needs to be taken into account. 
                   rotation={plane.trueTrack+50}
-                >
-                </Marker>
+                />
               )
             }
           }):undefined
@@ -159,8 +136,6 @@ export default function Map(props:any) {
           >
         </Circle>
       </MapView>
-      <Button onPress={()=>console.log(userCards)} title="LOG"></Button>
-      {/*<Button title='log_and_refresh' onPress={()=>{console.log(planes);refreshPlanes(location)}}></Button>*/}
     </View>
   );
 }

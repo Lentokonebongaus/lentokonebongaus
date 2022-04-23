@@ -40,7 +40,7 @@ export default function PlaneView({route, navigation}){
 
     useEffect(()=>{
 
-        if(planeDetailsState.owner && planeDetailsState.manufacturername && planeDetailsState.model){
+        if(planeDetailsState.owner || planeDetailsState.manufacturername || planeDetailsState.model){
             setPlaneDataLoading(false)
             fetchAndSetPlaneImg()
         }
@@ -57,7 +57,7 @@ export default function PlaneView({route, navigation}){
     },[planeDetailsState])
 
     async function fetchAndSetPlaneImg(){
-        const imgUrl = await fetchPlaneImageUrl(planeDetailsState.manufacturername, planeDetailsState.model, planeDetailsState.owner)
+        const imgUrl = await fetchPlaneImageUrl(planeDetailsState.manufacturername, planeDetailsState.model, planeDetailsState.owner?planeDetailsState.owner:planeDetailsState.operator)
         setPlaneImageUrl(imgUrl)
     }
 
@@ -79,7 +79,6 @@ export default function PlaneView({route, navigation}){
         }
     }
 
-    //---
     function notDuplicateCard(cardSnapshot:Object, newCard:Card) {
         
         const cardsArray = cardSnapshot.val()
@@ -122,13 +121,14 @@ export default function PlaneView({route, navigation}){
             })
         }
     }
-    //----
 
     const createCard = () => {
-        // TODO: save plane image URL to card
-        const newCard = new Card(plane, loggedUsername)
+        const newCard = new Card(plane, loggedUsername, planeImageUrl)
         return newCard
     }
+
+
+    //----------------------- UI Kitten -----------------------------
 
     const LoadingIndicator = (props) => (
         <View style={[props.style, styles.indicator]}>
@@ -140,7 +140,14 @@ export default function PlaneView({route, navigation}){
         <Icon {...props} name='star'/>
     );
 
-    // TODO: move styles to styles.tsx
+    const ForbiddenIcon = (props) => (
+        <Icon {...props} name='slash-outline'/>
+    );
+
+    //---------------------------------------------------------------
+
+
+    // TODO: move styles to styles.tsx. UI could still be better, so keeping styles here for the sake of modifibiality.
     const styles = {
         divider:{ 
             height: 10
@@ -164,18 +171,19 @@ export default function PlaneView({route, navigation}){
             marginLeft: 1000,
         },
         imageFrame: {
-            height: 100,
+            height: 150,
             width: "100%",
         },
         imageLoading: {
-            height: 100,
+            height: 150,
             width: "100%",
             display: "flex",
+            alignItems: "center",
             justifyContent: "center",
             backgroundColor: "deepskyblue"
         },
         grid: {
-            
+         
         },
         planeImage: {
             height: "100%",
@@ -195,6 +203,8 @@ export default function PlaneView({route, navigation}){
     }
 
     
+    //---------------------- Rendering functions --------------------------
+
     const renderDataLoading = () =>{
         return(<Wave size={25} color="#FFF" style={styles.dataLoading}/>)
     }
@@ -202,7 +212,7 @@ export default function PlaneView({route, navigation}){
     const renderImageLoading = () =>{
         return(
             <View style={styles.imageLoading}>
-                <Grid size={100} style={styles.grid}/>
+                <Grid size={100} style={styles.grid} color="#25C8FF"/>
             </View>
         )
     }
@@ -223,11 +233,19 @@ export default function PlaneView({route, navigation}){
             )
         } 
         else if(!planeDataLoading && !planeAdded){
-            return(
-                <KittenButton status='success' onPress={()=>saveCard()}>
-                    ADD PLANE
-                </KittenButton>
-            )
+            if(planeDetailsState.manufacturername != "NO DATA" && planeDetailsState.model != "NO DATA"){
+                return(
+                    <KittenButton status='success' onPress={()=>saveCard()}>
+                        ADD PLANE
+                    </KittenButton>
+                )
+            } else{
+                return(
+                    <KittenButton disabled={true} accessoryRight={ForbiddenIcon}>
+                        CAN'T ADD PLANE
+                    </KittenButton>
+                )
+            }
         }
         else if (!planeDataLoading && planeAdded){
             return(
@@ -245,6 +263,8 @@ export default function PlaneView({route, navigation}){
             height="100%"/>
         )
     }*/
+
+    //-----------------------------------------------------------------------------
 
     return(
         <View style={{flex: 1, flexDirection: "column"}}>
