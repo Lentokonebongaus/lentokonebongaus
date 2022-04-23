@@ -25,7 +25,6 @@ async function updateUserCardsContext(setUserCards, loggedUsername){
             userCardsTmp.push(cardsArray[cardIds[i]])
         }
     }
-    console.log("PROVIDER")
     setUserCards(userCardsTmp)
 })
 }

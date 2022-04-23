@@ -12,7 +12,7 @@ class Card {
     planeDistance: number
     planeIcao24: string
 
-    constructor(plane:any, cardOwner:string="default user"){
+    constructor(plane:any, cardOwner:string="default user", cardUrl:string=""){
         this.cardOwner = cardOwner
         this.cardQuality = this.getCardQuality(plane)
         this.planeManufacturer = plane["manufacturerName"]
@@ -22,7 +22,7 @@ class Card {
         this.planeOwner = plane["owner"]
         this.cardId = Date.now().toString()+this.planeModel+this.cardQuality
         this.planeDistance = plane.distance
-        this.planePicture = ""
+        this.planePicture = cardUrl
         this.planeIcao24 = plane["icao24"]
     }
 
