@@ -14,27 +14,29 @@ export default function CardView(Props: Props){
 
     // Text doesn't show without Flatlist
 
+    /*
     //testcard broke rip
     let tester = {
-        "cardId": "1648568469955A321-21211618.58",
-        "cardQuality": 100000.58,
-        "planeManufacturer": "Airbus",
-        "planeModel": "A321-212",
-        "planeOperator": "Iberia Airlines",
-        "planeOperatorCallSign": "IBERIA",
-        "planeOwner": "Iberia",
-        "planePicture": "",
-      }; 
-
+      "cardId": "1648568469955A321-21211618.58",
+      "cardQuality": 100000.58,
+      "planeManufacturer": "Airbus",
+      "planeModel": "A321-212",
+      "planeOperator": "Iberia Airlines",
+      "planeOperatorCallSign": "IBERIA",
+      "planeOwner": "Iberia",
+      "planePicture": "",
+    }; 
+    
     let manyCardsTest = [tester]; 
-
+    
     useEffect(() => {
         console.log(testCard);
       }, [])
+  */
 
-      let translateX = new Animated.Value(0)
-      let translateY = new Animated.Value(0)
-      let scale  = new Animated.Value(1)
+    let translateX = new Animated.Value(0)
+    let translateY = new Animated.Value(0)
+    let scale  = new Animated.Value(1)
 
     return (
         <View style={{padding: 20}}>
@@ -85,7 +87,7 @@ export default function CardView(Props: Props){
                 </View>
 
             </View> }
-            data={manyCardsTest}
+            data={[Props.route.params]}
           />
            </Draggable>
         </View>

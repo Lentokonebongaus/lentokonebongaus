@@ -2,15 +2,51 @@ import { Text, View, FlatList, Image, TouchableOpacity} from "react-native";
 import testCard from '../testCard';
 import { styles } from '../util/styles';
 import { AntDesign } from '@expo/vector-icons'; 
+import { useContext, useEffect } from "react";
+import { UserCardsContext } from "../util/UserCardsProvider";
+import { cardsDb } from "../util/Firebase"
+import { getDatabase, push, ref, onValue, update, get } from 'firebase/database';
+import { LoggedUsernameContext } from "../util/LoggedUsernameProvider";
 
 type Props = {
     navigation: any
   }
 
 export default function Cards(Props: Props){
+    const { userCards, setUserCards } = useContext(UserCardsContext);
+    const { loggedUsername, setLoggedUsername } = useContext(LoggedUsernameContext)
+
+    useEffect(()=>{
+      fetchCards();
+    },[]);
+
+    async function fetchCards () {
+      get(cardsDb)
+        .then((snapshot)=>{
+          if(snapshot.exists()){
+            
+            let ownedCards:any = []
+            const cardsArray = snapshot.val()
+            const cardIds =  Object.keys(cardsArray)
+            for (let i = 0; i < cardIds.length; i++){
+              if(loggedUsername == cardsArray[cardIds[i]].cardOwner){
+                ownedCards = [...ownedCards, cardsArray[cardIds[i]]];
+              }
+            }
+            setUserCards(ownedCards);
+            console.log('Got cards from Firebase');
+            console.log(ownedCards);
+          } else {
+            console.log("No data available");
+          }
+        })
+        .catch((error)=>{
+          console.error(error);
+        })
+    }
 
     // for testing purposes
-    let manyCardsTest = [testCard, testCard, testCard, testCard]; 
+    //let manyCardsTest = [testCard, testCard, testCard, testCard]; 
     
     // sorting ? 
     return (
@@ -22,7 +58,7 @@ export default function Cards(Props: Props){
             <View style={styles.horizontalCard}>
 
             <TouchableOpacity style={styles.card} 
-            onPress={ () => Props.navigation.navigate('Card')}>
+            onPress={ () => Props.navigation.navigate('Card', item)}>
 
                 <Text style={styles.cardTextHeader}>{item.planeModel}</Text>
                 
@@ -62,7 +98,7 @@ export default function Cards(Props: Props){
 
 
             </View> }
-            data={manyCardsTest}
+            data={userCards}
           />
         </View>
       );
