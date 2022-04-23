@@ -5,41 +5,49 @@ import Plane from '../util/Plane';
 import Card from '../util/Card';
 import { cardsDb } from "../util/Firebase"
 import { LoggedUsernameContext } from '../util/LoggedUsernameProvider';
-import { getDatabase, push, ref, onValue, update } from 'firebase/database';
+import { UserCardsContext, updateUserCardsContext} from '../util/UserCardsProvider';
+import { getDatabase, push, ref, onValue, update, get } from 'firebase/database';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Wave, Grid } from 'react-native-animated-spinkit';
 import {fetchPlaneDetails, fetchPlaneImageUrl} from '../util/planeDetails';
 // import getFlagPath from '../util/getFlagPath';
 import getFlagEmoji from '../util/getFlagEmoji';
+import { Button as KittenButton, Layout, Text as KittenText, Spinner, Icon } from '@ui-kitten/components';
 
 
 
 export default function PlaneView({route, navigation}){
     const plane = route.params.plane
+    const location = route.params.location
     const [planeDetailsState, setPlaneDetailsState] = useState({owner:"", manufacturername:"", model:"", operator:""})
     const [planeImageUrl, setPlaneImageUrl] = useState("")
     const [flagPath, setFlagPath] = useState("")
     const [flagEmoji, setFlagEmoji] = useState("")
     const { loggedUsername, setLoggedUsername } = useContext(LoggedUsernameContext)
+    const { userCards, setUserCards } = useContext(UserCardsContext)
+    const [planeDataLoading, setPlaneDataLoading] = useState(true)
+    const [planeAdded, setPlaneAdded] = useState(false)
+    const [icao24InUserCards, setIcao24InUserCards] = useState(false)
 
     useEffect(()=>{
         setPlaneBackendDetails()
         // Currently using emojis instead of SVGs.
         // setFlagPath(getFlagPath(plane.originCountry))
         setFlagEmoji(getFlagEmoji(plane.originCountry))
+        icao24NotInUsersCards(plane.icao24)
     },[])
 
 
     useEffect(()=>{
 
         if(planeDetailsState.owner && planeDetailsState.manufacturername && planeDetailsState.model){
+            setPlaneDataLoading(false)
             fetchAndSetPlaneImg()
         }
         if(planeDetailsState.owner && !planeDetailsState.operator){
             setPlaneDetailsState(planeDetailsState=>({...planeDetailsState, operator:"Unknown"}))
         }
         for (const [key, value] of Object.entries(planeDetailsState)){
-            console.log(value)
             if(value==undefined){
                 setPlaneDetailsState(planeDetailsState=>({...planeDetailsState, key:"NO DATA"}))
             }
@@ -76,7 +84,6 @@ export default function PlaneView({route, navigation}){
         
         const cardsArray = cardSnapshot.val()
         const cardIds =  Object.keys(cardsArray)
-        console.log("Not duplicate?")
         for (let i = 0; i < cardIds.length; i++){
             if(loggedUsername == cardsArray[cardIds[i]].cardOwner){
                 if(cardsArray[cardIds[i]].planeIcao24 == newCard.planeIcao24){
@@ -87,27 +94,51 @@ export default function PlaneView({route, navigation}){
         return true;
     }
 
-    const saveNewCard = (newCard:Card) => {
+    async function icao24NotInUsersCards(icao24:String){
+        get(cardsDb).then((snapshot)=>{
+            const cardsArray = snapshot.val()
+            const cardIds =  Object.keys(cardsArray)
+            for (let i = 0; i < cardIds.length; i++){
+                if(loggedUsername == cardsArray[cardIds[i]].cardOwner){
+                    if(cardsArray[cardIds[i]].planeIcao24 == icao24){
+                        setIcao24InUserCards(true)
+                        return true
+                    }
+                }
+            }
+            setIcao24InUserCards(false)
+        })
+    }
+
+    const saveCard = () => {
+        const newCard = createCard()
         if (newCard.planeModel){
-            onValue(cardsDb, (snapshot) => {
+            get(cardsDb).then((snapshot)=>{
                 if(notDuplicateCard(snapshot, newCard) == true){
                     push(cardsDb, newCard)
-                    Alert.alert("Card saved to collection!")
+                    setPlaneAdded(true)
+                    updateUserCardsContext(setUserCards, loggedUsername)
                 }
             })
         }
     }
     //----
 
-    const createCard = (plane:Plane) => {
+    const createCard = () => {
         // TODO: save plane image URL to card
         const newCard = new Card(plane, loggedUsername)
-        console.log("PLANE:")
-        console.log(plane)
-        console.log("Saved card to DB:")
-        console.log(newCard)
-        saveNewCard(newCard);
+        return newCard
     }
+
+    const LoadingIndicator = (props) => (
+        <View style={[props.style, styles.indicator]}>
+          <Spinner size='small'/>
+        </View>
+    );
+
+    const StarIcon = (props) => (
+        <Icon {...props} name='star'/>
+    );
 
     // TODO: move styles to styles.tsx
     const styles = {
@@ -155,6 +186,10 @@ export default function PlaneView({route, navigation}){
             width: 200,
             position: "absolute",
             zIndex: 100
+        },
+        indicator: {
+            justifyContent: 'center',
+            alignItems: 'center',
         }
 
     }
@@ -170,6 +205,37 @@ export default function PlaneView({route, navigation}){
                 <Grid size={100} style={styles.grid}/>
             </View>
         )
+    }
+
+    const renderSaveCardButton = () =>{
+        if(icao24InUserCards){
+            return(
+                <KittenButton disabled={true}>
+                    PLANE ALREADY ADDED
+                </KittenButton>
+            )
+        }
+        else if(planeDataLoading){
+            return(
+                <KittenButton style={styles.button} appearance='outline' accessoryLeft={LoadingIndicator}>
+                    LOADING
+                </KittenButton>
+            )
+        } 
+        else if(!planeDataLoading && !planeAdded){
+            return(
+                <KittenButton status='success' onPress={()=>saveCard()}>
+                    ADD PLANE
+                </KittenButton>
+            )
+        }
+        else if (!planeDataLoading && planeAdded){
+            return(
+                <KittenButton status='success' accessoryRight={StarIcon}>
+                    PLANE ADDED
+                </KittenButton>
+            )
+        }
     }
 
     /* const renderFlag = () =>{
@@ -229,12 +295,7 @@ export default function PlaneView({route, navigation}){
             <View style={styles.planeData}>
                 <Text style={styles.planeDataText}>Model: {planeDetailsState.model?planeDetailsState.model:renderDataLoading()}</Text>
             </View>
-            
-            <Button title="SAVE CARD" onPress={()=>{createCard(plane)}}></Button>
-            <Button title="log current plane" onPress={()=>{console.log(plane)}}></Button>
-            <Button title="log url" onPress={()=>{console.log("dsfasdf")}}></Button>
-
-
+            {renderSaveCardButton()}
         </View>
     )
 }
