@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, ImageBackground, Image} from 'react-native';
 import { styles } from '../util/styles';
 import { useContext } from "react"
 import { LoggedUsernameContext } from "../util/LoggedUsernameProvider"
-import { UserCardsContext } from "../util/UserCardsProvider"
+import { UserCardsContext, updateUserCardsContext } from "../util/UserCardsProvider"
 import { fetchUserCards } from "../util/fetchCards"
 import { useEffect } from 'react';
 import { cardsDb } from "../util/Firebase"
@@ -29,9 +29,8 @@ export default function Kotinakyma(Props: Props) {
     
 
     useEffect(()=>{
-      console.log("UserCards:")
-      console.log(userCards)
-    },[userCards])
+      updateUserCardsContext(setUserCards, loggedUsername)
+    },[])
 
     // Laitoin tän tähän yhteyteen ku asynkronisuus ja contextin päivittäminen tuotti ongelmia erillisessä tiedostossa.
     // - kortit haetaan nykyään Card näkymän useEffectissä firebasen get() funktiolla
