@@ -71,7 +71,7 @@ export default function Kotinakyma(Props: Props) {
                friction={90} 
                tension={100}
                activeScale={0.95}
-              title="LOG IN"
+              title={loggedUsername=="Not logged in"?"LOG IN":"SIGN OUT"}
               titleStyle={{ fontWeight: 'bold', fontSize: 14}}
               buttonStyle={{
                 borderWidth: 0,
@@ -93,7 +93,7 @@ export default function Kotinakyma(Props: Props) {
               }}
               iconRight
               iconContainerStyle={{ marginLeft: 10, marginRight: -10 }}
-              onPress={() => Props.navigation.navigate('Log In')}
+              onPress={() => loggedUsername=="Not logged in"?Props.navigation.navigate('Log In'):setLoggedUsername("Not logged in")}
             />
 
               <Button
