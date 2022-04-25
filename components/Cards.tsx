@@ -7,7 +7,8 @@ import { UserCardsContext } from "../util/UserCardsProvider";
 import { cardsDb } from "../util/Firebase"
 import { getDatabase, push, ref, onValue, update, get } from 'firebase/database';
 import { LoggedUsernameContext } from "../util/LoggedUsernameProvider";
-
+import { Card } from "react-native-elements";
+ 
 type Props = {
     navigation: any
   }
@@ -46,7 +47,6 @@ export default function Cards(Props: Props){
     }
 
     // for testing purposes
-    //let manyCardsTest = [testCard, testCard, testCard, testCard]; 
     
     // sorting ? 
     return (
@@ -55,38 +55,41 @@ export default function Cards(Props: Props){
           <FlatList 
             keyExtractor={(item, index) => index.toString()} 
             renderItem={ ({item}) => 
-            <View style={styles.horizontalCard}>
 
-            <TouchableOpacity style={styles.card} 
-            onPress={ () => Props.navigation.navigate('Card', item)}>
+            <TouchableOpacity
+            onPress={ () => Props.navigation.navigate('Card', item)} style={{paddingHorizontal: 10}}>
 
-                <Text style={styles.cardTextHeader}>{item.planeModel}</Text>
-                
-                {item.planePicture != ""?  <Image
-                source={{uri: item.planePicture}}/>: null }
+          <Card containerStyle={{backgroundColor: "#333C83", paddingHorizontal: 20}}
+            wrapperStyle={{backgroundColor: "#333C83"}}>
+
+                <Card.Title style={styles.cardTextHeader}>{item.planeModel}</Card.Title>
 
                 {item.cardQuality < 5? 
-                <Text>
+                <Text style={{textAlign: "center", paddingBottom: 10}}>
                      {Array.from({ length: 5 }, (_, i) => 
-                    <AntDesign name="star" size={24} color="gold" />)}
+                    <AntDesign name="star" size={24} color="gold"/>)}
                 </Text>: null }
                 {item.cardQuality < 100 && item.cardQuality > 5? 
-                <Text>
+                <Text style={{textAlign: "center", paddingBottom: 10}}>
                      {Array.from({ length: 4 }, (_, i) => 
                     <AntDesign name="star" size={24} color="orange" />)}
                 </Text>: null }
-                {item.cardQuality < 500 && item.cardQuality > 100? <Text>
+                {item.cardQuality < 500 && item.cardQuality > 100? 
+                <Text style={{textAlign: "center", paddingBottom: 10}}>
                     {Array.from({ length: 3 }, (_, i) => 
                     <AntDesign name="star" size={24} color="#c4c4c4" />)}
                 </Text>: null }
-                {item.cardQuality < 1000 && item.cardQuality > 500? 
-                <Text>
+                {item.cardQuality < 800 && item.cardQuality > 500? 
+                <Text style={{textAlign: "center", paddingBottom: 10}}>
                  {Array.from({ length: 2 }, (_, i) => 
-                    <AntDesign name="star" size={24} color="#c41c10" />)}
+                    <AntDesign name="star" size={24} color="#c41c10"/>)}
                 </Text>
                 : null }
                 {item.cardQuality > 1000? 
-                <AntDesign name="star" size={24} color="white" />: null }
+                <Text style={{textAlign: "center", paddingBottom: 10}}>
+                <AntDesign name="star" size={24} color="white" /></Text>: null }
+                
+                <Card.Divider/>
 
                 <Text style={styles.cardText}>Manufacturer: {item.planeManufacturer}</Text>
                 <Text style={styles.cardText}>Model: {item.planeModel}</Text>
@@ -94,10 +97,10 @@ export default function Cards(Props: Props){
                 <Text style={styles.cardText}>Operator CallSign: {item.planeOperatorCallSign}</Text>
                 <Text style={styles.cardText}>Owner: {item.planeOwner}</Text>
 
+                </Card> 
                 </TouchableOpacity>
 
-
-            </View> }
+              }
             data={userCards}
           />
         </View>

@@ -5,12 +5,14 @@ import { styles } from '../util/styles';
 //import {useSpring, to, animated} from "react-spring"
 import { AntDesign } from '@expo/vector-icons'; 
 import Draggable from "react-native-draggable";
+import { Card } from 'react-native-elements';
 
 type Props = {
     // card id 
 }
 
 export default function CardView(Props: Props){
+
 
     // Text doesn't show without Flatlist
 
@@ -29,54 +31,55 @@ export default function CardView(Props: Props){
     
     let manyCardsTest = [tester]; 
     
-    useEffect(() => {
-        console.log(testCard);
-      }, [])
+    
   */
-
-    let translateX = new Animated.Value(0)
-    let translateY = new Animated.Value(0)
-    let scale  = new Animated.Value(1)
+useEffect(() => {
+        console.log(Props.route.params);
+      }, [])
 
     return (
         <View style={{padding: 20}}>
 
-        <Draggable x={60} y={200}>
+        <Draggable x={20} y={150}>
 
-          <FlatList 
+        <FlatList 
             keyExtractor={(item, index) => index.toString()} 
             renderItem={ ({item}) => 
-            <View style={styles.horizontalCard}>
-                
-                <View style={styles.card}>
 
-                <Text style={styles.cardTextHeader}>{item.planeModel}</Text>
-                
-                {item.planePicture != ""?  <Image
-                source={{uri: item.planePicture}}/>: null }
+          <Card containerStyle={{backgroundColor: "#333C83", paddingHorizontal: 20}}
+            wrapperStyle={{backgroundColor: "#333C83"}}>
+
+                <Card.Title style={styles.cardTextHeader}>{item.planeModel}</Card.Title>
 
                 {item.cardQuality < 5? 
-                <Text>
+                <Text style={{textAlign: "center", paddingBottom: 10}}>
                      {Array.from({ length: 5 }, (_, i) => 
-                    <AntDesign name="star" size={24} color="gold" />)}
+                    <AntDesign name="star" size={24} color="gold"/>)}
                 </Text>: null }
                 {item.cardQuality < 100 && item.cardQuality > 5? 
-                <Text>
+                <Text style={{textAlign: "center", paddingBottom: 10}}>
                      {Array.from({ length: 4 }, (_, i) => 
                     <AntDesign name="star" size={24} color="orange" />)}
                 </Text>: null }
-                {item.cardQuality < 500 && item.cardQuality > 100? <Text>
+                {item.cardQuality < 500 && item.cardQuality > 100? 
+                <Text style={{textAlign: "center", paddingBottom: 10}}>
                     {Array.from({ length: 3 }, (_, i) => 
                     <AntDesign name="star" size={24} color="#c4c4c4" />)}
                 </Text>: null }
                 {item.cardQuality < 1000 && item.cardQuality > 500? 
-                <Text>
+                <Text style={{textAlign: "center", paddingBottom: 10}}>
                  {Array.from({ length: 2 }, (_, i) => 
-                    <AntDesign name="star" size={24} color="#c41c10" />)}
+                    <AntDesign name="star" size={24} color="#c41c10"/>)}
                 </Text>
                 : null }
                 {item.cardQuality > 1000? 
-                <AntDesign name="star" size={24} color="white" />: null }
+                <Text style={{textAlign: "center", paddingBottom: 10}}>
+                <AntDesign name="star" size={24} color="white" /></Text>: null }
+                
+                <Card.Divider/>
+
+                {item.planePicture != ""?  <Image
+                source={{uri: item.planePicture}} style={{width: 300, height: 200, alignSelf: "center"}}/>: null }
 
                 <Text style={styles.cardText}>Manufacturer: {item.planeManufacturer}</Text>
                 <Text style={styles.cardText}>Model: {item.planeModel}</Text>
@@ -84,9 +87,8 @@ export default function CardView(Props: Props){
                 <Text style={styles.cardText}>Operator CallSign: {item.planeOperatorCallSign}</Text>
                 <Text style={styles.cardText}>Owner: {item.planeOwner}</Text>
 
-                </View>
-
-            </View> }
+                </Card> 
+              }
             data={[Props.route.params]}
           />
            </Draggable>
