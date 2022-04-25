@@ -6,12 +6,17 @@ import { styles } from '../util/styles';
 import { AntDesign } from '@expo/vector-icons'; 
 import Draggable from "react-native-draggable";
 import { Card } from 'react-native-elements';
+import { useSpring, easings, animated, config} from "react-spring";
 
 type Props = {
     // card id 
 }
 
+const AnimatedIcon = animated(AntDesign); 
+
 export default function CardView(Props: Props){
+
+  const [flip, set] = useState(false);
 
 
     // Text doesn't show without Flatlist
@@ -36,15 +41,45 @@ export default function CardView(Props: Props){
       }, [])
   */
 
+      // glow animaatio
+    function glow(start: number, end: number, color: string){
+  
+      const { textShadowColor, shadowOpacity, textShadowRadius, textShadowOffset } = useSpring({
+        from: {
+          textShadowColor: color,
+          shadowOpacity: 0.8,
+          textShadowRadius: start,
+          textShadowOffset:{width: 0,height: 1}
+        },
+        to: {
+          textShadowColor: color,
+          shadowOpacity: 0.8,
+          textShadowRadius: end,
+          textShadowOffset:{width: 0,height: 1}
+        },
+        config: {
+          duration: 2000,
+          easing: easings.easeInOutQuart,
+        },
+        delay: 200,
+        reset: true,
+        reverse: flip,
+        onRest: () => set(!flip),
+      })
+      return { textShadowColor, shadowOpacity, textShadowRadius, textShadowOffset };
+     }
+  
+     let gold = glow(10, 40, "gold"); 
+     let orange = glow(10, 30, "orange"); 
+     // weird flicker, no problem with 5 start tho?
+     let grey = glow(10, 15, "#c4c4c4");
+
+     let item = Props.route.params;
 
     return (
         <View style={{padding: 20}}>
 
         <Draggable x={20} y={150}>
-
-        <FlatList 
-            keyExtractor={(item, index) => index.toString()} 
-            renderItem={ ({item}) => 
 
           <Card containerStyle={{backgroundColor: "#333C83", paddingHorizontal: 20}}
             wrapperStyle={{backgroundColor: "#333C83"}}>
@@ -54,17 +89,17 @@ export default function CardView(Props: Props){
                 {item.cardQuality < 5? 
                 <Text style={{textAlign: "center", paddingBottom: 10}}>
                      {Array.from({ length: 5 }, (_, i) => 
-                    <AntDesign name="star" size={24} color="gold"/>)}
+                    <AnimatedIcon name="star" size={24} color="gold" style={gold}/>)}
                 </Text>: null }
                 {item.cardQuality < 100 && item.cardQuality > 5? 
                 <Text style={{textAlign: "center", paddingBottom: 10}}>
                      {Array.from({ length: 4 }, (_, i) => 
-                    <AntDesign name="star" size={24} color="orange" />)}
+                    <AnimatedIcon name="star" size={24} color="orange" style={orange}/>)}
                 </Text>: null }
                 {item.cardQuality < 500 && item.cardQuality > 100? 
                 <Text style={{textAlign: "center", paddingBottom: 10}}>
                     {Array.from({ length: 3 }, (_, i) => 
-                    <AntDesign name="star" size={24} color="#c4c4c4" />)}
+                    <AnimatedIcon name="star" size={24} color="#c4c4c4" style={grey}/>)}
                 </Text>: null }
                 {item.cardQuality < 1000 && item.cardQuality > 500? 
                 <Text style={{textAlign: "center", paddingBottom: 10}}>
@@ -89,9 +124,6 @@ export default function CardView(Props: Props){
                 <Text style={styles.cardText}>Owner: {item.planeOwner}</Text>
 
                 </Card> 
-              }
-            data={[Props.route.params]}
-          />
            </Draggable>
         </View>
       );
