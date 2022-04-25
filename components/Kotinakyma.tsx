@@ -1,15 +1,18 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, ImageBackground, Image} from 'react-native';
 import { styles } from '../util/styles';
-import { useContext } from "react"
+import { useContext, useState } from "react"
 import { LoggedUsernameContext } from "../util/LoggedUsernameProvider"
-import { UserCardsContext } from "../util/UserCardsProvider"
+import { UserCardsContext, updateUserCardsContext } from "../util/UserCardsProvider"
 import { fetchUserCards } from "../util/fetchCards"
 import { useEffect } from 'react';
 import { cardsDb } from "../util/Firebase"
 import { getDatabase, push, ref, onValue, update } from 'firebase/database';
 import { Card, ListItem, Icon, CheckBox, Button} from 'react-native-elements';
 import TouchableScale from 'react-native-touchable-scale';
+import { UserLocationContext, refreshUserLocationContext } from '../util/UserLocationProvider';
+import { PlanesContext } from '../util/PlanesProvider';
+import { refreshPlanes } from '../util/locationFunctions'
 
 
 
@@ -26,12 +29,31 @@ export default function Kotinakyma(Props: Props) {
 
     const { loggedUsername, setLoggedUsername } = useContext(LoggedUsernameContext)
     const { userCards, setUserCards } = useContext(UserCardsContext)
+    const { userLocation, setUserLocation} = useContext(UserLocationContext)
+    const { planes, setPlanes } = useContext(PlanesContext)
+    const [initialLocationChanged, setInitialLocationChanged] = useState(false)
     
 
     useEffect(()=>{
-      console.log("UserCards:")
-      console.log(userCards)
-    },[userCards])
+      refreshUserLocationContext(setUserLocation)
+      updateUserCardsContext(setUserCards, loggedUsername)
+    },[])
+  
+    useEffect(() => {
+      if(initialLocationChanged == true){
+        refreshLoop(userLocation)
+      }
+    }, [initialLocationChanged])
+  
+    useEffect(()=>{
+      if(userLocation.longitude != 0 && userLocation.latitude != 0){
+        setInitialLocationChanged(true)
+      }
+    },[userLocation])
+  
+    const refreshLoop = (location: any) =>{
+      setInterval(()=>{refreshPlanes(userLocation, setPlanes)},7000)
+    }
 
     // Laitoin tän tähän yhteyteen ku asynkronisuus ja contextin päivittäminen tuotti ongelmia erillisessä tiedostossa.
     // - kortit haetaan nykyään Card näkymän useEffectissä firebasen get() funktiolla
@@ -72,7 +94,7 @@ export default function Kotinakyma(Props: Props) {
                friction={90} 
                tension={100}
                activeScale={0.95}
-              title="LOG IN"
+              title={loggedUsername=="Not logged in"?"LOG IN":"SIGN OUT"}
               titleStyle={{ fontWeight: 'bold', fontSize: 14}}
               buttonStyle={{
                 borderWidth: 0,
@@ -94,7 +116,7 @@ export default function Kotinakyma(Props: Props) {
               }}
               iconRight
               iconContainerStyle={{ marginLeft: 10, marginRight: -10 }}
-              onPress={() => Props.navigation.navigate('Log In')}
+              onPress={() => loggedUsername=="Not logged in"?Props.navigation.navigate('Log In'):setLoggedUsername("Not logged in")}
             />
 
               <Button
@@ -185,6 +207,36 @@ export default function Kotinakyma(Props: Props) {
               iconRight
               iconContainerStyle={{ marginLeft: 10, marginRight: -10 }}
               onPress={() => Props.navigation.navigate('Settings')}
+            />
+
+            <Button
+               TouchableComponent={TouchableScale}
+               friction={90} 
+               tension={100}
+               activeScale={0.95}
+              title="LOG"
+              titleStyle={{ fontWeight: 'bold', fontSize: 14}}
+              buttonStyle={{
+                borderWidth: 0,
+                borderColor: 'transparent',
+                borderRadius: 0,
+                backgroundColor: "rgba(20, 39, 155, 0.8)"
+                
+              }}
+              containerStyle={{
+                width: 200,
+                marginHorizontal: 80,
+                marginVertical: 10,
+              }}
+              icon={{
+                name: 'wrench',
+                type: 'font-awesome',
+                size: 15,
+                color: 'white',
+              }}
+              iconRight
+              iconContainerStyle={{ marginLeft: 10, marginRight: -10 }}
+              onPress={() => {refreshUserLocationContext(setUserLocation); console.log(userLocation)}}
             />
           {/*
             <Button

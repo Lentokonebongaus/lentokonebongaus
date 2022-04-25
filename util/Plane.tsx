@@ -60,7 +60,6 @@ class Plane {
         this.longitude = planeData[5]
         this.latitude = planeData[6]
         if(userLocation!=undefined){
-            // Anteeksi VSC, miksi punaista?
             this.distance = distanceBetween(this.longitude, this.latitude, userLocation.longitude, userLocation.latitude)
         } else{
             this.distance = -1
