@@ -18,47 +18,52 @@ import { refreshPlanes, setGPSlocation } from '../util/locationFunctions';
 import { getDatabase, push, ref, onValue, update, get } from 'firebase/database';
 import { LoggedUsernameContext } from '../util/LoggedUsernameProvider';
 import { UserCardsContext, updateUserCardsContext } from '../util/UserCardsProvider';
+import { PlanesContext } from '../util/PlanesProvider';
 import { styles } from '../util/styles';
+import { UserLocationContext, refreshUserLocationContext } from '../util/UserLocationProvider';
 
 
 export default function Map(props:any) {
  
   // Because MapView is rendered before user location is set, region state is used to set the initial map view to a pre-determined location.
   // A short loading screen would maybe be another, more adequate solution? -Eeli
-  const [location, setLocation] = useState({longitude:0, latitude:0});
+  //const [location, setLocation] = useState({longitude:0, latitude:0});
   const [initialLocationChanged, setInitialLocationChanged] = useState(false)
   const [region, setRegion] = useState({longitude:24.9049634, latitude:60.2494251 , latitudeDelta: 0.20, longitudeDelta: 0.02});
   const [errorMsg, setErrorMsg] = useState("");
-  const [planes, setPlanes] = useState<any[]>([])
+  // const [planes, setPlanes] = useState<any[]>([])
   const [userCardIcaos, setUserCardIcaos] = useState([])
   const { loggedUsername, setLoggedUsername } = useContext(LoggedUsernameContext)
   const { userCards, setUserCards } = useContext(UserCardsContext)
-
+  const { planes, setPlanes } = useContext(PlanesContext)
+  const { userLocation, setUserLocation } = useContext(UserLocationContext)
   
-  useEffect(() => {
-    setGPSlocation(setLocation, setErrorMsg)
+  /*useEffect(() => {
+    //setGPSlocation(setLocation, setErrorMsg)
+    refreshUserLocationContext(setUserLocation)
     updateUserCardsContext(setUserCards, loggedUsername)
-  }, []);
+  }, []);*/
 
   // refreshLoop can't be executed on inital load, as it would use unset GPS location (0,0) for every loop.
   // Also, a new refreshLoop can't be ran everytime location state changes, as it would create multiple concurrent loops that never break.
   // Therefore initialLocationChanged is used to run refreshLoop only once after a location is set. 
-  useEffect(() => {
+  /*useEffect(() => {
     if(initialLocationChanged == true){
       refreshLoop(location)
     }
   }, [initialLocationChanged])
-
-  useEffect(()=>{
-    if(location.longitude != 0 && location.latitude != 0){
-      refreshPlanes(location, setPlanes)
+  */
+  /*useEffect(()=>{
+    if(userLocation.longitude != 0 && userLocation.latitude != 0){
+      refreshPlanes(userLocation, setPlanes)
       setInitialLocationChanged(true)
+      refreshLoop()
     }
-  },[location])
-  
+  },[userLocation])*/
 
-  const refreshLoop = (location: any) =>{
-    setInterval(()=>{refreshPlanes(location, setPlanes)},7000)
+  
+  const refreshLoop = () =>{
+    setInterval(()=>{refreshPlanes(userLocation, setPlanes)},7000)
   }
   
   const getPlaneIcon = (plane:Plane) => {
@@ -109,7 +114,7 @@ export default function Map(props:any) {
                     longitude: plane.longitude,
                   }}
                   title={plane.icao24}
-                  onPress={()=>{props.navigation.navigate("Plane", {plane:plane, location:location})}}
+                  onPress={()=>{props.navigation.navigate("Plane", {plane:plane, location:userLocation})}}
                   // plane_icon.png isn't currently aligned with Plane object's trueTrack attribute, so even though trueTrack is measured in degrees
                   // similar to Marker component's rotation prop, png file's unalignment needs to be taken into account. 
                   rotation={plane.trueTrack+50}
@@ -119,8 +124,8 @@ export default function Map(props:any) {
           }):undefined
         }
         <Circle 
-          center={{latitude:location.latitude, longitude:location.longitude}} 
-          radius={10000}
+          center={{latitude:userLocation.latitude, longitude:userLocation.longitude}} 
+          radius={70000}
           options={{
             strokeColor: "#FF0000",
             strokeOpacity: 0.8,
