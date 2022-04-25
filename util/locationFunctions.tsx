@@ -20,5 +20,7 @@ export async function setGPSlocation(setLocation: Function, setErrorMsg: Functio
         return false
     }
     const userGpsLocation = await Location.getCurrentPositionAsync({});
+    console.log("USERLOCATION SET:")
+    console.log(userGpsLocation)
     setLocation({longitude:userGpsLocation.coords.longitude, latitude:userGpsLocation.coords.latitude});
 }
