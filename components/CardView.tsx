@@ -31,11 +31,11 @@ export default function CardView(Props: Props){
     
     let manyCardsTest = [tester]; 
     
-    
-  */
-useEffect(() => {
+    useEffect(() => {
         console.log(Props.route.params);
       }, [])
+  */
+
 
     return (
         <View style={{padding: 20}}>
@@ -81,6 +81,7 @@ useEffect(() => {
                 {item.planePicture != ""?  <Image
                 source={{uri: item.planePicture}} style={{width: 300, height: 200, alignSelf: "center"}}/>: null }
 
+                <Card.Divider style={{padding: 10}}/>
                 <Text style={styles.cardText}>Manufacturer: {item.planeManufacturer}</Text>
                 <Text style={styles.cardText}>Model: {item.planeModel}</Text>
                 <Text style={styles.cardText}>Operator: {item.planeOperator}</Text>
