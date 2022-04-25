@@ -50,7 +50,7 @@ export default function Cards(Props: Props){
     
     // sorting ? 
     return (
-        <View style={{padding: 20}}>
+        <View style={{padding: 20, backgroundColor: "#e1effa"}}>
 
           <FlatList 
             keyExtractor={(item, index) => index.toString()} 
@@ -90,6 +90,11 @@ export default function Cards(Props: Props){
                 <AntDesign name="star" size={24} color="white" /></Text>: null }
                 
                 <Card.Divider/>
+
+                {item.planePicture != ""?  <Image
+                source={{uri: item.planePicture}} style={{width: 300, height: 200, alignSelf: "center"}}/>: null }
+
+                <Card.Divider style={{padding: 10}}/>
 
                 <Text style={styles.cardText}>Manufacturer: {item.planeManufacturer}</Text>
                 <Text style={styles.cardText}>Model: {item.planeModel}</Text>
