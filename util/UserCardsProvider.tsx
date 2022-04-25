@@ -28,4 +28,14 @@ async function updateUserCardsContext(setUserCards, loggedUsername){
     setUserCards(userCardsTmp)
 })
 }
-export { UserCardsContext, UserCardsProvider, updateUserCardsContext  }
+
+function icao24InUsersCards(userCards, icao24:String){
+  for(let i = 0; i < userCards.length; i++){
+    if(userCards[i].planeIcao24 == icao24){
+      return true
+    }
+  }
+  return false
+}
+
+export { UserCardsContext, UserCardsProvider, updateUserCardsContext, icao24InUsersCards  }
