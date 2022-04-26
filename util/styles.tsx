@@ -78,31 +78,20 @@ export const styles = StyleSheet.create({
     margin: 5,
   },
   card: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingTop: 40,
-    backgroundColor: '#75c9fa', 
-    borderRadius: 5, 
-    borderWidth: 5,
-    borderColor: "#0285d1",
-    padding: 20, 
     shadowColor: 'black',
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 6,
     shadowOpacity: 0.26,
     elevation: 8,
-    width: 250, 
-    height: 250
 }, 
 cardText: {
-    fontSize: 15, 
-    color: "#005485"
+    fontSize: 16, 
+    color: "white", 
 }, 
 cardTextHeader: {
     fontSize: 20, 
-    color: "#00273d", 
-    fontWeight: "bold"
+    color: "white", 
+    fontWeight: "bold", 
 }, 
 horizontalCard: {
   flexDirection: 'column',
