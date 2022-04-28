@@ -1,4 +1,4 @@
-import { Text, View, FlatList, Image, TouchableOpacity} from "react-native";
+import { Text, View, FlatList, Image, TouchableOpacity, Dimensions} from "react-native";
 import testCard from '../testCard';
 import { styles } from '../util/styles';
 import { AntDesign } from '@expo/vector-icons'; 
@@ -68,7 +68,7 @@ export default function Cards(Props: Props){
         textShadowOffset:{width: 0,height: 1}
       },
       config: {
-        duration: 2000,
+        duration: 1500,
         easing: easings.easeInOutQuart,
       },
       delay: 200,
@@ -83,6 +83,13 @@ export default function Cards(Props: Props){
    let orange = glow(10, 30, "orange"); 
    // weird flicker, no problem with 5 start tho?
    let grey = glow(10, 15, "#c4c4c4");
+   
+   //image width height scaling
+   //og width 300 height 200
+  let width = Dimensions.get('window').width; 
+  let height = Dimensions.get("window").height;
+  let imgWidth = width * 0.72992; 
+  let imgHeight = height * 0.24660;
     
     return (
         <View style={{padding: 20, backgroundColor: "#e1effa"}}>
@@ -94,6 +101,7 @@ export default function Cards(Props: Props){
             <TouchableOpacity
             onPress={ () => Props.navigation.navigate('Card', item)} style={{paddingHorizontal: 10}}>
 
+          <View style={{flex: 1, paddingBottom: 40}}>
           <Card containerStyle={{backgroundColor: "#333C83", paddingHorizontal: 20}}
             wrapperStyle={{backgroundColor: "#333C83"}}>
 
@@ -129,8 +137,9 @@ export default function Cards(Props: Props){
                 <Card.Divider/>
 
                 {item.planePicture != ""?  <Image
-                source={{uri: item.planePicture}} style={{width: 300, height: 200, alignSelf: "center"}}/>: null }
+                source={{uri: item.planePicture}} style={{width: imgWidth, height: imgHeight, alignSelf: "center"}}/>: null }
 
+                <View style={{flex: 1}}>
                 <Card.Divider style={{padding: 10}}/>
 
                 <Text style={styles.cardText}>Manufacturer: {item.planeManufacturer}</Text>
@@ -138,8 +147,10 @@ export default function Cards(Props: Props){
                 <Text style={styles.cardText}>Operator: {item.planeOperator}</Text>
                 <Text style={styles.cardText}>Operator CallSign: {item.planeOperatorCallSign}</Text>
                 <Text style={styles.cardText}>Owner: {item.planeOwner}</Text>
+                </View>
 
                 </Card> 
+                </View>
                 </TouchableOpacity>
 
               }
