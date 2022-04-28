@@ -1,4 +1,4 @@
-import { Text, View, FlatList, Image, TouchableOpacity, Animated} from "react-native";
+import { Text, View, FlatList, Image, Dimensions} from "react-native";
 import {useEffect, useRef, useState} from "react";
 import testCard from '../testCard';
 import { styles } from '../util/styles';
@@ -76,6 +76,14 @@ export default function CardView(Props: Props){
 
      let item = Props.route.params;
 
+     //image width height scaling
+   //og width 300 height 200
+  let width = Dimensions.get('window').width; 
+  let height = Dimensions.get("window").height;
+  let imgWidth = width * 0.72992; 
+  let imgHeight = height * 0.24660;
+    
+
     return (
         <View style={{padding: 20}}>
 
@@ -114,7 +122,7 @@ export default function CardView(Props: Props){
                 <Card.Divider/>
 
                 {item.planePicture != ""?  <Image
-                source={{uri: item.planePicture}} style={{width: 300, height: 200, alignSelf: "center"}}/>: null }
+                source={{uri: item.planePicture}} style={{width: imgWidth, height: imgHeight, alignSelf: "center"}}/>: null }
 
                 <Card.Divider style={{padding: 10}}/>
                 <Text style={styles.cardText}>Manufacturer: {item.planeManufacturer}</Text>
