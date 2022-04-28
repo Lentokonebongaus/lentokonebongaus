@@ -1,17 +1,15 @@
-import { useEffect, useState, createContext } from 'react';
-import { refreshPlanes } from './locationFunctions';
+import { useState, createContext } from 'react';
 
 const PlanesContext = createContext("")
 
-function PlanesProvider({ children }){
-    // User is the name of the "data" that gets stored in context
-    const [planes, setPlanes] = useState([])
-    
-    return (
-      <PlanesContext.Provider value={{ planes, setPlanes }}>
-        {children}
-      </PlanesContext.Provider>
-    );
+function PlanesProvider({ children }) {
+  const [planes, setPlanes] = useState([])
+
+  return (
+    <PlanesContext.Provider value={{ planes, setPlanes }}>
+      {children}
+    </PlanesContext.Provider>
+  );
 }
 
 

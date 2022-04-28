@@ -1,22 +1,22 @@
-import{ initializeApp } from "firebase/app";
-import { getDatabase, push, ref, onValue, update } from 'firebase/database';
+import { initializeApp } from "firebase/app";
+import { getDatabase, ref } from 'firebase/database';
 
 const firebaseConfig = {
 
     apiKey: "AIzaSyD2TF3qwV0gXZ7YPvagpymcuWTMJazIGxc",
-  
+
     authDomain: "lentokonebongaus.firebaseapp.com",
-  
+
     databaseURL: "https://lentokonebongaus-default-rtdb.europe-west1.firebasedatabase.app",
-  
+
     projectId: "lentokonebongaus",
-  
+
     storageBucket: "lentokonebongaus.appspot.com",
-  
+
     messagingSenderId: "313722689412",
-  
+
     appId: "1:313722689412:web:5cfa1aa1fcaf68c40fafd1"
-  
+
 };
 
 const app = initializeApp(firebaseConfig);

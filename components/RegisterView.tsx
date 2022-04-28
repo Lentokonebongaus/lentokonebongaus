@@ -1,110 +1,95 @@
-import { StatusBar } from 'expo-status-bar';
-import { useState, useEffect } from 'react';
-import { Alert, Button, StyleSheet, Text, TextInput, View } from 'react-native';
-import parseErrorStack from 'react-native/Libraries/Core/Devtools/parseErrorStack';
+import { useState } from 'react';
+import { Button, Text, TextInput, View } from 'react-native';
 import { styles } from '../util/styles';
 import { usersDb } from '../util/Firebase'
-import { getDatabase, push, ref, onValue, get, update } from 'firebase/database';
+import { push, get } from 'firebase/database';
 import { useContext } from 'react';
 import { LoggedUsernameContext } from '../util/LoggedUsernameProvider';
-// Siirsin noi Firebase-jutut util kansioon. Täällä tarvii vielä ainakin tota Firebase-kirjaston onValue-funktiota useEffectin yhteydessä.
-
+import { Snackbar } from 'react-native-paper';
 
 type Props = {
     navigation: any
 }
 
-export default function RegisterView(props: Props){
-
-
+export default function RegisterView(props: Props) {
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
     const [passwordConfirm, setPasswordConfirm] = useState("")
-    const [registeredMessage, setRegisteredMessage] = useState("")
-    const {loggedUsername, setLoggedUsername} = useContext(LoggedUsernameContext)
-    const [firebaseUsers, setFirebaseUsers] = useState({});
-    const [usernameFreeFlag, setUsernameFreeflag] = useState(false)
+    const { loggedUsername, setLoggedUsername } = useContext(LoggedUsernameContext)
+    const [snackbarVisible, setSnackbarVisible] = useState(false)
+    const [message, setMessage] = useState("")
 
-    useEffect(()=>{
-        if(usernameFreeFlag == true){
-           
-        }
-    },[usernameFreeFlag])
-    /*
-    useEffect(()=>{
-        onValue(usersDb, (snapshot) => {
-        console.log(snapshot)
-        /*const userIDs = Object.keys(data);
-        const usersTestData = Array()
-        userIDs.map((userID)=>{
-            usersTestData.push(userID)
-        })
-        setDbTestData(usersTestData)*//*
-        })
-    },[])
-    */
 
     const checkRegisterForm = () => {
-        if (password != passwordConfirm){
-            Alert.alert("Passwords don't match.")
+        if (password != passwordConfirm) {
+            setSnackbarMessage("Passwords don't match.")
         }
-        /*else if (usernames.includes(username)){
-            Alert.alert("Sorry, that username is already taken.")
-        }*/
-        else if (password == "" || passwordConfirm == ""){
-            Alert.alert("Please fill both password fields.")
+        else if (password == "" || passwordConfirm == "") {
+            setSnackbarMessage("Please fill both password fields.")
         }
-        else if (username == ""){
-            Alert.alert("Please give an username to register.")
+        else if (username == "") {
+            setSnackbarMessage("Please give an username to register.")
         }
-        else{
-           return true
+        else {
+            return true
         }
     }
 
 
-    function usernameFree(usersSnapshot:Object) {
-        const userIds =  Object.keys(usersSnapshot)
-        for (let i = 0; i < userIds.length; i++){
-            if(username == usersSnapshot[userIds[i]].username){
+    function usernameFree(usersSnapshot: Object) {
+        const userIds = Object.keys(usersSnapshot)
+        for (let i = 0; i < userIds.length; i++) {
+            if (username == usersSnapshot[userIds[i]].username) {
                 return false;
             }
         }
         return true;
     }
 
-    async function handleRegisterButton () {
-        if (checkRegisterForm() && loggedUsername == "Not logged in"){
-            get(usersDb).then((snapshot)=>{
-                if(usernameFree(snapshot.val()) == true){
-                    Alert.alert("You have been registered!")
+    async function handleRegisterButton() {
+        if (checkRegisterForm() && loggedUsername == "Not logged in") {
+            get(usersDb).then((snapshot) => {
+                if (usernameFree(snapshot.val()) == true) {
+                    setSnackbarMessage("You have been registered!")
                     setLoggedUsername(username)
-                    //setTimeout(()=>{props.navigation.navigate("Home")},2000)
                     props.navigation.navigate("Home")
-                    push(usersDb, {username:username, password:password})
-                 } else {
-                     // FIXME: se eksyy tänne vaikka rekisteröityminen onnistuukin
-                     Alert.alert("Username not available") 
-                 }
+                    push(usersDb, { username: username, password: password })
+                } else {
+                    setSnackbarMessage("Username not available")
+                }
+            }).catch((err) => {
+                console.error(err);
             })
         }
     }
 
-    return(
+    const setSnackbarMessage = (message:string) => {
+        setMessage(message)
+        setSnackbarVisible(true)
+        setTimeout(() => {
+            setSnackbarVisible(false)
+        }, 5000)
+    }
+
+    const dismissSnackbar = () => {
+        setSnackbarVisible(false);
+    }
+
+    return (
         <View style={styles.viewMain}>
             <Text>Username: {username}</Text>
             <Text>Password: {password}</Text>
             <Text>Confirmed password: {passwordConfirm}</Text>
             <TextInput
                 style={styles.textInput}
-                onChangeText={(text)=>(setUsername(text))}
+                onChangeText={(text) => (setUsername(text))}
                 value={username}
                 placeholder="username"
                 textAlign="center"
             />
             <TextInput
                 style={styles.textInput}
-                onChangeText={(text)=>(setPassword(text))}
+                onChangeText={(text) => (setPassword(text))}
                 value={password}
                 placeholder="password"
                 textAlign="center"
@@ -112,7 +97,7 @@ export default function RegisterView(props: Props){
             />
             <TextInput
                 style={styles.textInput}
-                onChangeText={(text)=>(setPasswordConfirm(text))}
+                onChangeText={(text) => (setPasswordConfirm(text))}
                 value={passwordConfirm}
                 placeholder="confirm password"
                 textAlign="center"
@@ -120,10 +105,20 @@ export default function RegisterView(props: Props){
             />
             <Button
                 title="register"
-                onPress={()=>{handleRegisterButton()}}
+                onPress={() => { handleRegisterButton() }}
             />
-            <Text>{registeredMessage}</Text>
-
+            <Snackbar
+                visible={snackbarVisible}
+                onDismiss={dismissSnackbar}
+                action={{
+                    label: 'Dismiss',
+                    onPress: () => {
+                        dismissSnackbar
+                    },
+                }}
+            >
+                {message}
+            </Snackbar>
         </View>
     )
 }
