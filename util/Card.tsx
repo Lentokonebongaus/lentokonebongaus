@@ -28,8 +28,9 @@ class Card {
 
     getCardQuality(plane:any){
         const distance:number = plane["distance"]
+        const velocity:number = plane["velocity"]
         const geoAltitude:number = plane["geoAltitude"]
-        return Math.floor(geoAltitude-distance)
+        return Math.floor(geoAltitude+velocity*2-distance)
     }
 }
 
