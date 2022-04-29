@@ -1,5 +1,6 @@
 import{ initializeApp } from "firebase/app";
-import { getDatabase, push, ref, onValue, update } from 'firebase/database';
+import { getDatabase, push, ref, onValue, update, get } from 'firebase/database';
+import { getPlaneCurrentData } from "./locationFunctions";
 
 const firebaseConfig = {
 
@@ -24,4 +25,16 @@ const database = getDatabase(app);
 const usersDb = ref(database, "users");
 const cardsDb = ref(database, "cards");
 
-export { usersDb, cardsDb }
+async function getRandomCard(){
+    let card = {}
+    card = await get(cardsDb).then((snapshot)=>{
+      const cardsArray = snapshot.val()
+      const cardIds =  Object.keys(cardsArray)
+      const randIndex = Math.floor((Math.random()*cardIds.length+1)-1)
+      return cardsArray[cardIds[randIndex]]
+     
+    })
+    return card
+  }
+
+export { usersDb, cardsDb, getRandomCard }
