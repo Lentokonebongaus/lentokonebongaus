@@ -88,6 +88,10 @@ cardText: {
     fontSize: 16, 
     color: "white", 
 }, 
+cardTextSmall: {
+  fontSize: 11, 
+  color: "white", 
+}, 
 cardTextHeader: {
     fontSize: 20, 
     color: "white", 
