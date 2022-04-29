@@ -12,7 +12,7 @@ import { Card, ListItem, Icon, CheckBox, Button} from 'react-native-elements';
 import TouchableScale from 'react-native-touchable-scale';
 import { UserLocationContext, refreshUserLocationContext } from '../util/UserLocationProvider';
 import { PlanesContext } from '../util/PlanesProvider';
-import { refreshPlanes } from '../util/locationFunctions'
+import { refreshPlanes, getPlaneDistance } from '../util/locationFunctions'
 
 
 
@@ -70,6 +70,7 @@ export default function Kotinakyma(Props: Props) {
       })
     }
     */
+
 
     return (
       <View style={styles.container}>
@@ -236,7 +237,7 @@ export default function Kotinakyma(Props: Props) {
               }}
               iconRight
               iconContainerStyle={{ marginLeft: 10, marginRight: -10 }}
-              onPress={() => {refreshUserLocationContext(setUserLocation); console.log(userLocation)}}
+              onPress={() => {getPlaneDistance("4aca05",userLocation)}}
             />
           {/*
             <Button
