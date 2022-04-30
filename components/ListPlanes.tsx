@@ -1,169 +1,225 @@
-import { useEffect, useState } from "react";
-import { Button, FlatList, Text, View } from "react-native";
-import  planesData from '../planesData';
-import fetchplanesData from '../planesData';
-import Plane from "../Plane"
-import distanceBetween from '../distanceBetween';
+import { useEffect, useState, useContext } from "react";
+import { Button, FlatList, Text, View, SafeAreaView, ScrollView } from "react-native";
+import  planesData from '../util/planesData';
+import fetchplanesData from '../util/planesData';
+import Plane from "../util/Plane"
+import distanceBetween from '../util/distanceBetween';
 import * as Location from 'expo-location';
+import { refreshPlanes, setGPSlocation } from "../util/locationFunctions";
+import { PlanesContext } from "../util/PlanesProvider"
+
+import { DataTable } from 'react-native-paper';
+import getFlagEmoji from '../util/getFlagEmoji'
+import { styles } from '../util/styles';
+import { UserCardsContext, icao24InUsersCards } from "../util/UserCardsProvider";
+import { UserLocationContext } from "../util/UserLocationProvider";
+
+const optionsPerPage = [2, 3, 4];
 
 export default function ListPlanes (props:any){
   const [location, setLocation] = useState({longitude:0, latitude:0});
+  const [initialLocationChanged, setInitialLocationChanged] = useState(false)
   const [region, setRegion] = useState({longitude:24.9049634, latitude:60.2494251 , latitudeDelta: 0.20, longitudeDelta: 0.02});
   const [errorMsg, setErrorMsg] = useState("");
-  const [planes, setPlanes] = useState<any[]>([])
+  //const [planes, setPlanes] = useState<any[]>([])
+  const [page, setPage] = useState<number>(0);
+  const [itemsPerPage, setItemsPerPage] = useState(optionsPerPage[0]);
+  const { planes, setPlanes } = useContext(PlanesContext)
+  const { userCards, setUserCards } = useContext(UserCardsContext)
+  const { userLocation, setUserLocation } = useContext(UserLocationContext)
+  const [listedPlanes, setListedPlanes] = useState([])
 
-  
+  const [sortDirections, setSortDirections] = useState({
+    icao24:"descending",
+    callsign:"descending",
+    country: "descending",
+    distance: "descending"
+  })
 
-  // Note(markus): copypastet Map.tsx:stä
+  const [sortBy, setSortBy] = useState("distance")
+
+
   useEffect(() => {
-    setGPSlocation()
-   
+    setGPSlocation(setLocation, setErrorMsg);
   }, []);
 
   useEffect(()=>{
+    sortListedPlanes()
+  },[planes])
+
+  useEffect(()=>{
+    refreshPlanes(location, setPlanes);
+  },[sortBy])
+
+  useEffect(()=>{
+    refreshPlanes(location, setPlanes);
+  },[sortDirections])
+
+  /*useEffect(()=>{
+    console.log("LISTED PLANES FIRST:")
+    console.log(listedPlanes[0])
+  },[listedPlanes])*/
+
+  /*useEffect(()=>{
     if(location.longitude != 0 && location.latitude != 0){
-      refreshPlanes(location)
+      refreshPlanes(location, setPlanes);
+      sortListedPlanes()
     }
   },[location])
-  
-  async function refreshPlanes(location: any){
-    const planesData = await fetchplanesData(location)
-    setPlanes([])
-    for(let i = 0; i < planesData.length; i++){
-      let newPlane = new Plane(planesData[i])
-      setPlanes((planes)=>([...planes, newPlane]))
+
+  useEffect(() => {
+    if(initialLocationChanged == true){
+      refreshLoop(location)
     }
-  }
+  }, [initialLocationChanged])
 
-  async function setGPSlocation(){
-    let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        setErrorMsg('Permission to access location was denied');
-        return false
+  useEffect(()=>{
+    if(location.longitude != 0 && location.latitude != 0){
+      refreshPlanes(location, setPlanes)
+      setInitialLocationChanged(true)
+    }
+  },[location])
+
+  const refreshLoop = (location: any) =>{
+    setInterval(()=>{refreshPlanes(location, setPlanes)},7000)
+  }*/
+
+  
+  function sortListedPlanes(){
+
+    const sortedPlanes = [...planes].sort((a, b) => {
+      if(parseFloat(a[sortBy])){
+        if(sortDirections[sortBy] == "ascending"){
+          return(parseFloat(a[sortBy]) < parseFloat(b[sortBy]))
+        } else{
+          return(parseFloat(a[sortBy]) > parseFloat(b[sortBy]))
+        }
+      } else{
+        if(sortDirections[sortBy] == "ascending"){
+          return(a[sortBy] < b[sortBy])
+        } else{
+          return(a[sortBy] < b[sortBy])
+        }
       }
-    const userGpsLocation = await Location.getCurrentPositionAsync({});
-    setLocation({longitude:userGpsLocation.coords.longitude, latitude:userGpsLocation.coords.latitude});
+    });
+    setListedPlanes(sortedPlanes);
   }
-  // Note(markus): end copypastet Map.tsx:stä
+
+  /*function sortPlanes(){
+    const sortedPlanes = [...planes].sort((plane1, plane2)=>{return(plane1[sortedBy]>plane2[sortedBy])})
+  }*/
+  
+  const getDataTableRow = (plane:Plane) =>{
+    return(
+      <DataTable.Row style={icao24InUsersCards(userCards, plane.icao24)==true?styles.planeCollectedRow:undefined} onPress={()=>props.navigation.navigate("Plane", {plane:plane, location:userLocation})}>
+          <DataTable.Cell>{plane.icao24}</DataTable.Cell>
+          <DataTable.Cell>{plane.callsign}</DataTable.Cell>
+          <DataTable.Cell>{getFlagEmoji(plane.originCountry)}</DataTable.Cell>
+          <DataTable.Cell><Text style={plane.distance<=70?styles.planeCollectableText:styles.planeNotCollectableText}>{plane.distance} km</Text></DataTable.Cell>
+      </DataTable.Row>
+    )
+
+  }
 
   
 
-  async function  sortIcao(){
-    setPlanes([])
-    await refreshPlanes(location);
-    let test2 = planes.sort((a, b) => (a.icao24 < b.icao24 ? -1 : 1));
-    setPlanes(test2);
-    //console.log("icao24"); 
-    
-  }
-
-  async function  sortCall(){
-    setPlanes([])
-    await refreshPlanes(location);
-    let test3 = planes.sort((a, b) => (a.callsign < b.callsign ? -1 : 1));
-    setPlanes(test3);
-    //console.log("callsign"); 
-  }
-
-  async function sortCountry(){
-    setPlanes([])
-    await refreshPlanes(location);
-    let test4 = planes.sort((a, b) => (a.originCountry < b.originCountry ? -1 : 1));
-    setPlanes(test4);
-    //console.log("country"); 
-    
-  }
-  
-  
-
-  if (!planes){
-    return (
-      <View>
-        <Text>Loading List</Text>
+  /*return (
+    <View>
+      {
+      <View style={styles.refreshbutton}>
+        <Button title='refresh' onPress={() => refreshPlanes(location, setPlanes)}/>
       </View>
-    );
-  } else {
-    return (
-      <View>
-        {/*
-        <View style={styles.refreshbutton}>
-          <Button title='refresh' onPress={() => refreshPlanes(location)}/>
-        </View>
-          */}
-        <View style={styles.horizontalMargin}>
-          {/*<Button title="icao24" onPress={sortIcao}></Button>*/}
-          <Text style={styles.bLink} onPress={sortIcao}>Icao24</Text>
-          {/*<Button title="callsign" onPress={sortCall}></Button>*/}
-          <Text style={styles.bLink} onPress={sortCall}>Callsign</Text>
-          {/*<Button title="country" onPress={sortCountry}></Button>*/}
-          <Text style={styles.b2Link} onPress={sortCountry}>Origin Country</Text>
-          <Text style={styles.b}>Longitude</Text>
-          <Text style={styles.b}>Latitude</Text>
-        </View>
-        <FlatList 
-          keyExtractor={(item, index) => index.toString()} 
-          renderItem={ ({item}) => 
-          <View style={styles.horizontal}>
-            <Text onPress={()=>{props.navigation.navigate("Plane", {plane:item})}}
-              style={styles.planelink}>{item.icao24}</Text>
-            <Text style={styles.listText}>{item.callsign}</Text>
-            <Text style={styles.listText2}>{item.originCountry}</Text>
-            <Text style={styles.listText}>{item.longitude}</Text>
-            <Text style={{...styles.listText, marginRight:10}}>{item.latitude}</Text>
-          </View> }
-          data={planes}
-        />
+      }
+      <View style={styles.horizontalMargin}>
+        <Text style={styles.bLink} onPress={() => sortPlanes('icao24')}>Icao24</Text>
+        <Text style={styles.bLink} onPress={() => sortPlanes('callsign')}>Callsign</Text>
+        <Text style={styles.b2Link} onPress={() => sortPlanes('originCountry')}>Origin Country</Text>
+        <Text style={styles.b}>Longitude</Text>
+        <Text style={styles.b}>Latitude</Text>
       </View>
-    );
-  }
-}
+      <FlatList 
+        keyExtractor={(item, index) => index.toString()} 
+        renderItem={ ({item}) => 
+        <View style={styles.horizontal}>
+          <Text onPress={()=>{props.navigation.navigate("Plane", {plane:item})}}
+            style={styles.planelink}>{item.icao24}</Text>
+          <Text style={styles.listText}>{item.callsign}</Text>
+          <Text style={styles.listText2}>{item.originCountry}</Text>
+          <Text style={styles.listText}>{item.longitude}</Text>
+          <Text style={{...styles.listText, marginRight:10}}>{item.latitude}</Text>
+        </View> }
+        data={planes}
+      />
+    </View>
+  );*/
 
-const styles = {
-  horizontal: {
-    flexDirection: 'row',
-    alignItems: 'flex-start', 
-    justifyContent:'space-around',
-  },
-  horizontalMargin: {
-    flexDirection: 'row',
-    alignItems: 'flex-start', 
-    justifyContent:'space-around',
-    margin: 10,
-  },
-  b:{
-    fontWeight: "bold",
-    flex: 1
-  },
-  b2:{
-    fontWeight: "bold",
-    flex: 2
-  },
-  bLink:{
-    fontWeight: "bold",
-    flex: 1,
-    color: '#006adb'
-  },
-  b2Link:{
-    fontWeight: "bold",
-    flex: 2,
-    color: '#006adb'
-  },
-  planelink:{
-    color: '#0000aa',
-    flex: 1,
-    marginLeft: 10,
-    marginTop: 5
-  },
-  listText:{
-    flex:1,
-    marginTop:5
-  },
-  listText2:{
-    flex:2,
-    marginTop:5
-  },
-  refreshbutton:{
-    width: 150,
-    margin: 5,
+  const styles={
+    columnHighlighted:{
+      borderStyle:"solid", 
+      borderWidth:1, 
+      borderColor:"blue", 
+      borderRadius:10
+    },
+    planeCollectedRow:{
+      backgroundColor:"#2626FF", 
+    },
+    planeCollectableRow:{
+      backgroundColor:"#51FF51"
+    },
+    planeCollectableText:{
+      color: "chartreuse"
+    },
+    planeNotCollectableText:{
+      color: "crimson"
+    },
+    planeNotCollectableRow:{
+      backgroundColor:"#FF4719"
+    },
   }
+  return (
+    <SafeAreaView>
+    <ScrollView>
+    <DataTable>
+      <DataTable.Header>
+        <DataTable.Title sortDirection={sortDirections.icao24} onPress={()=>{
+            sortDirections.icao24=="descending"?setSortDirections({...sortDirections,icao24:"ascending"}):setSortDirections({...sortDirections,icao24:"descending"})
+            setSortBy("icao24")
+          }}
+        style={sortBy=="icao24"?styles.columnHighlighted:undefined}
+        >icao24
+        </DataTable.Title>
+
+        <DataTable.Title sortDirection={sortDirections.callsign} onPress={()=>{
+            sortDirections.callsign=="descending"?setSortDirections({...sortDirections,callsign:"ascending"}):setSortDirections({...sortDirections,callsign:"descending"})
+            setSortBy("callsign")
+          }}
+        style={sortBy=="callsign"?styles.columnHighlighted:undefined}
+        >Callsign
+        </DataTable.Title>
+
+        <DataTable.Title sortDirection={sortDirections.country} onPress={()=>{
+            sortDirections.country=="descending"?setSortDirections({...sortDirections,country:"ascending"}):setSortDirections({...sortDirections,country:"descending"})
+            setSortBy("originCountry")
+          }}
+        style={sortBy=="originCountry"?styles.columnHighlighted:undefined}
+        >Country
+        </DataTable.Title>
+
+        <DataTable.Title sortDirection={sortDirections.distance} onPress={()=>{
+            sortDirections.distance=="descending"?setSortDirections({...sortDirections,distance:"ascending"}):setSortDirections({...sortDirections,distance:"descending"})
+            setSortBy("distance")
+          }}
+        style={sortBy=="distance"?styles.columnHighlighted:undefined}
+        >Distance
+        </DataTable.Title>
+
+      </DataTable.Header>
+
+      {listedPlanes.map((plane)=>getDataTableRow(plane))}
+
+    </DataTable>
+    </ScrollView>
+    </SafeAreaView>
+  );
+  
 }

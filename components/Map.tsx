@@ -1,59 +1,96 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Button, Image } from 'react-native';
 import MapView, { Marker, Circle } from 'react-native-maps';
 import {PROVIDER_GOOGLE} from 'react-native-maps';
-// Hakee ainakin Androidilla sijainnin expo-location -kirjaston avulla. Kannattaa vielä testata, että toimii myös iOS:llä. -Eeli 
 import * as Location from 'expo-location';
 import { async } from '@firebase/util';
-import  planesData from '../planesData';
-import Plane from "../Plane"
-import distanceBetween from '../distanceBetween';
-import fetchplanesData from '../planesData';
-import planeIcon from '../plane_icon.png'
+import  planesData from '../util/planesData';
+import Plane from "../util/Plane"
+import distanceBetween from '../util/distanceBetween';
+import fetchplanesData from '../util/planesData';
+import planeIcon from '../assets/plane_icon.png'
+import planeIconGrounded from '../assets/plane_icon_grounded.png'
+import planeIconGroundedCollected from '../assets/plane_icon_grounded_collected.png'
+import planeIconCollected from '../assets/plane_icon_collected.png'
+import { cardsDb } from '../util/Firebase';
+import { refreshPlanes, setGPSlocation } from '../util/locationFunctions';
+import { getDatabase, push, ref, onValue, update, get } from 'firebase/database';
+import { LoggedUsernameContext } from '../util/LoggedUsernameProvider';
+import { UserCardsContext, updateUserCardsContext } from '../util/UserCardsProvider';
+import { PlanesContext } from '../util/PlanesProvider';
+import { styles } from '../util/styles';
+import { UserLocationContext, refreshUserLocationContext } from '../util/UserLocationProvider';
 
 
 export default function Map(props:any) {
  
   // Because MapView is rendered before user location is set, region state is used to set the initial map view to a pre-determined location.
   // A short loading screen would maybe be another, more adequate solution? -Eeli
-  const [location, setLocation] = useState({longitude:0, latitude:0});
+  //const [location, setLocation] = useState({longitude:0, latitude:0});
+  const [initialLocationChanged, setInitialLocationChanged] = useState(false)
   const [region, setRegion] = useState({longitude:24.9049634, latitude:60.2494251 , latitudeDelta: 0.20, longitudeDelta: 0.02});
   const [errorMsg, setErrorMsg] = useState("");
-  const [planes, setPlanes] = useState<any[]>([])
-
+  // const [planes, setPlanes] = useState<any[]>([])
+  const [userCardIcaos, setUserCardIcaos] = useState([])
+  const { loggedUsername, setLoggedUsername } = useContext(LoggedUsernameContext)
+  const { userCards, setUserCards } = useContext(UserCardsContext)
+  const { planes, setPlanes } = useContext(PlanesContext)
+  const { userLocation, setUserLocation } = useContext(UserLocationContext)
   
-  useEffect(() => {
-    setGPSlocation()
-  }, []);
+  /*useEffect(() => {
+    //setGPSlocation(setLocation, setErrorMsg)
+    refreshUserLocationContext(setUserLocation)
+    updateUserCardsContext(setUserCards, loggedUsername)
+  }, []);*/
 
-  useEffect(()=>{
-    if(location.longitude != 0 && location.latitude != 0){
-      refreshPlanes(location)
+  // refreshLoop can't be executed on inital load, as it would use unset GPS location (0,0) for every loop.
+  // Also, a new refreshLoop can't be ran everytime location state changes, as it would create multiple concurrent loops that never break.
+  // Therefore initialLocationChanged is used to run refreshLoop only once after a location is set. 
+  /*useEffect(() => {
+    if(initialLocationChanged == true){
+      refreshLoop(location)
     }
-  },[location])
-  
+  }, [initialLocationChanged])
+  */
+  /*useEffect(()=>{
+    if(userLocation.longitude != 0 && userLocation.latitude != 0){
+      refreshPlanes(userLocation, setPlanes)
+      setInitialLocationChanged(true)
+      refreshLoop()
+    }
+  },[userLocation])*/
 
-  async function refreshPlanes(location: any){
-    const planesData = await fetchplanesData(location)
-    setPlanes([])
-    for(let i = 0; i < planesData.length; i++){
-      let newPlane = new Plane(planesData[i])
-      setPlanes((planes)=>([...planes, newPlane]))
+  
+  const refreshLoop = () =>{
+    setInterval(()=>{refreshPlanes(userLocation, setPlanes)},7000)
+  }
+  
+  const getPlaneIcon = (plane:Plane) => {
+
+    const planeInUserCards = icao24NotInUsersCards(plane.icao24)
+    if(plane.onGround && !planeInUserCards){
+      return planeIconGrounded
+    } else if (plane.onGround && planeInUserCards){
+      return planeIconGroundedCollected
+    } else if (!plane.onGround && planeInUserCards){
+      return planeIconCollected
+    } else {
+      return planeIcon
     }
   }
 
-  async function setGPSlocation(){
-    let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        setErrorMsg('Permission to access location was denied');
-        return false
+  function icao24NotInUsersCards(icao24:String){
+
+    const cardIds = Object.keys(userCards)
+      for (let i = 0; i < cardIds.length; i++){
+        if(userCards[cardIds[i]].planeIcao24 == icao24){
+          return true
+        }
       }
-    const userGpsLocation = await Location.getCurrentPositionAsync({});
-    setLocation({longitude:userGpsLocation.coords.longitude, latitude:userGpsLocation.coords.latitude});
+      return false
   }
-
-  
+    
   return (
     <View style={styles.container}>
       <MapView 
@@ -65,31 +102,30 @@ export default function Map(props:any) {
         showsTraffic={false}
         initialRegion={region}
       >
-        {
+        {planes?
           planes.map((plane, index) => {
             if(plane.latitude && plane.longitude){
               return(
                 <Marker
-                  icon={planeIcon}
+                  icon={getPlaneIcon(plane)}
                   key={index}
                   coordinate={{
                     latitude: plane.latitude,
                     longitude: plane.longitude,
                   }}
                   title={plane.icao24}
-                  onPress={()=>{props.navigation.navigate("Plane", {plane:plane})}}
+                  onPress={()=>{props.navigation.navigate("Plane", {plane:plane, location:userLocation})}}
                   // plane_icon.png isn't currently aligned with Plane object's trueTrack attribute, so even though trueTrack is measured in degrees
                   // similar to Marker component's rotation prop, png file's unalignment needs to be taken into account. 
                   rotation={plane.trueTrack+50}
-                >
-                </Marker>
+                />
               )
             }
-          })
+          }):undefined
         }
         <Circle 
-          center={{latitude:location.latitude, longitude:location.longitude}} 
-          radius={10000}
+          center={{latitude:userLocation.latitude, longitude:userLocation.longitude}} 
+          radius={70000}
           options={{
             strokeColor: "#FF0000",
             strokeOpacity: 0.8,
@@ -105,16 +141,6 @@ export default function Map(props:any) {
           >
         </Circle>
       </MapView>
-      {/*<Button title='log_and_refresh' onPress={()=>{console.log(planes);refreshPlanes(location)}}></Button>*/}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
