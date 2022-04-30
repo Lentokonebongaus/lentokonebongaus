@@ -1,5 +1,6 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Ionicons} from '@expo/vector-icons';  
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';  
+
 import Kotinakyma from './Kotinakyma';
 import Map from './Map';
 import ListPlanes from './ListPlanes';
@@ -14,15 +15,14 @@ export default function CardscreenTabs(){
         <Tab.Navigator
         screenOptions={({route }) => ({ 
         tabBarIcon: ({ focused, color, size}) => {             
-                
-            let iconName;            
+                      
             if (route.name === 'Cards') {             
-                iconName = 'md-home';            
+                return(<MaterialCommunityIcons name={"cards"} size={size}color={color}/>)          
             } else if (route.name === 'Listed') {
-                iconName = 'md-map';            
+                return(<MaterialCommunityIcons name={"format-list-numbered"} size={size}color={color}/>)
             } 
             // näyttää punaista mutta toimii
-            return <Ionicons name={iconName}size={size}color={color} />;  
+            
              
                 
         },
