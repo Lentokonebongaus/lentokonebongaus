@@ -6,18 +6,55 @@ import { DataTable } from 'react-native-paper';
 import { UserCardsContext } from "../util/UserCardsProvider";
 import { UserLocationContext } from '../util/UserLocationProvider';
 import { getPlaneCurrentData } from '../util/locationFunctions';
+import { Fold } from 'react-native-animated-spinkit';
+import { cos } from "react-native-reanimated";
 
 export default function CardsList(props:any){
 
     const { userCards, setUserCards } = useContext(UserCardsContext)
     const { userLocation, setUserLocation } = useContext(UserLocationContext)
 
-    const [cardsCurrentData, setCardsCurrentData] = useState(undefined)
+    const [cardsWithCurrentData, setCardsWithCurrentData] = useState(undefined)
+    const [sortDirections, setSortDirections] = useState({
+        manufacturer: "ascending",
+        model:"ascending",
+        owner:"ascending",
+        distance:"ascending",
+        quality:"ascending"
+    })
+    const [sortBy, setSortBy] = useState("manufacturer")
 
     useEffect(()=>{
-        fetchCardsCurrentData()
+        fetchCardsWithCurrentData()
     },[])
+
+    useEffect(()=>{
+        if(cardsWithCurrentData!=undefined){
+            sortListedCards()
+        }
+    },[sortBy])
+    
+    useEffect(()=>{
+        if(cardsWithCurrentData!=undefined){
+            sortListedCards()
+        }
+    },[sortDirections])
+
+
     const styles={
+        columnTitleNormal:{
+            width: 120
+        },
+        columnTitleHighlighted:{
+            width: 120,
+            borderStyle:"solid", 
+            borderWidth:1, 
+            borderColor:"blue", 
+            borderRadius:10
+        },
+        dataTableCell:{
+            width: 120
+        },
         cardsArea:{
             flex: 1,
             border: "solid",
@@ -31,55 +68,129 @@ export default function CardsList(props:any){
             backgroundColor: "lightgray",
         },
         tableRowCardAvailable:{
-        },
-        dataTableCell:{
-            width: 100
-        },
-        dataTableTitle:{
-            width: 100
         }
     }
 
-    async function fetchCardsCurrentData(){
+    function sortListedCards(){
+
+        const tmpCards = [...cardsWithCurrentData].sort((a, b) => {
+          if(parseFloat(a[sortBy]) && parseFloat(b[sortBy])){
+            if(sortDirections[sortBy] == "ascending"){
+              return(parseFloat(a[sortBy]) < parseFloat(b[sortBy]))
+            } else{
+              return(parseFloat(a[sortBy]) > parseFloat(b[sortBy]))
+            }
+          } else{
+            if(sortDirections[sortBy] == "ascending"){
+              return(a[sortBy] < b[sortBy])
+            } else{
+              return(a[sortBy] > b[sortBy])
+            }
+          }
+        });
+        setCardsWithCurrentData(tmpCards);
+    }
+
+    async function fetchCardsWithCurrentData(){
         let currentDataTmp = []
         for(let i = 0; i < userCards.length; i++){
             let currentPlaneData = await getPlaneCurrentData(userCards[i].planeIcao24, userLocation)
             
-            currentDataTmp.push({icao24:userCards[i].planeIcao24, distance:currentPlaneData.distance, velocity:currentPlaneData.velocity, geometricAltitude:currentPlaneData.geometricAltitude})
+            currentDataTmp.push({
+                icao24:userCards[i].planeIcao24,
+                userCardsIndex:i,
+                manufacturer:userCards[i].planeManufacturer,
+                model:userCards[i].planeModel,
+                owner:userCards[i].planeOwner!=undefined?userCards[i].planeOwner:userCards[i].planeOperator,
+                quality:userCards[i].cardQuality,
+                distance:currentPlaneData.distance==undefined?"Not in use":currentPlaneData.distance, 
+                velocity:currentPlaneData.velocity, 
+                geometricAltitude:currentPlaneData.geometricAltitude
+            })
         }
-        setCardsCurrentData(currentDataTmp)
+        setCardsWithCurrentData(currentDataTmp)
     }
 
-    const getDataTableRow = (card:Card, index:number) =>{
-        if(userCards.includes(card.planeIcao24) == false){
+    const getDataTableRow = (currentCard:Card, index:number) =>{
+        if(cardsWithCurrentData.includes(currentCard.planeIcao24) == false){
             return(
-                <DataTable.Row style={cardsCurrentData[index].distance==undefined?styles.tableRowCardUnavailable:undefined} onPress={()=>{props.navigation.navigate('Card', userCards[index])}}>
-                    <DataTable.Cell style={styles.dataTableCell}><Text style={cardsCurrentData[index].distance==undefined?undefined:{color:"lime"}}>{cardsCurrentData[index].distance==undefined?"No":"Yes"}</Text></DataTable.Cell>
-                    <DataTable.Cell style={styles.dataTableCell}>{card.planeManufacturer}</DataTable.Cell>
-                    <DataTable.Cell style={styles.dataTableCell}>{card.planeModel}</DataTable.Cell>
-                    <DataTable.Cell style={styles.dataTableCell}>{card.planeOwner?card.planeOwner:card.planeOperator}</DataTable.Cell>
-                    <DataTable.Cell style={styles.dataTableCell}>{card.cardQuality}</DataTable.Cell>
-                    <DataTable.Cell style={styles.dataTableCell}>{cardsCurrentData[index].distance?parseInt(cardsCurrentData[index].distance):null}<Text>{cardsCurrentData[index].distance!=undefined?" km":null}</Text></DataTable.Cell>
+                <DataTable.Row style={currentCard.distance==undefined?styles.tableRowCardUnavailable:undefined} onPress={()=>{props.navigation.navigate('Card', userCards[currentCard.userCardsIndex])}}>
+                    <DataTable.Cell style={styles.dataTableCell}>{currentCard.manufacturer}</DataTable.Cell>
+                    <DataTable.Cell style={styles.dataTableCell}>{currentCard.model}</DataTable.Cell>
+                    <DataTable.Cell style={styles.dataTableCell}>{currentCard.owner}</DataTable.Cell>
+                    <DataTable.Cell style={styles.dataTableCell}>{currentCard.distance!="Not in use"?parseInt(currentCard.distance):null}<Text>{currentCard.distance!="Not in use"?" km":"Not in use"}</Text></DataTable.Cell>
+                    <DataTable.Cell style={styles.dataTableCell}>{currentCard.quality}</DataTable.Cell>
                 </DataTable.Row>
             )
         }
     }
 
+    const renderDataLoading = () =>{
+        return(
+            <View style={{height:"100%", width:"100%", display: "flex", alignItems: "center", justifyContent: "center"}}>
+                <Fold size={100} color="rgba(25, 58, 165, 1)"/>
+                <Text style={{marginTop: 100, fontSize: 30}}>Loading cards</Text>
+            </View>
+        )
+    }
+    
     const renderDataTable = () =>{
         return(
             <SafeAreaView>
                 <ScrollView horizontal>
                     <ScrollView>
                         <DataTable>
+
                             <DataTable.Header>
-                                <DataTable.Title style={styles.dataTableTitle}>In use</DataTable.Title>
-                                <DataTable.Title style={styles.dataTableTitle}>Manufacturer</DataTable.Title>
-                                <DataTable.Title style={styles.dataTableTitle}>Model</DataTable.Title>
-                                <DataTable.Title style={styles.dataTableTitle}>Operator</DataTable.Title>
-                                <DataTable.Title style={styles.dataTableTitle}>Card quality</DataTable.Title>
-                                <DataTable.Title style={styles.dataTableTitle}>Distance</DataTable.Title>
+                                <DataTable.Title 
+                                    sortDirection={sortDirections.manufacturer}
+                                    style={sortBy=="manufacturer"?styles.columnTitleHighlighted:styles.columnTitleNormal}
+                                    onPress={()=>{
+                                        sortDirections.manufacturer=="descending"?setSortDirections({...sortDirections,manufacturer:"ascending"}):setSortDirections({...sortDirections,manufacturer:"descending"})
+                                        setSortBy("manufacturer")
+                                    }}
+                                    >Manufacturer
+                                </DataTable.Title>
+                                <DataTable.Title
+                                    sortDirection={sortDirections.model} 
+                                    style={sortBy=="model"?styles.columnTitleHighlighted:styles.columnTitleNormal}
+                                    onPress={()=>{
+                                        sortDirections.model=="descending"?setSortDirections({...sortDirections,model:"ascending"}):setSortDirections({...sortDirections,model:"descending"})
+                                        setSortBy("model")
+                                    }}
+                                    >Model
+                                </DataTable.Title>
+                                <DataTable.Title 
+                                    sortDirection={sortDirections.owner} 
+                                    style={sortBy=="owner"?styles.columnTitleHighlighted:styles.columnTitleNormal}
+                                    onPress={()=>{
+                                        sortDirections.owner=="descending"?setSortDirections({...sortDirections,owner:"ascending"}):setSortDirections({...sortDirections,owner:"descending"})
+                                        setSortBy("owner")
+                                    }}
+                                    >Operator/Owner
+                                </DataTable.Title>
+                                <DataTable.Title
+                                    sortDirection={sortDirections.distance} 
+                                    style={sortBy=="distance"?styles.columnTitleHighlighted:styles.columnTitleNormal}
+                                    onPress={()=>{
+                                        sortDirections.distance=="ascending"?setSortDirections({...sortDirections,distance:"descending"}):setSortDirections({...sortDirections,distance:"ascending"})
+                                        setSortBy("distance")
+                                    }}
+                                    >Distance
+                                </DataTable.Title>
+                                <DataTable.Title 
+                                    sortDirection={sortDirections.quality} 
+                                    style={sortBy=="quality"?styles.columnTitleHighlighted:styles.columnTitleNormal}
+                                    onPress={()=>{
+                                        sortDirections.quality=="ascending"?setSortDirections({...sortDirections,quality:"descending"}):setSortDirections({...sortDirections,quality:"ascending"})
+                                        setSortBy("quality")
+                                    }}
+                                    >Card quality
+                                </DataTable.Title>
                             </DataTable.Header>
-                            {userCards.map((card, index)=>getDataTableRow(card, index))}
+
+                            {cardsWithCurrentData.map((card, index)=>getDataTableRow(card, index))}
+
                         </DataTable>
                     </ScrollView>
                 </ScrollView>
@@ -90,7 +201,7 @@ export default function CardsList(props:any){
 
     return(
         <View>
-            {cardsCurrentData==undefined?null:renderDataTable()}
+            {cardsWithCurrentData==undefined?renderDataLoading():renderDataTable()}
         </View>
     )
 }
