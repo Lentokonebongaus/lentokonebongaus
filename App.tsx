@@ -25,6 +25,7 @@ import * as eva from '@eva-design/eva';
 import { ApplicationProvider, IconRegistry } from '@ui-kitten/components';
 import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import { setGPSlocation } from './util/locationFunctions';
+import CardscreenTabs from './components/CardsScreenTabs';
 
 const Stack = createNativeStackNavigator();
 
@@ -50,11 +51,12 @@ export default function App() {
                   <Stack.Screen name="Home " component={HomeScreenTabs}/>
                   <Stack.Screen name="Log In" component={SigninView}/>
                   <Stack.Screen name="Register" component={RegisterView}/>
-                  <Stack.Screen name="Cards" component={Cards}/>
+                  <Stack.Screen name="CardsFull" component={Cards}/>
                   <Stack.Screen name="Play" component={PlayView}/>
                   <Stack.Screen name="Settings" component={Settings}/>
                   <Stack.Screen name="Plane" component={PlaneView}/>
                   <Stack.Screen name="Card" component={CardView}/>
+                  <Stack.Screen name="Cards" component={CardscreenTabs}/>
                 </Stack.Navigator>
               </NavigationContainer>
             </UserCardsProvider>
