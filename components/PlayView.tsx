@@ -1,5 +1,5 @@
 import { useContext, useState} from "react"
-import { Text, View, SafeAreaView, ScrollView, Button, Image, Alert } from "react-native";
+import { Text, View, SafeAreaView, ScrollView, Button, Image, Alert, ImageBackground } from "react-native";
 import { Button as KittenButton, Icon, Layout, Spinner } from '@ui-kitten/components';
 import { DataTable } from 'react-native-paper';
 import { UserCardsContext } from "../util/UserCardsProvider";
@@ -13,7 +13,6 @@ import { Card as NativeCard} from "react-native-elements";
 import { AntDesign } from '@expo/vector-icons'; 
 import { styles as utilStyles } from '../util/styles';
 import { getRandomCard } from "../util/Firebase";
-import question from '../assets/question.png'
 
 
 export default function PlayView (props:any){
@@ -53,30 +52,22 @@ export default function PlayView (props:any){
     const styles={
         cardsArea:{
             flex: 1,
-            border: "solid",
-            borderWidth: 2,
-            borderColor: "red",
             height: "100%",
             width: "100%",
             flexDirection: "column"
         },
-        infoArea:{
+        modifiersArea:{
             flex: 1,
             border: "solid",
-            borderWidth: 10,
-            borderColor: "orange",
+            borderWidth: 1,
+            borderColor: "blue",
         },
         playerArea:{
-            flex: 4,
-            border: "solid",
-            borderWidth: 2,
-            borderColor: "green",
+            flex: 4
+      
         },
         computerArea:{
-            flex: 4,
-            border: "solid",
-            borderWidth: 2,
-            borderColor: "yellow",
+            flex: 4
         },
         tableRowCardUnavailable:{
             backgroundColor: "red",
@@ -117,10 +108,9 @@ export default function PlayView (props:any){
 
     let gold = glow(10, 40, "gold"); 
     let orange = glow(10, 30, "orange"); 
-     // weird flicker, no problem with 5 start tho?
     let grey = glow(10, 15, "#c4c4c4");
     
-    
+
     useEffect(()=>{
         if(currentPlayerPlanesData.length > 0){
             setPlanesCurrentDataLoaded(true)
@@ -140,12 +130,8 @@ export default function PlayView (props:any){
                 Alert.alert("Too bad!", "You lost, better luck next time",[{text: "Return to home screen", onPress: () => props.navigation.navigate("Home"), style: "cancel"}])
             }
         }
+        setRandomScoreModifiers()
     },[round])
-
-    useEffect(()=>{
-        console.log(usedCards)
-        console.log(usedCards)
-    },[usedCards])
 
     useEffect(()=>{
         if(currentComputerCardApiData.distance!=undefined && currentPlayerCardApiData.distance!=undefined){
@@ -192,11 +178,12 @@ export default function PlayView (props:any){
     function gaussianRandomRange(start:number, end:number) {
         return start + gaussianRandom() * (end - start + 1);
     }
-    
+     
     const calculateCardPoints = (planeCard, apiData) =>{
         if(apiData.geometricAltitude == null){
             apiData.geometricAltitude = 1
         }
+        // (ㆆ_ㆆ)
         let qualityPoints = scoreModifier1.type=="quality"?parseInt(planeCard.cardQuality)*scoreModifier1.multiplier:parseInt(planeCard.cardQuality)
         qualityPoints = scoreModifier2.type=="quality"?parseInt(planeCard.cardQuality)*scoreModifier2.multiplier:parseInt(planeCard.cardQuality)
         let velocityPoints = scoreModifier1.type=="velocity"?parseInt(apiData.velocity)*scoreModifier1.multiplier:parseInt(apiData.velocity)
@@ -261,8 +248,6 @@ export default function PlayView (props:any){
         setFetchingCurrentComputerCard(false)
     }
 
-
-    // onPress={()=>props.navigation.navigate('Card', card)
     const getDataTableRow = (card:Card, index:number) =>{
         if(userCards.includes(card.planeIcao24) == false){
             return(
@@ -279,7 +264,6 @@ export default function PlayView (props:any){
             )
         }
     }
-
 
     const renderComputerCard = () =>{
         if(currentComputerCard != undefined && currentComputerCardApiData.distance != undefined){
@@ -426,7 +410,6 @@ export default function PlayView (props:any){
         )
     }
 
-
     const renderSpinner = () =>{
         return(<Spinner size='giant'/>)
     }
@@ -436,21 +419,25 @@ export default function PlayView (props:any){
             return(  
                 <View style={{height: "100%", width: "100%",  display: "flex", alignItems: "center", justifyContent: "center"}}>
                     {renderSpinner()}
-                    <Text style={{fontSize:20, marginTop: 20}}>Loading opponent's card...</Text>
+                    <Text style={{color:"black",fontSize:20, marginTop: 20}}>Loading opponent's card...</Text>
                     <Text style={{fontSize:20, marginTop: 20}}>🤖</Text>
                 </View>
             )
         } else{
             if(round<5){
                 return(
-                    <View style={{backgroundColor:"red", height: "100%", width: "100%", justifyContent:"center"}}>
-                        <Text style={{textAlign:"center", fontSize:30}}>Round {round}/5</Text>  
-                        <Text style={{textAlign:"center", fontSize:23}}>Select a card</Text>  
+                    <View style={{height: "100%", width: "100%"}}>
+                        <Text style={{fontSize: 18, zIndex: 10, left:50, top: 20, color:points.player>points.computer?"lawngreen":"black"}}>Player: {points.player}</Text>
+                        <Text style={{fontSize: 18, zIndex: 10, right: 50, top: 20, position: "absolute", color:points.computer>points.player?"lawngreen":"black"}}>🤖: {points.computer}</Text>
+                        <View style={{position: "absolute", backgroundColor:"deepskyblue", height: "100%", width: "100%", justifyContent:"center"}}>
+                            <Text style={{textAlign:"center", fontSize:30}}>Round {round}/5</Text>  
+                            <Text style={{textAlign:"center", fontSize:23}}>Select a card</Text>  
+                        </View>
                     </View>
                 )
             } else{
                 return(
-                    <View style={{backgroundColor:"red", height: "100%", width: "100%", justifyContent:"center"}}>
+                    <View style={{backgroundColor:"dodgerblue", height: "100%", width: "100%", justifyContent:"center"}}>
                         <Text style={{textAlign:"center", fontSize:30}}>Final round!</Text>  
                         <Text style={{textAlign:"center", fontSize:23}}>Select a card</Text>  
                     </View>
@@ -470,7 +457,6 @@ export default function PlayView (props:any){
             newPoints.computer = points.computer+1
             setPoints(newPoints)
         }
-        //setUsedCards(...usedCards, currentPlayerCard.PlaneIcao24)
         setRound((round)=>round+1)
         setCurrentPlayerCard(undefined)
         setCurrentComputerCard(undefined)
@@ -483,29 +469,73 @@ export default function PlayView (props:any){
 
     const renderScoreModifiersText = () =>{
         if(scoreModifier1!=undefined && scoreModifier2!=undefined){
+            let scoreModifierTextColors = [scoreModifier1, scoreModifier2]
+            for (let i = 0; i < scoreModifierTextColors.length; i++){
+                if(scoreModifierTextColors[i].type == "distance"){
+                    if(scoreModifierTextColors[i].multiplier.toFixed(1) > 1.0){
+                        scoreModifierTextColors[i] = "red"
+                    } else{
+                        scoreModifierTextColors[i] = "lime"
+                    }
+                } else{
+                    if(scoreModifierTextColors[i].multiplier.toFixed(1) >= 1.0){
+                        scoreModifierTextColors[i] = "lime"
+                    } else{
+                        scoreModifierTextColors[i] = "red"
+                    }
+                }
+            }
+            
             return(
-                <View>
-                    <Text>{scoreModifier1.type}: {scoreModifier1.multiplier.toFixed(2)}</Text>
-                    <Text>{scoreModifier2.type}: {scoreModifier2.multiplier.toFixed(2)}</Text>
+                <View style={{height:"100%", width:"50%", display: "flex", flexDirection:"row", marginLeft: 10}}>
+                    <View style={{height:"100%", display: "flex", alignItems: "center", justifyContent: "center"}}>
+                        <Text>Score modifiers:</Text>
+                    </View>
+                    <View style={{height:"100%", display: "flex", alignItems: "center", justifyContent: "center", marginLeft:10}}>
+                        <Text style={{fontSize:(14*scoreModifier1.multiplier.toFixed(1)), color:scoreModifierTextColors[0]}}>{scoreModifier1.type}: {scoreModifier1.multiplier.toFixed(1)}</Text>
+                        <Text style={{fontSize:(14*scoreModifier2.multiplier.toFixed(1)), color:scoreModifierTextColors[1]}}>{scoreModifier2.type}: {scoreModifier2.multiplier.toFixed(1)}</Text>
+                    </View>
                 </View>
             )
         }
     }
 
+    const renderComputerTotalPoints = () =>{
+        return(
+            <View style={{width: "100%", borderBottomWidth: 1, borderStyle:"solid", borderColor: currentComputerCardTotalPoints>currentPlayerCardTotalPoints?"lime":"red", display: "flex", alignItems: "center", justifyContent: "center"}}>
+                <View style={{display:"flex", flexDirection:"row"}}>
+                    <Text>🤖 total points: </Text>
+                    <Text style={{color:currentComputerCardTotalPoints>currentPlayerCardTotalPoints?"limegreen":"red"}}>{currentComputerCardTotalPoints}</Text>
+                </View>
+            </View>
+        )
+    }
+
+    const renderPlayerTotalPoints = () =>{
+        return(
+            <View style={{width: "100%", borderBottomWidth: 1, borderStyle:"solid", borderColor: currentComputerCardTotalPoints<currentPlayerCardTotalPoints?"lime":"red", display: "flex", alignItems: "center", justifyContent: "center"}}>
+                <View style={{display:"flex", flexDirection:"row"}}>
+                    <Text>Player total points: </Text>
+                    <Text style={{color:currentComputerCardTotalPoints<currentPlayerCardTotalPoints?"limegreen":"red"}}>{currentPlayerCardTotalPoints}</Text>
+                </View>
+            </View>
+        )
+    }
+
+
     return (
         <View style={{flex:1}}>
             <View style={styles.cardsArea}>
                 <View style={styles.computerArea}>
-                    {currentComputerCardTotalPoints!=undefined?<Text>Total points: {currentComputerCardTotalPoints}</Text>:null}
+                    {currentComputerCardTotalPoints!=undefined?renderComputerTotalPoints():null}
                     {currentComputerCard==undefined?roundInfoScreen():renderComputerCard()}
                 </View>
-                <View style={styles.infoArea}>
+                <View style={styles.modifiersArea}>
                     {renderScoreModifiersText()}
-                    <Text>Player points: {points.player}, CPU points: {points.computer}</Text>
                     {currentComputerCard!=undefined&&currentPlayerCard!=undefined?<KittenButton size="small" style={{width:100, height: "100%", position:"absolute",right:0}} status='success' accessoryLeft={PlayIcon} onPress={()=>{startNewRound()}}/>:null}
                 </View>
                 <View style={styles.playerArea}>
-                    {currentPlayerCardTotalPoints!=undefined?<Text>Total points: {currentPlayerCardTotalPoints}</Text>:null}
+                    {currentPlayerCardTotalPoints!=undefined?renderPlayerTotalPoints():null}
                     {!planesCurrentDataLoaded&&currentPlayerCard==undefined?renderCardsListLoading():dataTableVisible?renderDataTable():null}
                     {renderPlayerCard()}
                 </View>
