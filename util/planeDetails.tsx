@@ -1,12 +1,28 @@
 async function fetchPlaneDetails(icao24:String){
     const backendUrl = "http://172.105.80.249"
     const planePromise = await fetch(`${backendUrl}?icao24=${icao24}`)
-    const planeDetails = await planePromise.json()
+    let planeDetails = await planePromise.json()
+    console.log("Fetched plane details from backend:")
+    console.log(planeDetails)
+    for (const [key, value] of Object.entries(planeDetails)){
+        console.log(key)
+        console.log(value)
+        console.log(value == "")
+        if(value == ""){
+            planeDetails[key] = "Unknown"
+        } 
+    }
+    console.log("Changed to:")
+    console.log(planeDetails)
     return planeDetails
 }
 
 async function fetchPlaneImageUrl(manufacturer, model, owner){
 
+    console.log("Fetch plane image arguments:")
+    console.log(`Manufacturer: ${manufacturer}`)
+    console.log(`Model: ${model}`)
+    console.log(`Owner: ${owner}`)
     const urlParameterManufacturer = manufacturer.replace(" ", "_")
     const urlParameterModel = model.replace(" ", "_")
     const urlParameterOwner = owner.replace(" ", "_")
@@ -21,6 +37,8 @@ async function fetchPlaneImageUrl(manufacturer, model, owner){
         const apiDataValues = apiData.value
         const firstImgJson = apiDataValues[0]
         return firstImgJson.contentUrl
+    } else if(response.status == 403){ //Forbidden
+        return false
     }
 }
 

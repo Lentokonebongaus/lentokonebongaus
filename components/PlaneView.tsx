@@ -41,29 +41,35 @@ export default function PlaneView({route, navigation}){
     useEffect(()=>{
 
         if(planeDetailsState.owner || planeDetailsState.manufacturername || planeDetailsState.model){
-            setPlaneDataLoading(false)
             fetchAndSetPlaneImg()
-        }
-        if(planeDetailsState.owner && !planeDetailsState.operator){
-            setPlaneDetailsState(planeDetailsState=>({...planeDetailsState, operator:"Unknown"}))
+            setPlaneDataLoading(false)
         }
         for (const [key, value] of Object.entries(planeDetailsState)){
             if(value==undefined){
                 setPlaneDetailsState(planeDetailsState=>({...planeDetailsState, key:"NO DATA"}))
-            }
+            } 
         }
 
         
     },[planeDetailsState])
 
     async function fetchAndSetPlaneImg(){
-        const imgUrl = await fetchPlaneImageUrl(planeDetailsState.manufacturername, planeDetailsState.model, planeDetailsState.owner?planeDetailsState.owner:planeDetailsState.operator)
-        setPlaneImageUrl(imgUrl)
-    }
 
-    async function printPlaneDetails(icao24:String){
-        const planeDetails = await fetchPlaneDetails(icao24)
-        console.log(planeDetails)
+        let imgUrl
+        if(planeDetailsState.owner != "Unknown"){
+            imgUrl = await fetchPlaneImageUrl(
+                planeDetailsState.manufacturername=="Unknown"?"":planeDetailsState.manufacturername, 
+                planeDetailsState.model=="Unknown"?"":planeDetailsState.model,
+                planeDetailsState.owner
+            )
+        } else{
+            imgUrl = await fetchPlaneImageUrl(
+                planeDetailsState.manufacturername=="Unknown"?"":planeDetailsState.manufacturername, 
+                planeDetailsState.model=="Unknown"?"":planeDetailsState.model,
+                planeDetailsState.operator=="Unknown"?"":planeDetailsState.operator,
+            )
+        }
+        setPlaneImageUrl(imgUrl)
     }
 
     async function setPlaneBackendDetails(){
