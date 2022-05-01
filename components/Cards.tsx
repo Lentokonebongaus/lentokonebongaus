@@ -108,29 +108,29 @@ export default function Cards(Props: Props){
                 <Card.Title style={styles.cardTextHeader}>{item.planeModel}</Card.Title>
      
               
-                {item.cardQuality <= 5? 
+                {item.cardQuality  > 10000? 
                 <Text style={{textAlign: "center", paddingBottom: 10}}>
                      {Array.from({ length: 5 }, (_, i) => 
                     <AnimatedIcon name="star" size={24} color="gold" style={gold}/>)}
                 </Text>: null }
 
-                {item.cardQuality <= 100 && item.cardQuality > 5? 
+                {item.cardQuality > 7000 && item.cardQuality <= 10000? 
                 <Text style={{textAlign: "center", paddingBottom: 10}}>
                      {Array.from({ length: 4 }, (_, i) => 
                     <AnimatedIcon name="star" size={24} color="orange" style={orange}/>)}
                 </Text>: null }
-                {item.cardQuality <= 500 && item.cardQuality > 100? 
+                {item.cardQuality > 4000 && item.cardQuality <= 7000? 
                 <Text style={{textAlign: "center", paddingBottom: 10}}>
                     {Array.from({ length: 3 }, (_, i) => 
                    <AnimatedIcon name="star" size={24} color="#c4c4c4" style={grey}/>)}
                 </Text>: null }
-                {item.cardQuality <= 1000 && item.cardQuality > 500? 
+                {item.cardQuality > 2000 && item.cardQuality <= 4000? 
                 <Text style={{textAlign: "center", paddingBottom: 10}}>
                  {Array.from({ length: 2 }, (_, i) => 
                     <AntDesign name="star" size={24} color="#c41c10"/>)}
                 </Text>
                 : null }
-                {item.cardQuality > 1000? 
+                {item.cardQuality <= 2000? 
                 <Text style={{textAlign: "center", paddingBottom: 10}}>
                 <AntDesign name="star" size={24} color="white" /></Text>: null }
                 
