@@ -6,11 +6,12 @@ import parseErrorStack from 'react-native/Libraries/Core/Devtools/parseErrorStac
 import { styles } from '../util/styles';
 import { useContext } from 'react';
 import { LoggedUsernameContext } from '../util/LoggedUsernameProvider';
-import { UserCardsContext } from '../util/UserCardsProvider';
 import { usersDb } from '../util/Firebase'
 import { getDatabase, push, ref, onValue, update } from 'firebase/database';
 import { Icon, Button, Input} from 'react-native-elements';
 import TouchableScale from 'react-native-touchable-scale';
+import { PlanesContext } from "../util/PlanesProvider"
+import { UserCardsContext, updateUserCardsContext } from "../util/UserCardsProvider"
 
 type Props = {
     navigation: any
@@ -133,6 +134,7 @@ export default function SigninView(props: Props){
                     setLoggedUsername(usernameInput)
                     setUserCards([])
                     setErrorMsg("")
+                    updateUserCardsContext(setUserCards, usernameInput)
                     props.navigation.navigate("Home")
                 } else{
                     setErrorMsg("Username or password is wrong!")

@@ -36,7 +36,9 @@ export default function Kotinakyma(Props: Props) {
 
     useEffect(()=>{
       refreshUserLocationContext(setUserLocation)
-      updateUserCardsContext(setUserCards, loggedUsername)
+      if(loggedUsername != "Not logged in"){
+        updateUserCardsContext(setUserCards, loggedUsername)
+      }
     },[])
   
     useEffect(() => {
@@ -53,6 +55,12 @@ export default function Kotinakyma(Props: Props) {
   
     const refreshLoop = (location: any) =>{
       setInterval(()=>{refreshPlanes(userLocation, setPlanes)},7000)
+    }
+
+    const handleSignOut = () =>{
+      setLoggedUsername("Not logged in")
+      setUserCards([])
+      setPlanes([])
     }
 
     // Laitoin tän tähän yhteyteen ku asynkronisuus ja contextin päivittäminen tuotti ongelmia erillisessä tiedostossa.
@@ -117,7 +125,7 @@ export default function Kotinakyma(Props: Props) {
               }}
               iconRight
               iconContainerStyle={{ marginLeft: 10, marginRight: -10 }}
-              onPress={() => loggedUsername=="Not logged in"?Props.navigation.navigate('Log In'):setLoggedUsername("Not logged in")}
+              onPress={() => loggedUsername=="Not logged in"?Props.navigation.navigate('Log In'):handleSignOut()}
             />
 
               <Button
