@@ -1,5 +1,5 @@
 import { useContext, useState} from "react"
-import { Text, View, SafeAreaView, ScrollView, Button, Image, Alert } from "react-native";
+import { Text, View, SafeAreaView, ScrollView, Button, Image, Alert, ImageBackground } from "react-native";
 import { Button as KittenButton, Icon, Layout, Spinner } from '@ui-kitten/components';
 import { DataTable } from 'react-native-paper';
 import { UserCardsContext } from "../util/UserCardsProvider";
@@ -13,7 +13,6 @@ import { Card as NativeCard} from "react-native-elements";
 import { AntDesign } from '@expo/vector-icons'; 
 import { styles as utilStyles } from '../util/styles';
 import { getRandomCard } from "../util/Firebase";
-import question from '../assets/question.png'
 
 
 export default function PlayView (props:any){
@@ -53,33 +52,25 @@ export default function PlayView (props:any){
     const styles={
         cardsArea:{
             flex: 1,
-            border: "solid",
-            borderWidth: 2,
-            borderColor: "red",
             height: "100%",
             width: "100%",
             flexDirection: "column"
         },
-        infoArea:{
+        modifiersArea:{
             flex: 1,
             border: "solid",
-            borderWidth: 10,
-            borderColor: "orange",
+            borderWidth: 1,
+            borderColor: "blue",
         },
         playerArea:{
-            flex: 4,
-            border: "solid",
-            borderWidth: 2,
-            borderColor: "green",
+            flex: 4
+      
         },
         computerArea:{
-            flex: 4,
-            border: "solid",
-            borderWidth: 2,
-            borderColor: "yellow",
+            flex: 4
         },
         tableRowCardUnavailable:{
-            backgroundColor: "red",
+            backgroundColor: "firebrick",
         },
         tableRowCardAvailable:{
         },
@@ -117,10 +108,9 @@ export default function PlayView (props:any){
 
     let gold = glow(10, 40, "gold"); 
     let orange = glow(10, 30, "orange"); 
-     // weird flicker, no problem with 5 start tho?
     let grey = glow(10, 15, "#c4c4c4");
     
-    
+
     useEffect(()=>{
         if(currentPlayerPlanesData.length > 0){
             setPlanesCurrentDataLoaded(true)
@@ -140,12 +130,8 @@ export default function PlayView (props:any){
                 Alert.alert("Too bad!", "You lost, better luck next time",[{text: "Return to home screen", onPress: () => props.navigation.navigate("Home"), style: "cancel"}])
             }
         }
+        setRandomScoreModifiers()
     },[round])
-
-    useEffect(()=>{
-        console.log(usedCards)
-        console.log(usedCards)
-    },[usedCards])
 
     useEffect(()=>{
         if(currentComputerCardApiData.distance!=undefined && currentPlayerCardApiData.distance!=undefined){
@@ -192,7 +178,7 @@ export default function PlayView (props:any){
     function gaussianRandomRange(start:number, end:number) {
         return start + gaussianRandom() * (end - start + 1);
     }
-    
+     
     const calculateCardPoints = (planeCard, apiData) =>{
         if(apiData.geometricAltitude == null){
             apiData.geometricAltitude = 1
@@ -205,8 +191,7 @@ export default function PlayView (props:any){
         altitudePoints = scoreModifier2.type=="altitude"?parseInt(apiData.geometricAltitude)*scoreModifier2.multiplier:parseInt(apiData.geometricAltitude)
         let distancePoints = scoreModifier1.type=="distance"?parseInt(apiData.distance)*scoreModifier1.multiplier:parseInt(apiData.distance)
         distancePoints = scoreModifier2.type=="distance"?parseInt(apiData.distance)*scoreModifier1.multiplier:parseInt(apiData.distance)
-        const totalPoints = Math.floor(qualityPoints+velocityPoints+altitudePoints-distancePoints)
-
+        const totalPoints = Math.floor(qualityPoints+velocityPoints*1.2+altitudePoints*0.7-distancePoints)
         return totalPoints
     }
 
@@ -236,6 +221,36 @@ export default function PlayView (props:any){
         setScoreModifier2({type:scoreModifier2Type, multiplier:scoreModifier2Multiplier})
     }
 
+    /* Will crash Expo without any error messages for some reason (╯°□°)╯︵ ┻━┻
+    const convertQualityToStarSize = (quality:number) =>{
+        const CARD_STAR_LIMITS = [
+            {stars: 5, maxQuality: 20000, minQuality: 10001},
+            {stars: 4, maxQuality: 10000, minQuality: 7001},
+            {stars: 3, maxQuality: 7000, minQuality: 4001},
+            {stars: 2, maxQuality: 4000, minQuality: 2001},
+            {stars: 1, maxQuality: 2000, minQuality: 0}
+        ]
+        const STAR_SIZE_MIN_MAX = {max:18, min:13}
+        let qualityMinMax = undefined
+        for (let i = 0; i < CARD_STAR_LIMITS.length; i++) {
+          if(quality > CARD_STAR_LIMITS[i].minQuality && quality < CARD_STAR_LIMITS[i].maxQuality){
+              qualityMinMax = {min:CARD_STAR_LIMITS[i].minQuality, max:CARD_STAR_LIMITS[i].maxQuality}
+          }
+        }
+        if (qualityMinMax == undefined){
+            return (STAR_SIZE_MIN_MAX.min)
+        } else{
+            const starSizesRange = (STAR_SIZE_MIN_MAX.max - STAR_SIZE_MIN_MAX.min)
+            const qualityRange = (qualityMinMax.max - qualityMinMax.min)
+            // Linear conversion
+            const starSize = (((quality - qualityMinMax.min) * starSizesRange) / qualityRange) + STAR_SIZE_MIN_MAX
+            return(starSize)
+        }
+    }
+    */
+
+          
+
     const renderCardsListLoading = () =>{
         return(
             <View style={{height: "100%", width: "100%",  display: "flex", alignItems: "center", justifyContent: "center"}}>
@@ -261,80 +276,74 @@ export default function PlayView (props:any){
         setFetchingCurrentComputerCard(false)
     }
 
-
-    // onPress={()=>props.navigation.navigate('Card', card)
     const getDataTableRow = (card:Card, index:number) =>{
         if(userCards.includes(card.planeIcao24) == false){
             return(
             <DataTable.Row style={currentPlayerPlanesData[index].distance==undefined?styles.tableRowCardUnavailable:undefined} onPress={()=>{handleCardPick(index)}}>
-                <DataTable.Cell style={{width:50}}><Text style={currentPlayerPlanesData[index].distance==undefined?undefined:{color:"lime"}}>{currentPlayerPlanesData[index].distance==undefined?"No":"Yes"}</Text></DataTable.Cell>
-                <DataTable.Cell style={styles.dataTableCell}>{card.planeManufacturer}</DataTable.Cell>
-                <DataTable.Cell style={styles.dataTableCell}>{card.planeModel}</DataTable.Cell>
-                <DataTable.Cell style={styles.dataTableCell}>{card.planeOwner?card.planeOwner:card.planeOperator}</DataTable.Cell>
-                <DataTable.Cell style={styles.dataTableCell}>{card.cardQuality}</DataTable.Cell>
                 <DataTable.Cell style={styles.dataTableCell}>{currentPlayerPlanesData[index].velocity?parseInt(currentPlayerPlanesData[index].velocity):null} <Text>{currentPlayerPlanesData[index].velocity!=undefined?"m/s":null}</Text></DataTable.Cell>
                 <DataTable.Cell style={styles.dataTableCell}>{currentPlayerPlanesData[index].geometricAltitude?parseInt(currentPlayerPlanesData[index].geometricAltitude):null}<Text>{currentPlayerPlanesData[index].geometricAltitude!=undefined?" km":null}</Text></DataTable.Cell>
                 <DataTable.Cell style={styles.dataTableCell}>{currentPlayerPlanesData[index].distance?parseInt(currentPlayerPlanesData[index].distance):null}<Text>{currentPlayerPlanesData[index].distance!=undefined?" km":null}</Text></DataTable.Cell>
+                <DataTable.Cell style={styles.dataTableCell}>{card.cardQuality}</DataTable.Cell>
+                <DataTable.Cell style={styles.dataTableCell}><Text style={currentPlayerPlanesData[index].distance==undefined?undefined:{color:"lime"}}>{currentPlayerPlanesData[index].distance==undefined?"No":"Yes"}</Text></DataTable.Cell>
+                <DataTable.Cell style={styles.dataTableCell}>{card.planeManufacturer}</DataTable.Cell>
+                <DataTable.Cell style={styles.dataTableCell}>{card.planeModel}</DataTable.Cell>
+                <DataTable.Cell style={styles.dataTableCell}>{card.planeOwner?card.planeOwner:card.planeOperator}</DataTable.Cell>
             </DataTable.Row>
             )
         }
     }
 
-
     const renderComputerCard = () =>{
         if(currentComputerCard != undefined && currentComputerCardApiData.distance != undefined){
             return(
-                <NativeCard containerStyle={{backgroundColor: "#333C83", paddingHorizontal: 20}}
-                wrapperStyle={{backgroundColor: "#333C83"}}>
+                <NativeCard containerStyle={{backgroundColor: "#333C83", paddingHorizontal: 20, height:"80%"}} wrapperStyle={{backgroundColor: "#333C83"}}>
                     <View style={{display:"flex", flexDirection:"row"}}>
                     {currentComputerCard.planePicture != ""?  <Image source={{uri: currentComputerCard.planePicture}} style={{width: 200, height: 100, alignSelf: "center"}}/>: null}
                         <View>
-                            {currentComputerCard.cardQuality < 5? 
+                            {currentComputerCard.cardQuality > 10000? 
                                 <Text style={{textAlign: "center", paddingBottom: 10}}>
                                     {Array.from({ length: 5 }, (_, i) => 
-                                    <AnimatedIcon name="star" size={24} color="gold" style={gold}/>)}
+                                    <AnimatedIcon name="star" size={18} color="gold" style={gold}/>)}
                                 </Text>: null 
                             }
-                            {currentComputerCard.cardQuality < 100 && currentComputerCard.cardQuality > 5? 
+                            {currentComputerCard.cardQuality > 7000 && currentComputerCard.cardQuality <= 10000? 
                                 <Text style={{textAlign: "center", paddingBottom: 10}}>
                                     {Array.from({ length: 4 }, (_, i) => 
-                                    <AnimatedIcon name="star" size={24} color="orange" style={orange}/>)}
+                                    <AnimatedIcon name="star" size={18} color="orange" style={orange}/>)}
                                 </Text>: null 
                             }
-                            {currentComputerCard.cardQuality < 500 && currentComputerCard.cardQuality > 100? 
+                            {currentComputerCard.cardQuality > 4000 && currentComputerCard.cardQuality <= 7000? 
                                 <Text style={{textAlign: "center", paddingBottom: 10}}>
                                     {Array.from({ length: 3 }, (_, i) => 
-                                    <AnimatedIcon name="star" size={24} color="#c4c4c4" style={grey}/>)}
+                                    <AnimatedIcon name="star" size={18} color="#c4c4c4" style={grey}/>)}
                                 </Text>: null 
                             }
-                                {currentComputerCard.cardQuality < 1000 && currentComputerCard.cardQuality > 500? 
+                                {currentComputerCard.cardQuality > 2000 && currentComputerCard.cardQuality <= 4000? 
                                 <Text style={{textAlign: "center", paddingBottom: 10}}>
                                 {Array.from({ length: 2 }, (_, i) => 
-                                    <AntDesign name="star" size={24} color="#c41c10"/>)}
+                                    <AntDesign name="star" size={18} color="#c41c10"/>)}
                                 </Text>
                                 : null 
                             }
-                                {currentComputerCard.cardQuality > 1000? 
+                                {currentComputerCard.cardQuality <= 2000? 
                                 <Text style={{textAlign: "center", paddingBottom: 10}}>
-                                <AntDesign name="star" size={24} color="white" /></Text>: null
+                                <AntDesign name="star" size={18} color="white" /></Text>: null
                             }
                         </View>
                     </View>
                     <NativeCard.Divider/>
                     <View style={{display:"flex", flexDirection:"row"}}>
-                        <View style={{marginRight: 10}}>
-                            <Text style={utilStyles.cardTextSmall}>Manufacturer: {currentComputerCard.planeManufacturer}</Text>
-                            <Text style={utilStyles.cardTextSmall}>Model: {currentComputerCard.planeModel}</Text>
-                            <Text style={utilStyles.cardTextSmall}>Operator: {currentComputerCard.planeOperator}</Text>
-                            <Text style={utilStyles.cardTextSmall}>CallSign: {currentComputerCard.planeCallSign}</Text>
-                            <Text style={utilStyles.cardTextSmall}>Owner: {currentComputerCard.planeOwner}</Text>
+                        <View style={{marginRight: 10, maxWidth:"50%"}}>
+                            <Text style={utilStyles.cardTextSmall}>{currentComputerCard.planeManufacturer}</Text>
+                            <Text style={utilStyles.cardTextSmall}>{currentComputerCard.planeModel}</Text>
+                            <Text style={utilStyles.cardTextSmall}>{currentComputerCard.planeOwner}</Text>
+                            <Text style={utilStyles.cardTextSmall}>Card owner: {currentComputerCard.cardOwner}</Text>
                         </View>
-                        <View>
+                        <View style={{maxWidth:"50%"}}>
                             <Text style={utilStyles.cardTextSmall}>Card quality: {currentComputerCard.cardQuality}</Text>
                             <Text style={utilStyles.cardTextSmall}>Current altitude: {currentComputerCardApiData.geometricAltitude?Math.floor(currentComputerCardApiData.geometricAltitude):null} km</Text>
                             <Text style={utilStyles.cardTextSmall}>Current velocity: {currentComputerCardApiData.velocity?Math.floor(currentComputerCardApiData.velocity):null} m/s</Text>
                             <Text style={utilStyles.cardTextSmall}>Distance: {Math.floor(currentComputerCardApiData.distance)} km</Text>
-                            <Text style={utilStyles.cardTextSmall}>Card owner: {currentComputerCard.cardOwner}</Text>
                         </View>
                     </View>        
                 </NativeCard>
@@ -345,52 +354,49 @@ export default function PlayView (props:any){
     const renderPlayerCard = () =>{
         if(currentPlayerCard != undefined && currentPlayerCardApiData.distance != undefined){
             return(
-                <NativeCard containerStyle={{backgroundColor: "#333C83", paddingHorizontal: 20}}
-                wrapperStyle={{backgroundColor: "#333C83"}}>
+                <NativeCard containerStyle={{backgroundColor: "#333C83", paddingHorizontal: 20, height:"80%"}} wrapperStyle={{backgroundColor: "#333C83"}}>
                     <View style={{display:"flex", flexDirection:"row"}}>
                     {currentPlayerCard.planePicture != ""?  <Image source={{uri: currentPlayerCard.planePicture}} style={{width: 200, height: 100, alignSelf: "center"}}/>: null}
                         <View>
-                            {currentPlayerCard.cardQuality < 5? 
+                            {currentPlayerCard.cardQuality > 10000? 
                                 <Text style={{textAlign: "center", paddingBottom: 10}}>
                                     {Array.from({ length: 5 }, (_, i) => 
-                                    <AnimatedIcon name="star" size={24} color="gold" style={gold}/>)}
+                                    <AnimatedIcon name="star" size={18} color="gold" style={gold}/>)}
                                 </Text>: null 
                             }
-                            {currentPlayerCard.cardQuality < 100 && currentPlayerCard.cardQuality > 5? 
+                            {currentPlayerCard.cardQuality > 7000 && currentPlayerCard.cardQuality <= 10000?
                                 <Text style={{textAlign: "center", paddingBottom: 10}}>
                                     {Array.from({ length: 4 }, (_, i) => 
-                                    <AnimatedIcon name="star" size={24} color="orange" style={orange}/>)}
+                                    <AnimatedIcon name="star" size={18} color="orange" style={orange}/>)}
                                 </Text>: null 
                             }
-                            {currentPlayerCard.cardQuality < 500 && currentPlayerCard.cardQuality > 100? 
+                            {currentPlayerCard.cardQuality > 4000 && currentPlayerCard.cardQuality <= 7000? 
                                 <Text style={{textAlign: "center", paddingBottom: 10}}>
                                     {Array.from({ length: 3 }, (_, i) => 
-                                    <AnimatedIcon name="star" size={24} color="#c4c4c4" style={grey}/>)}
+                                    <AnimatedIcon name="star" size={18} color="#c4c4c4" style={grey}/>)}
                                 </Text>: null 
                             }
-                                {currentPlayerCard.cardQuality < 1000 && currentPlayerCard.cardQuality > 500? 
+                                {currentPlayerCard.cardQuality > 2000 && currentPlayerCard.cardQuality <= 4000? 
                                 <Text style={{textAlign: "center", paddingBottom: 10}}>
                                 {Array.from({ length: 2 }, (_, i) => 
-                                    <AntDesign name="star" size={24} color="#c41c10"/>)}
+                                    <AntDesign name="star" size={18} color="#c41c10"/>)}
                                 </Text>
                                 : null 
                             }
-                                {currentPlayerCard.cardQuality > 1000? 
+                                {currentPlayerCard.cardQuality <= 2000? 
                                 <Text style={{textAlign: "center", paddingBottom: 10}}>
-                                <AntDesign name="star" size={24} color="white" /></Text>: null
+                                <AntDesign name="star" size={18} color="white" /></Text>: null
                             }
                         </View>
                     </View>
                     <NativeCard.Divider/>
                     <View style={{display:"flex", flexDirection:"row"}}>
-                        <View style={{marginRight: 10}}>
+                        <View style={{marginRight: 10, maxWidth:"50%"}}>
                             <Text style={utilStyles.cardTextSmall}>Manufacturer: {currentPlayerCard.planeManufacturer}</Text>
                             <Text style={utilStyles.cardTextSmall}>Model: {currentPlayerCard.planeModel}</Text>
-                            <Text style={utilStyles.cardTextSmall}>Operator: {currentPlayerCard.planeOperator}</Text>
-                            <Text style={utilStyles.cardTextSmall}>CallSign: {currentPlayerCard.planeCallSign}</Text>
                             <Text style={utilStyles.cardTextSmall}>Owner: {currentPlayerCard.planeOwner}</Text>
                         </View>
-                        <View>
+                        <View style={{maxWidth:"50%"}}>
                             <Text style={utilStyles.cardTextSmall}>Card quality: {currentPlayerCard.cardQuality}</Text>
                             <Text style={utilStyles.cardTextSmall}>Current altitude: {currentPlayerCardApiData.geometricAltitude?Math.floor(currentPlayerCardApiData.geometricAltitude):null} km</Text>
                             <Text style={utilStyles.cardTextSmall}>Current velocity: {currentPlayerCardApiData.velocity?Math.floor(currentPlayerCardApiData.velocity):null} m/s</Text>
@@ -409,14 +415,14 @@ export default function PlayView (props:any){
                 <ScrollView>
                     <DataTable>
                         <DataTable.Header>
+                            <DataTable.Title>Velocity</DataTable.Title>
+                            <DataTable.Title>Altitude</DataTable.Title>
+                            <DataTable.Title>Distance</DataTable.Title>
+                            <DataTable.Title>Quality</DataTable.Title>
                             <DataTable.Title>In use</DataTable.Title>
                             <DataTable.Title>Manufacturer</DataTable.Title>
                             <DataTable.Title>Model</DataTable.Title>
                             <DataTable.Title>Operator</DataTable.Title>
-                            <DataTable.Title>Quality</DataTable.Title>
-                            <DataTable.Title>Velocity</DataTable.Title>
-                            <DataTable.Title>Altitude</DataTable.Title>
-                            <DataTable.Title>Distance</DataTable.Title>
                         </DataTable.Header>
                         {userCards.map((card, index)=>getDataTableRow(card, index))}
                     </DataTable>
@@ -425,7 +431,6 @@ export default function PlayView (props:any){
             </SafeAreaView>
         )
     }
-
 
     const renderSpinner = () =>{
         return(<Spinner size='giant'/>)
@@ -436,21 +441,25 @@ export default function PlayView (props:any){
             return(  
                 <View style={{height: "100%", width: "100%",  display: "flex", alignItems: "center", justifyContent: "center"}}>
                     {renderSpinner()}
-                    <Text style={{fontSize:20, marginTop: 20}}>Loading opponent's card...</Text>
+                    <Text style={{color:"black",fontSize:20, marginTop: 20}}>Loading opponent's card...</Text>
                     <Text style={{fontSize:20, marginTop: 20}}>🤖</Text>
                 </View>
             )
         } else{
             if(round<5){
                 return(
-                    <View style={{backgroundColor:"red", height: "100%", width: "100%", justifyContent:"center"}}>
-                        <Text style={{textAlign:"center", fontSize:30}}>Round {round}/5</Text>  
-                        <Text style={{textAlign:"center", fontSize:23}}>Select a card</Text>  
+                    <View style={{height: "100%", width: "100%"}}>
+                        <Text style={{fontSize: 18, zIndex: 10, left:50, top: 20, color:points.player>points.computer?"lawngreen":"black"}}>Player: {points.player}</Text>
+                        <Text style={{fontSize: 18, zIndex: 10, right: 50, top: 20, position: "absolute", color:points.computer>points.player?"lawngreen":"black"}}>🤖: {points.computer}</Text>
+                        <View style={{position: "absolute", backgroundColor:"deepskyblue", height: "100%", width: "100%", justifyContent:"center"}}>
+                            <Text style={{textAlign:"center", fontSize:30}}>Round {round}/5</Text>  
+                            <Text style={{textAlign:"center", fontSize:23}}>Select a card</Text>  
+                        </View>
                     </View>
                 )
             } else{
                 return(
-                    <View style={{backgroundColor:"red", height: "100%", width: "100%", justifyContent:"center"}}>
+                    <View style={{backgroundColor:"dodgerblue", height: "100%", width: "100%", justifyContent:"center"}}>
                         <Text style={{textAlign:"center", fontSize:30}}>Final round!</Text>  
                         <Text style={{textAlign:"center", fontSize:23}}>Select a card</Text>  
                     </View>
@@ -470,7 +479,6 @@ export default function PlayView (props:any){
             newPoints.computer = points.computer+1
             setPoints(newPoints)
         }
-        //setUsedCards(...usedCards, currentPlayerCard.PlaneIcao24)
         setRound((round)=>round+1)
         setCurrentPlayerCard(undefined)
         setCurrentComputerCard(undefined)
@@ -483,29 +491,73 @@ export default function PlayView (props:any){
 
     const renderScoreModifiersText = () =>{
         if(scoreModifier1!=undefined && scoreModifier2!=undefined){
+            let scoreModifierTextColors = [scoreModifier1, scoreModifier2]
+            for (let i = 0; i < scoreModifierTextColors.length; i++){
+                if(scoreModifierTextColors[i].type == "distance"){
+                    if(scoreModifierTextColors[i].multiplier.toFixed(1) > 1.0){
+                        scoreModifierTextColors[i] = "red"
+                    } else{
+                        scoreModifierTextColors[i] = "lime"
+                    }
+                } else{
+                    if(scoreModifierTextColors[i].multiplier.toFixed(1) >= 1.0){
+                        scoreModifierTextColors[i] = "lime"
+                    } else{
+                        scoreModifierTextColors[i] = "red"
+                    }
+                }
+            }
+            
             return(
-                <View>
-                    <Text>{scoreModifier1.type}: {scoreModifier1.multiplier.toFixed(2)}</Text>
-                    <Text>{scoreModifier2.type}: {scoreModifier2.multiplier.toFixed(2)}</Text>
+                <View style={{height:"100%", width:"50%", display: "flex", flexDirection:"row", marginLeft: 10}}>
+                    <View style={{height:"100%", display: "flex", alignItems: "center", justifyContent: "center"}}>
+                        <Text>Score modifiers:</Text>
+                    </View>
+                    <View style={{height:"100%", display: "flex", alignItems: "center", justifyContent: "center", marginLeft:10}}>
+                        <Text style={{fontSize:(14*scoreModifier1.multiplier.toFixed(1)), color:scoreModifierTextColors[0]}}>{scoreModifier1.type}: {scoreModifier1.multiplier.toFixed(1)}</Text>
+                        <Text style={{fontSize:(14*scoreModifier2.multiplier.toFixed(1)), color:scoreModifierTextColors[1]}}>{scoreModifier2.type}: {scoreModifier2.multiplier.toFixed(1)}</Text>
+                    </View>
                 </View>
             )
         }
     }
 
+    const renderComputerTotalPoints = () =>{
+        return(
+            <View style={{width: "100%", borderBottomWidth: 1, borderStyle:"solid", borderColor: currentComputerCardTotalPoints>currentPlayerCardTotalPoints?"lime":"red", display: "flex", alignItems: "center", justifyContent: "center"}}>
+                <View style={{display:"flex", flexDirection:"row"}}>
+                    <Text>🤖 total points: </Text>
+                    <Text style={{color:currentComputerCardTotalPoints>currentPlayerCardTotalPoints?"limegreen":"red"}}>{currentComputerCardTotalPoints}</Text>
+                </View>
+            </View>
+        )
+    }
+
+    const renderPlayerTotalPoints = () =>{
+        return(
+            <View style={{width: "100%", borderBottomWidth: 1, borderStyle:"solid", borderColor: currentComputerCardTotalPoints<currentPlayerCardTotalPoints?"lime":"red", display: "flex", alignItems: "center", justifyContent: "center"}}>
+                <View style={{display:"flex", flexDirection:"row"}}>
+                    <Text>Player total points: </Text>
+                    <Text style={{color:currentComputerCardTotalPoints<currentPlayerCardTotalPoints?"limegreen":"red"}}>{currentPlayerCardTotalPoints}</Text>
+                </View>
+            </View>
+        )
+    }
+
+
     return (
         <View style={{flex:1}}>
             <View style={styles.cardsArea}>
                 <View style={styles.computerArea}>
-                    {currentComputerCardTotalPoints!=undefined?<Text>Total points: {currentComputerCardTotalPoints}</Text>:null}
+                    {currentComputerCardTotalPoints!=undefined?renderComputerTotalPoints():null}
                     {currentComputerCard==undefined?roundInfoScreen():renderComputerCard()}
                 </View>
-                <View style={styles.infoArea}>
+                <View style={styles.modifiersArea}>
                     {renderScoreModifiersText()}
-                    <Text>Player points: {points.player}, CPU points: {points.computer}</Text>
                     {currentComputerCard!=undefined&&currentPlayerCard!=undefined?<KittenButton size="small" style={{width:100, height: "100%", position:"absolute",right:0}} status='success' accessoryLeft={PlayIcon} onPress={()=>{startNewRound()}}/>:null}
                 </View>
                 <View style={styles.playerArea}>
-                    {currentPlayerCardTotalPoints!=undefined?<Text>Total points: {currentPlayerCardTotalPoints}</Text>:null}
+                    {currentPlayerCardTotalPoints!=undefined?renderPlayerTotalPoints():null}
                     {!planesCurrentDataLoaded&&currentPlayerCard==undefined?renderCardsListLoading():dataTableVisible?renderDataTable():null}
                     {renderPlayerCard()}
                 </View>
