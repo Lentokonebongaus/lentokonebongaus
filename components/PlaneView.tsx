@@ -152,12 +152,22 @@ export default function PlaneView({route, navigation}){
         divider:{ 
             height: 10
         },
-        planeData:{
-            backgroundColor: "deepskyblue",
+        planeData:{  
             flex: 1,
+            flexDirection: "row"
         },
         planeDataText:{
             fontSize: 20,
+            color: "#dee1ff", 
+            paddingLeft: 10, 
+            paddingTop: 5, 
+        },
+        planeDataTextBold:{
+            fontSize: 20,
+            color: "white", 
+            paddingLeft: 10, 
+            paddingTop: 5, 
+            fontWeight: "bold"
         },
         background: {
             position: 'absolute',
@@ -177,10 +187,9 @@ export default function PlaneView({route, navigation}){
         imageLoading: {
             height: 150,
             width: "100%",
-            display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            backgroundColor: "deepskyblue"
+            backgroundColor: "darkblue"
         },
         grid: {
          
@@ -198,6 +207,24 @@ export default function PlaneView({route, navigation}){
         indicator: {
             justifyContent: 'center',
             alignItems: 'center',
+        }, 
+        bottomDivider: {
+            borderBottomColor: 'deepskyblue', 
+            borderBottomWidth: 2 
+        }, 
+        planeCollectableText:{
+            color: "chartreuse", 
+            fontSize: 20,
+            paddingLeft: 10, 
+            paddingTop: 5, 
+            fontWeight: "bold"
+        },
+        planeNotCollectableText:{
+            color: "crimson", 
+            fontSize: 20,
+            paddingLeft: 10, 
+            paddingTop: 5, 
+            fontWeight: "bold"
         }
 
     }
@@ -268,53 +295,69 @@ export default function PlaneView({route, navigation}){
 
     return(
         <View style={{flex: 1, flexDirection: "column"}}>
+
             <View style={styles.imageFrame}>
                 {planeImageUrl == "" && renderImageLoading()}
                 {planeImageUrl != "" && <Image source={{uri: planeImageUrl}} style={styles.planeImage}></Image>}
             </View>
+            
+            <LinearGradient colors={["darkblue", "deepskyblue"]}
+             style={{width: "100%", height: "74%"}}>
             <View style={styles.planeData}>
-                <Text style={styles.planeDataText}>icao24: {plane.icao24}</Text>
+                <Text style={styles.planeDataTextBold}>icao24:</Text>
+                <Text style={styles.planeDataText}>{plane.icao24}</Text>
             </View>
-            <LinearGradient colors={["rgba(0,0,200,10)", 'transparent']} style={styles.divider} />
+            <View style={styles.bottomDivider}/>
             <View style={styles.planeData}>
-                <Text style={styles.planeDataText}>Callsign: {plane.callsign}</Text>
+                <Text style={styles.planeDataTextBold}>Callsign: </Text>
+                <Text style={styles.planeDataText}>{plane.callsign}</Text>
             </View>
-            <LinearGradient colors={["rgba(0,0,200,10)", 'transparent']} style={styles.divider} />
+            <View style={styles.bottomDivider}/>
             <View style={styles.planeData}>
-                <Text style={styles.planeDataText}>Country: {plane.originCountry} {flagEmoji}</Text>
+                <Text style={styles.planeDataTextBold}>Country: </Text>
+                <Text style={styles.planeDataText}>{plane.originCountry} {flagEmoji}</Text>
             </View>
-            <LinearGradient colors={["rgba(0,0,200,10)", 'transparent']} style={styles.divider} />
+            <View style={styles.bottomDivider}/>
             <View style={styles.planeData}>
-                <Text style={styles.planeDataText}>Velocity: {plane.velocity} m/s</Text>
+                <Text style={styles.planeDataTextBold}>Velocity: </Text>
+                <Text style={styles.planeDataText}>{plane.velocity} m/s</Text>
             </View>
-            <LinearGradient colors={["rgba(0,0,200,10)", 'transparent']} style={styles.divider} />
+            <View style={styles.bottomDivider}/>
             <View style={styles.planeData}>
-                <Text style={styles.planeDataText}>Barometric altitude: {plane.baroAltitude} m</Text>
+                <Text style={styles.planeDataTextBold}>Barometric altitude: </Text>
+                <Text style={styles.planeDataText}>{plane.baroAltitude} m</Text>
             </View>
-            <LinearGradient colors={["rgba(0,0,200,10)", 'transparent']} style={styles.divider} />
+            <View style={styles.bottomDivider}/>
             <View style={styles.planeData}>
-                <Text style={styles.planeDataText}>Geometric altitude: {plane.geoAltitude} m</Text>
+                <Text style={styles.planeDataTextBold}>Geometric altitude: </Text>
+                <Text style={styles.planeDataText}>{plane.geoAltitude} m</Text>
             </View>
-            <LinearGradient colors={["rgba(0,0,200,10)", 'transparent']} style={styles.divider} />
+            <View style={styles.bottomDivider}/>
             <View style={styles.planeData}>
-                <Text style={styles.planeDataText}>Plane distance: {plane.distance} km</Text>
+                <Text style={styles.planeDataTextBold}>Plane distance:</Text>
+                <Text style={plane.distance<=70?styles.planeCollectableText:styles.planeNotCollectableText}> {plane.distance} km</Text>
             </View>
-            <LinearGradient colors={["rgba(0,0,200,10)", 'transparent']} style={styles.divider} />
+            <View style={styles.bottomDivider}/>
             <View style={styles.planeData}>
-                <Text style={styles.planeDataText}>Owner: {planeDetailsState.owner?planeDetailsState.owner:renderDataLoading()}</Text>
+                <Text style={styles.planeDataTextBold}>Owner: </Text>
+                <Text style={styles.planeDataText}>{planeDetailsState.owner?planeDetailsState.owner:renderDataLoading()}</Text>
             </View>
-            <LinearGradient colors={["rgba(0,0,200,10)", 'transparent']} style={styles.divider} />
+            <View style={styles.bottomDivider}/>
             <View style={styles.planeData}>
-                <Text style={styles.planeDataText}>Operator: {planeDetailsState.operator?planeDetailsState.operator:renderDataLoading()}</Text>
+                <Text style={styles.planeDataTextBold}>Operator: </Text>
+                <Text style={styles.planeDataText}>{planeDetailsState.operator?planeDetailsState.operator:renderDataLoading()}</Text>
             </View>
-            <LinearGradient colors={["rgba(0,0,200,10)", 'transparent']} style={styles.divider} />
+            <View style={styles.bottomDivider}/>
             <View style={styles.planeData}>
-                <Text style={styles.planeDataText}>Manufacturer: {planeDetailsState.manufacturername?planeDetailsState.manufacturername:renderDataLoading()}</Text>
+                <Text style={styles.planeDataTextBold}>Manufacturer: </Text>
+                <Text style={styles.planeDataText}>{planeDetailsState.manufacturername?planeDetailsState.manufacturername:renderDataLoading()}</Text>
             </View>
-            <LinearGradient colors={["rgba(0,0,200,10)", 'transparent']} style={styles.divider} />
+            <View style={styles.bottomDivider}/>
             <View style={styles.planeData}>
-                <Text style={styles.planeDataText}>Model: {planeDetailsState.model?planeDetailsState.model:renderDataLoading()}</Text>
+                <Text style={styles.planeDataTextBold}>Model: </Text>
+                <Text style={styles.planeDataText}>{planeDetailsState.model?planeDetailsState.model:renderDataLoading()}</Text>
             </View>
+            </LinearGradient>
             {renderSaveCardButton()}
         </View>
     )
