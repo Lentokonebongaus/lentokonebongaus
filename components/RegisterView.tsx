@@ -9,6 +9,7 @@ import { useContext } from 'react';
 import { LoggedUsernameContext } from '../util/LoggedUsernameProvider';
 import { Icon, Button, Input} from 'react-native-elements';
 import TouchableScale from 'react-native-touchable-scale';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 // Siirsin noi Firebase-jutut util kansioon. Täällä tarvii vielä ainakin tota Firebase-kirjaston onValue-funktiota useEffectin yhteydessä.
 
 
@@ -101,6 +102,7 @@ export default function RegisterView(props: Props){
  
      return(
          <View style={styles.container}>
+             <KeyboardAwareScrollView>
              <ImageBackground source={backgroundImg} resizeMode="cover" style={{
              width: width, 
              height: height}}>
@@ -202,6 +204,7 @@ export default function RegisterView(props: Props){
             />
 
         </ImageBackground>
+        </KeyboardAwareScrollView>
         </View>
     )
 }
