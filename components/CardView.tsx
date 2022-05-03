@@ -78,7 +78,6 @@ export default function CardView(Props: Props){
   
     let gold = glow(10, 40, "gold"); 
     let orange = glow(10, 30, "orange"); 
-    // weird flicker, no problem with 5 start tho?
     let grey = glow(10, 15, "#c4c4c4");
 
      let item = Props.route.params;

@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext} from 'react';
-import { Alert, Button, StyleSheet, Text, TextInput, View, FlatList, Image } from 'react-native';
+import { Alert, Button, StyleSheet, Text, TextInput, View, FlatList, Image, Dimensions} from 'react-native';
 // import { SvgUri } from "react-native-svg";
 import Plane from '../util/Plane';
 import Card from '../util/Card';
@@ -302,6 +302,9 @@ export default function PlaneView({route, navigation}){
 
     //-----------------------------------------------------------------------------
 
+    let height = Dimensions.get("window").height;
+    let imgHeight = (height * 0.24660) * 2.74; 
+
     return(
         <View style={{flex: 1, flexDirection: "column"}}>
 
@@ -311,7 +314,7 @@ export default function PlaneView({route, navigation}){
             </View>
             
             <LinearGradient colors={["darkblue", "deepskyblue"]}
-             style={{width: "100%", height: "74%"}}>
+             style={{width: "100%", height: imgHeight}}>
             <View style={styles.planeData}>
                 <Text style={styles.planeDataTextBold}>icao24:</Text>
                 <Text style={styles.planeDataText}>{plane.icao24}</Text>
