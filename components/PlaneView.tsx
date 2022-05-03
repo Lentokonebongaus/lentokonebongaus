@@ -224,41 +224,44 @@ export default function PlaneView({route, navigation}){
     }
 
     const renderSaveCardButton = () =>{
-        if(icao24InUserCards){
-            return(
-                <KittenButton disabled={true}>
-                    PLANE ALREADY ADDED
-                </KittenButton>
-            )
-        }
-        else if(planeDataLoading){
-            return(
-                <KittenButton style={styles.button} appearance='outline' accessoryLeft={LoadingIndicator}>
-                    LOADING
-                </KittenButton>
-            )
-        } 
-        else if(!planeDataLoading && !planeAdded){
-            if(planeDetailsState.manufacturername != "NO DATA" && planeDetailsState.model != "NO DATA"){
+        if (loggedUsername != "Not logged in"){
+
+            if(icao24InUserCards){
                 return(
-                    <KittenButton status='success' onPress={()=>saveCard()}>
-                        ADD PLANE
-                    </KittenButton>
-                )
-            } else{
-                return(
-                    <KittenButton disabled={true} accessoryRight={ForbiddenIcon}>
-                        CAN'T ADD PLANE
+                    <KittenButton disabled={true}>
+                        PLANE ALREADY ADDED
                     </KittenButton>
                 )
             }
-        }
-        else if (!planeDataLoading && planeAdded){
-            return(
-                <KittenButton status='success' accessoryRight={StarIcon}>
-                    PLANE ADDED
-                </KittenButton>
-            )
+            else if(planeDataLoading){
+                return(
+                    <KittenButton style={styles.button} appearance='outline' accessoryLeft={LoadingIndicator}>
+                        LOADING
+                    </KittenButton>
+                )
+            } 
+            else if(!planeDataLoading && !planeAdded){
+                if(planeDetailsState.manufacturername != "NO DATA" && planeDetailsState.model != "NO DATA"){
+                    return(
+                        <KittenButton status='success' onPress={()=>saveCard()}>
+                            ADD PLANE
+                        </KittenButton>
+                    )
+                } else{
+                    return(
+                        <KittenButton disabled={true} accessoryRight={ForbiddenIcon}>
+                            CAN'T ADD PLANE
+                        </KittenButton>
+                    )
+                }
+            }
+            else if (!planeDataLoading && planeAdded){
+                return(
+                    <KittenButton status='success' accessoryRight={StarIcon}>
+                        PLANE ADDED
+                    </KittenButton>
+                )
+            }
         }
     }
 
