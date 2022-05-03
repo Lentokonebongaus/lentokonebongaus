@@ -19,6 +19,7 @@ type Props = {
 export default function Cards(Props: Props){
     const { userCards, setUserCards } = useContext(UserCardsContext);
     const { loggedUsername, setLoggedUsername } = useContext(LoggedUsernameContext)
+    const [flip, set] = useState(false)
 
     useEffect(()=>{
       fetchCards();
@@ -52,8 +53,6 @@ export default function Cards(Props: Props){
     // glow animaatio
     function glow(start: number, end: number, color: string){
 
-    const [flip, set] = useState(false)
-
     const { textShadowColor, shadowOpacity, textShadowRadius, textShadowOffset } = useSpring({
       from: {
         textShadowColor: color,
@@ -81,7 +80,6 @@ export default function Cards(Props: Props){
 
    let gold = glow(10, 40, "gold"); 
    let orange = glow(10, 30, "orange"); 
-   // weird flicker, no problem with 5 start tho?
    let grey = glow(10, 15, "#c4c4c4");
    
    //image width height scaling
