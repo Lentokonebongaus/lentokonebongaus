@@ -1,4 +1,4 @@
-import { Text, View, FlatList, Image, Dimensions} from "react-native";
+import { Text, View, FlatList, Image, TouchableOpacity, Animated, Dimensions} from "react-native";
 import {useEffect, useRef, useState} from "react";
 import testCard from '../testCard';
 import { styles } from '../util/styles';
@@ -68,21 +68,20 @@ export default function CardView(Props: Props){
       })
       return { textShadowColor, shadowOpacity, textShadowRadius, textShadowOffset };
      }
+
+    //image width height scaling
+    //og width 300 height 200
+    let width = Dimensions.get('window').width; 
+    let height = Dimensions.get("window").height;
+    let imgWidth = width * 0.72992; 
+    let imgHeight = height * 0.24660;
   
-     let gold = glow(10, 40, "gold"); 
-     let orange = glow(10, 30, "orange"); 
-     // weird flicker, no problem with 5 start tho?
-     let grey = glow(10, 15, "#c4c4c4");
+    let gold = glow(10, 40, "gold"); 
+    let orange = glow(10, 30, "orange"); 
+    // weird flicker, no problem with 5 start tho?
+    let grey = glow(10, 15, "#c4c4c4");
 
      let item = Props.route.params;
-
-     //image width height scaling
-   //og width 300 height 200
-  let width = Dimensions.get('window').width; 
-  let height = Dimensions.get("window").height;
-  let imgWidth = width * 0.72992; 
-  let imgHeight = height * 0.24660;
-    
 
     return (
         <View style={{padding: 20}}>
@@ -94,35 +93,35 @@ export default function CardView(Props: Props){
 
                 <Card.Title style={styles.cardTextHeader}>{item.planeModel}</Card.Title>
 
-                {item.cardQuality < 5? 
+                {item.cardQuality  > 10000? 
                 <Text style={{textAlign: "center", paddingBottom: 10}}>
-                     {Array.from({ length: 5 }, (_, i) => 
+                    {Array.from({ length: 5 }, (_, i) => 
                     <AnimatedIcon name="star" size={24} color="gold" style={gold}/>)}
                 </Text>: null }
-                {item.cardQuality < 100 && item.cardQuality > 5? 
+                {item.cardQuality > 7000 && item.cardQuality <= 10000? 
                 <Text style={{textAlign: "center", paddingBottom: 10}}>
                      {Array.from({ length: 4 }, (_, i) => 
                     <AnimatedIcon name="star" size={24} color="orange" style={orange}/>)}
                 </Text>: null }
-                {item.cardQuality < 500 && item.cardQuality > 100? 
+                {item.cardQuality > 4000 && item.cardQuality <= 7000? 
                 <Text style={{textAlign: "center", paddingBottom: 10}}>
                     {Array.from({ length: 3 }, (_, i) => 
                     <AnimatedIcon name="star" size={24} color="#c4c4c4" style={grey}/>)}
                 </Text>: null }
-                {item.cardQuality < 1000 && item.cardQuality > 500? 
+                {item.cardQuality > 2000 && item.cardQuality <= 4000? 
                 <Text style={{textAlign: "center", paddingBottom: 10}}>
                  {Array.from({ length: 2 }, (_, i) => 
                     <AntDesign name="star" size={24} color="#c41c10"/>)}
                 </Text>
                 : null }
-                {item.cardQuality > 1000? 
+                {item.cardQuality <= 2000? 
                 <Text style={{textAlign: "center", paddingBottom: 10}}>
                 <AntDesign name="star" size={24} color="white" /></Text>: null }
                 
                 <Card.Divider/>
 
                 {item.planePicture != ""?  <Image
-                source={{uri: item.planePicture}} style={{width: imgWidth, height: imgHeight, alignSelf: "center"}}/>: null }
+                source={{uri: item.planePicture}} style={{width: 300, height: 200, alignSelf: "center"}}/>: null }
 
                 <Card.Divider style={{padding: 10}}/>
                 <Text style={styles.cardText}>Manufacturer: {item.planeManufacturer}</Text>
