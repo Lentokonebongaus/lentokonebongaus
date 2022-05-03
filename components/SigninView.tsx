@@ -12,6 +12,7 @@ import { Icon, Button, Input} from 'react-native-elements';
 import TouchableScale from 'react-native-touchable-scale';
 import { PlanesContext } from "../util/PlanesProvider"
 import { UserCardsContext, updateUserCardsContext } from "../util/UserCardsProvider"
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 type Props = {
     navigation: any
@@ -54,6 +55,7 @@ export default function SigninView(props: Props){
 
     return(
         <View style={styles.container}>
+          <KeyboardAwareScrollView>
             <ImageBackground source={backgroundImg} resizeMode="cover" style={{
             width: width, 
             height: height}}>
@@ -184,6 +186,7 @@ export default function SigninView(props: Props){
             />
 
             </ImageBackground>
+            </KeyboardAwareScrollView>
         </View>
     )
 }
