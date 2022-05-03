@@ -90,7 +90,9 @@ export default function Kotinakyma(Props: Props) {
         <Text style={{fontWeight: "bold", fontSize: 50, paddingBottom: 30, color: "white", textAlign: "center"}}>
           Welcome</Text>
           <Text style={{fontWeight: "bold", fontSize: 28, color: "white", textAlign: "center"}}>
-          {loggedUsername}</Text>
+          {(loggedUsername!="Not logged in")?
+          loggedUsername:
+          'Please log in'}</Text>
         </View>
 
         <View style={{flex: 2, justifyContent: "space-between", padding: 30}}>
@@ -127,70 +129,75 @@ export default function Kotinakyma(Props: Props) {
               iconContainerStyle={{ marginLeft: 10, marginRight: -10 }}
               onPress={() => loggedUsername=="Not logged in"?Props.navigation.navigate('Log In'):handleSignOut()}
             />
-
+              { 
+                (loggedUsername!="Not logged in")?
+                <Button
+                TouchableComponent={TouchableScale}
+                friction={90} 
+                tension={100}
+                activeScale={0.95}
+                title="CARDS"
+                titleStyle={{ fontWeight: 'bold', fontSize: 14}}
+                buttonStyle={{
+                  borderWidth: 0,
+                  borderColor: 'transparent',
+                  borderRadius: 0,
+                  backgroundColor: "rgba(20, 39, 155, 0.8)"
+                  
+                }}
+                containerStyle={{
+                  width: 200,
+                  marginHorizontal: 80,
+                  marginVertical: 10,
+                }}
+                icon={{
+                  name: 'plane',
+                  type: 'font-awesome',
+                  size: 15,
+                  color: 'white',
+                }}
+                iconRight
+                iconContainerStyle={{ marginLeft: 10, marginRight: -10 }}
+                onPress={() => Props.navigation.navigate('Cards')}
+                /> : null
+              }
+            {
+              (loggedUsername!="Not logged in")?
               <Button
-               TouchableComponent={TouchableScale}
-               friction={90} 
-               tension={100}
-               activeScale={0.95}
-              title="CARDS"
-              titleStyle={{ fontWeight: 'bold', fontSize: 14}}
-              buttonStyle={{
-                borderWidth: 0,
-                borderColor: 'transparent',
-                borderRadius: 0,
-                backgroundColor: "rgba(20, 39, 155, 0.8)"
-                
-              }}
-              containerStyle={{
-                width: 200,
-                marginHorizontal: 80,
-                marginVertical: 10,
-              }}
-              icon={{
-                name: 'plane',
-                type: 'font-awesome',
-                size: 15,
-                color: 'white',
-              }}
-              iconRight
-              iconContainerStyle={{ marginLeft: 10, marginRight: -10 }}
-              onPress={() => Props.navigation.navigate('Cards')}
-            />
+              TouchableComponent={TouchableScale}
+              friction={90} 
+              tension={100}
+              activeScale={0.95}
+               title="PLAY"
+               titleStyle={{ fontWeight: 'bold', fontSize: 14}}
+               buttonStyle={{
+                 borderWidth: 0,
+                 borderColor: 'transparent',
+                 borderRadius: 0,
+                 backgroundColor: "rgba(20, 39, 155, 0.8)"
+                 
+                }}
+                containerStyle={{
+                  width: 200,
+                  marginHorizontal: 80,
+                  marginVertical: 10,
+                }}
+                icon={{
+                  name: 'gamepad',
+                  type: 'font-awesome',
+                  size: 15,
+                  color: 'white',
+                }}
+                iconRight
+                iconContainerStyle={{ marginLeft: 10, marginRight: -10 }}
+                onPress={() => Props.navigation.navigate('Play')}
+                />
+                :null
 
-            <Button
-               TouchableComponent={TouchableScale}
-               friction={90} 
-               tension={100}
-               activeScale={0.95}
-              title="PLAY"
-              titleStyle={{ fontWeight: 'bold', fontSize: 14}}
-              buttonStyle={{
-                borderWidth: 0,
-                borderColor: 'transparent',
-                borderRadius: 0,
-                backgroundColor: "rgba(20, 39, 155, 0.8)"
-                
-              }}
-              containerStyle={{
-                width: 200,
-                marginHorizontal: 80,
-                marginVertical: 10,
-              }}
-              icon={{
-                name: 'gamepad',
-                type: 'font-awesome',
-                size: 15,
-                color: 'white',
-              }}
-              iconRight
-              iconContainerStyle={{ marginLeft: 10, marginRight: -10 }}
-              onPress={() => Props.navigation.navigate('Play')}
-            />
-
+            }
              <Button
-               TouchableComponent={TouchableScale}
-               friction={90} 
+             TouchableComponent={TouchableScale}
+             friction={90} 
                tension={100}
                activeScale={0.95}
               title="SETTINGS"
