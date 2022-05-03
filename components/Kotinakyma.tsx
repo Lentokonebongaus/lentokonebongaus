@@ -196,36 +196,7 @@ export default function Kotinakyma(Props: Props) {
                 :null
 
             }
-             <Button
-             TouchableComponent={TouchableScale}
-             friction={90} 
-               tension={100}
-               activeScale={0.95}
-              title="SETTINGS"
-              titleStyle={{ fontWeight: 'bold', fontSize: 14}}
-              buttonStyle={{
-                borderWidth: 0,
-                borderColor: 'transparent',
-                borderRadius: 0,
-                backgroundColor: "rgba(20, 39, 155, 0.8)"
-                
-              }}
-              containerStyle={{
-                width: 200,
-                marginHorizontal: 80,
-                marginVertical: 10,
-              }}
-              icon={{
-                name: 'wrench',
-                type: 'font-awesome',
-                size: 15,
-                color: 'white',
-              }}
-              iconRight
-              iconContainerStyle={{ marginLeft: 10, marginRight: -10 }}
-              onPress={() => Props.navigation.navigate('Settings')}
-            />
-
+          
             <Button
                TouchableComponent={TouchableScale}
                friction={90} 
