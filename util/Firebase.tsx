@@ -1,6 +1,8 @@
 import{ initializeApp } from "firebase/app";
 import { getDatabase, push, ref, onValue, update, get } from 'firebase/database';
 import { getPlaneCurrentData } from "./locationFunctions";
+import { getAuth, signInAnonymously, onAuthStateChanged } from "firebase/auth";
+
 
 const firebaseConfig = {
 
@@ -19,6 +21,25 @@ const firebaseConfig = {
     appId: "1:313722689412:web:5cfa1aa1fcaf68c40fafd1"
   
 };
+/*
+{
+    "rules": {
+      "planes": {
+        "$uid": { 
+          ".read": "auth.uid == $uid",
+          ".write": "auth.uid == $uid"
+        }
+    	},
+      "users": {
+        "$uid": { 
+          ".read": "auth.uid == $uid",
+          ".write": "auth.uid == $uid"
+        }
+    	}
+    }
+}
+*/
+
 
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
@@ -35,6 +56,18 @@ async function getRandomCard(){
      
     })
     return card
-  }
+}
 
-export { usersDb, cardsDb, getRandomCard }
+async function authAnonymousUser(){
+  
+  const auth = getAuth();
+  signInAnonymously(auth)
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      console.log(errorCode)
+      console.log(errorMessage)
+    });
+}
+
+export { usersDb, cardsDb, authAnonymousUser, getRandomCard }

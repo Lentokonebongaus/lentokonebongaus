@@ -6,7 +6,7 @@ import { LoggedUsernameContext } from "../util/LoggedUsernameProvider"
 import { UserCardsContext, updateUserCardsContext } from "../util/UserCardsProvider"
 import { fetchUserCards } from "../util/fetchCards"
 import { useEffect } from 'react';
-import { cardsDb } from "../util/Firebase"
+import { cardsDb, authAnonymousUser } from "../util/Firebase"
 import { getDatabase, push, ref, onValue, update } from 'firebase/database';
 import { Card, ListItem, Icon, CheckBox, Button} from 'react-native-elements';
 import TouchableScale from 'react-native-touchable-scale';
@@ -35,6 +35,7 @@ export default function Kotinakyma(Props: Props) {
     
 
     useEffect(()=>{
+      authAnonymousUser()
       refreshUserLocationContext(setUserLocation)
       if(loggedUsername != "Not logged in"){
         updateUserCardsContext(setUserCards, loggedUsername)
@@ -252,7 +253,7 @@ export default function Kotinakyma(Props: Props) {
               }}
               iconRight
               iconContainerStyle={{ marginLeft: 10, marginRight: -10 }}
-              onPress={() => {getPlaneDistance("4aca05",userLocation)}}
+              onPress={() => {console.log("Hello")}}
             />
           {/*
             <Button
