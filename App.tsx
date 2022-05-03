@@ -12,7 +12,6 @@ import HomeScreenTabs from './components/HomeScreenTabs';
 import SigninView from './components/SigninView';
 import Cards from './components/Cards';
 import PlayView from './components/PlayView';
-import Settings from './components/Settings';
 import planesData from './util/planesData';
 import PlaneView from './components/PlaneView';
 import CardView from './components/CardView';
@@ -53,7 +52,6 @@ export default function App() {
                   <Stack.Screen name="Register" component={RegisterView}/>
                   <Stack.Screen name="CardsFull" component={Cards}/>
                   <Stack.Screen name="Play" component={PlayView}/>
-                  <Stack.Screen name="Settings" component={Settings}/>
                   <Stack.Screen name="Plane" component={PlaneView}/>
                   <Stack.Screen name="Card" component={CardView}/>
                   <Stack.Screen name="Cards" component={CardscreenTabs}/>
