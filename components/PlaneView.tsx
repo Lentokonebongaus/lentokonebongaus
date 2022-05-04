@@ -11,6 +11,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Wave, Grid } from 'react-native-animated-spinkit';
 import {fetchPlaneDetails, fetchPlaneImageUrl} from '../util/planeDetails';
 // import getFlagPath from '../util/getFlagPath';
+import questionPng from '../assets/question.png'
 import getFlagEmoji from '../util/getFlagEmoji';
 import { Button as KittenButton, Layout, Text as KittenText, Spinner, Icon } from '@ui-kitten/components';
 
@@ -28,6 +29,7 @@ export default function PlaneView({route, navigation}){
     const [planeDataLoading, setPlaneDataLoading] = useState(true)
     const [planeAdded, setPlaneAdded] = useState(false)
     const [icao24InUserCards, setIcao24InUserCards] = useState(false)
+    const MAX_COLLECTABLE_DISTANCE = 70
 
     useEffect(()=>{
         setPlaneBackendDetails()
@@ -35,6 +37,8 @@ export default function PlaneView({route, navigation}){
         // setFlagPath(getFlagPath(plane.originCountry))
         setFlagEmoji(getFlagEmoji(plane.originCountry))
         icao24NotInUsersCards(plane.icao24)
+        console.log("PLAAAAAAANEE")
+        console.log(plane)
     },[])
 
 
@@ -48,9 +52,7 @@ export default function PlaneView({route, navigation}){
             if(value==undefined){
                 setPlaneDetailsState(planeDetailsState=>({...planeDetailsState, key:"NO DATA"}))
             } 
-        }
-
-        
+        }        
     },[planeDetailsState])
 
     async function fetchAndSetPlaneImg(){
@@ -62,7 +64,10 @@ export default function PlaneView({route, navigation}){
                 planeDetailsState.model=="Unknown"?"":planeDetailsState.model,
                 planeDetailsState.owner
             )
-        } else{
+        } 
+        else if(planeDetailsState.owner == "Unknown" && planeDetailsState.model == "Unknown" && planeDetailsState.manufacturername == "Unknown"){
+            imgUrl = await fetchPlaneImageUrl("Unknown", "Question", "")
+        }else{
             imgUrl = await fetchPlaneImageUrl(
                 planeDetailsState.manufacturername=="Unknown"?"":planeDetailsState.manufacturername, 
                 planeDetailsState.model=="Unknown"?"":planeDetailsState.model,
@@ -77,7 +82,7 @@ export default function PlaneView({route, navigation}){
             console.error("Error fetching plane details from backend. Backend most likely offline or in a different address.");
         });
 
-        if(planeDetails.ok != false){
+        if(planeDetails != false){
             setPlaneDetailsState(planeDetails)
             plane.setBackendDetails(planeDetails)
         } else{
@@ -145,15 +150,15 @@ export default function PlaneView({route, navigation}){
     const StarIcon = (props) => (
         <Icon {...props} name='star'/>
     );
-
     const ForbiddenIcon = (props) => (
         <Icon {...props} name='slash-outline'/>
+    );
+    const OutsideRangeIcon = (props) =>(
+        <Icon {...props} name='radio-outline' />
     );
 
     //---------------------------------------------------------------
 
-
-    // TODO: move styles to styles.tsx. UI could still be better, so keeping styles here for the sake of modifibiality.
     const styles = {
         divider:{ 
             height: 10
@@ -201,7 +206,7 @@ export default function PlaneView({route, navigation}){
          
         },
         planeImage: {
-            height: "100%",
+            height: 150,
             width: "100%",
         },
         flag: {
@@ -234,7 +239,6 @@ export default function PlaneView({route, navigation}){
         }
 
     }
-
     
     //---------------------- Rendering functions --------------------------
 
@@ -250,6 +254,18 @@ export default function PlaneView({route, navigation}){
         )
     }
 
+    const renderPlaneImage = () =>{
+        if(planeDetailsState.owner!="NO DATA" || (plane.owner=="Unknown" && plane.manufacturer == "Unknown")){
+            return(
+                <Image source={{uri:planeImageUrl}} style={styles.planeImage}></Image>
+            )
+        } else{
+            return(
+                <Image source={questionPng} style={styles.planeImage}></Image>
+            )
+        }
+    }
+
     const renderSaveCardButton = () =>{
         if (loggedUsername != "Not logged in"){
 
@@ -260,13 +276,27 @@ export default function PlaneView({route, navigation}){
                     </KittenButton>
                 )
             }
+            else if (plane.distance > MAX_COLLECTABLE_DISTANCE){
+                return(
+                    <KittenButton disabled={true} accessoryRight={OutsideRangeIcon}>
+                        OUTSIDE RANGE
+                    </KittenButton>
+                )
+            }
+            else if(plane.onGround == true){
+                return(
+                    <KittenButton disabled={true} accessoryRight={ForbiddenIcon}>
+                            CAN'T ADD LANDED PLANES
+                    </KittenButton>
+                )
+            }
             else if(planeDataLoading){
                 return(
                     <KittenButton style={styles.button} appearance='outline' accessoryLeft={LoadingIndicator}>
                         LOADING
                     </KittenButton>
                 )
-            } 
+            }
             else if(!planeDataLoading && !planeAdded){
                 if(planeDetailsState.manufacturername != "NO DATA" && planeDetailsState.model != "NO DATA"){
                     return(
@@ -289,6 +319,12 @@ export default function PlaneView({route, navigation}){
                     </KittenButton>
                 )
             }
+        } else{
+            return(
+                <KittenButton disabled={true} accessoryRight={ForbiddenIcon}>
+                    LOG IN TO ADD PLANES
+                </KittenButton>
+            )
         }
     }
 
@@ -303,18 +339,18 @@ export default function PlaneView({route, navigation}){
     //-----------------------------------------------------------------------------
 
     let height = Dimensions.get("window").height;
-    let imgHeight = (height * 0.24660) * 2.74; 
+    let imgHeight = (height * 0.24660) * 2.30; 
 
     return(
-        <View style={{flex: 1, flexDirection: "column"}}>
+        <View style={{flex: 1, flexDirection: "column", height: "100%"}}>
 
             <View style={styles.imageFrame}>
                 {planeImageUrl == "" && renderImageLoading()}
-                {planeImageUrl != "" && <Image source={{uri: planeImageUrl}} style={styles.planeImage}></Image>}
+                {planeImageUrl != "" && renderPlaneImage()}
             </View>
             
             <LinearGradient colors={["darkblue", "deepskyblue"]}
-             style={{width: "100%", height: imgHeight}}>
+             style={{width: "100%", flex:1}}>
             <View style={styles.planeData}>
                 <Text style={styles.planeDataTextBold}>icao24:</Text>
                 <Text style={styles.planeDataText}>{plane.icao24}</Text>
@@ -337,17 +373,17 @@ export default function PlaneView({route, navigation}){
             <View style={styles.bottomDivider}/>
             <View style={styles.planeData}>
                 <Text style={styles.planeDataTextBold}>Barometric altitude: </Text>
-                <Text style={styles.planeDataText}>{plane.baroAltitude} m</Text>
+                <Text style={styles.planeDataText}>{!plane.onGround?plane.baroAltitude+" m":"landed"}</Text>
             </View>
             <View style={styles.bottomDivider}/>
             <View style={styles.planeData}>
                 <Text style={styles.planeDataTextBold}>Geometric altitude: </Text>
-                <Text style={styles.planeDataText}>{plane.geoAltitude} m</Text>
+                <Text style={styles.planeDataText}>{!plane.onGround?plane.geoAltitude+" m":"landed"}</Text>
             </View>
             <View style={styles.bottomDivider}/>
             <View style={styles.planeData}>
                 <Text style={styles.planeDataTextBold}>Plane distance:</Text>
-                <Text style={plane.distance<=70?styles.planeCollectableText:styles.planeNotCollectableText}> {plane.distance} km</Text>
+                <Text style={plane.distance<=MAX_COLLECTABLE_DISTANCE?styles.planeCollectableText:styles.planeNotCollectableText}> {plane.distance} km</Text>
             </View>
             <View style={styles.bottomDivider}/>
             <View style={styles.planeData}>
@@ -369,8 +405,8 @@ export default function PlaneView({route, navigation}){
                 <Text style={styles.planeDataTextBold}>Model: </Text>
                 <Text style={styles.planeDataText}>{planeDetailsState.model?planeDetailsState.model:renderDataLoading()}</Text>
             </View>
-            </LinearGradient>
             {renderSaveCardButton()}
+            </LinearGradient>
         </View>
     )
 }
