@@ -19,8 +19,6 @@ async function refreshUserLocationContext(setUserLocation){
         console.log("Could not refresh user location with refreshUserLocationContext().")
     }
     const userGpsLocation = await Location.getCurrentPositionAsync({});
-    console.log("Setting new location with refreshUserLocationContext():")
-    console.log(userGpsLocation)
     setUserLocation({longitude:userGpsLocation.coords.longitude, latitude:userGpsLocation.coords.latitude});
 }
 
