@@ -37,8 +37,6 @@ export default function PlaneView({route, navigation}){
         // setFlagPath(getFlagPath(plane.originCountry))
         setFlagEmoji(getFlagEmoji(plane.originCountry))
         icao24NotInUsersCards(plane.icao24)
-        console.log("PLAAAAAAANEE")
-        console.log(plane)
     },[])
 
 
