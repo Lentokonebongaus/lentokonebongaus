@@ -6,7 +6,6 @@ import distanceBetween from "./distanceBetween";
 export async function refreshPlanes(location: any, setPlanes: Function){
     const planesData = await fetchplanesData(location)
     const planesTmp = []
-    console.log("Refreshing planes...")
     for(let i = 0; i < planesData.length; i++){
         let newPlane = new Plane(planesData[i], location)
         planesTmp.push(newPlane)

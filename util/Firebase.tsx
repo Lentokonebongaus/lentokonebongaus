@@ -2,11 +2,12 @@ import{ initializeApp } from "firebase/app";
 import { getDatabase, push, ref, onValue, update, get } from 'firebase/database';
 import { getPlaneCurrentData } from "./locationFunctions";
 import { getAuth, signInAnonymously, onAuthStateChanged } from "firebase/auth";
+import { SUPER_SECRET_FIREBASE_KEY } from "./keys";
 
 
 const firebaseConfig = {
 
-    apiKey: "***REMOVED***",
+    apiKey: SUPER_SECRET_FIREBASE_KEY,
   
     authDomain: "lentokonebongaus.firebaseapp.com",
   
@@ -21,25 +22,6 @@ const firebaseConfig = {
     appId: "1:313722689412:web:5cfa1aa1fcaf68c40fafd1"
   
 };
-/*
-{
-    "rules": {
-      "planes": {
-        "$uid": { 
-          ".read": "auth.uid == $uid",
-          ".write": "auth.uid == $uid"
-        }
-    	},
-      "users": {
-        "$uid": { 
-          ".read": "auth.uid == $uid",
-          ".write": "auth.uid == $uid"
-        }
-    	}
-    }
-}
-*/
-
 
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);

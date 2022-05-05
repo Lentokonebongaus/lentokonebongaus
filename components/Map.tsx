@@ -125,7 +125,7 @@ export default function Map(props:any) {
         }
         <Circle 
           center={{latitude:userLocation.latitude, longitude:userLocation.longitude}} 
-          radius={70000}
+          radius={47000}
           options={{
             strokeColor: "#FF0000",
             strokeOpacity: 0.8,

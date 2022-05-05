@@ -13,6 +13,7 @@ import TouchableScale from 'react-native-touchable-scale';
 import { UserLocationContext, refreshUserLocationContext } from '../util/UserLocationProvider';
 import { PlanesContext } from '../util/PlanesProvider';
 import { refreshPlanes, getPlaneDistance } from '../util/locationFunctions'
+import CryptoJS from "react-native-crypto-js";
 
 
 
