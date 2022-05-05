@@ -10,7 +10,8 @@ import { LoggedUsernameContext } from '../util/LoggedUsernameProvider';
 import { Icon, Button, Input} from 'react-native-elements';
 import TouchableScale from 'react-native-touchable-scale';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-// Siirsin noi Firebase-jutut util kansioon. Täällä tarvii vielä ainakin tota Firebase-kirjaston onValue-funktiota useEffectin yhteydessä.
+import { SUPER_SECRET_CRYPTO_KEY } from '../util/keys';
+import CryptoJS from "react-native-crypto-js";
 
 
 type Props = {
@@ -68,7 +69,6 @@ export default function RegisterView(props: Props){
         }
     }
 
-
     function usernameFree(usersSnapshot:Object) {
         const userIds =  Object.keys(usersSnapshot)
         for (let i = 0; i < userIds.length; i++){
@@ -87,7 +87,8 @@ export default function RegisterView(props: Props){
                     setLoggedUsername(username)
                     //setTimeout(()=>{props.navigation.navigate("Home")},2000)
                     props.navigation.navigate("Home")
-                    push(usersDb, {username:username, password:password})
+                    const cryptedPassword = CryptoJS.AES.encrypt(password, SUPER_SECRET_CRYPTO_KEY).toString();
+                    push(usersDb, {username:username, password:cryptedPassword})
                  } else {
                      // FIXME: se eksyy tänne vaikka rekisteröityminen onnistuukin
                      Alert.alert("Username not available") 

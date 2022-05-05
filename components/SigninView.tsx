@@ -13,10 +13,13 @@ import TouchableScale from 'react-native-touchable-scale';
 import { PlanesContext } from "../util/PlanesProvider"
 import { UserCardsContext, updateUserCardsContext } from "../util/UserCardsProvider"
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import CryptoJS from "react-native-crypto-js";
+import { SUPER_SECRET_CRYPTO_KEY } from '../util/keys';
 
 type Props = {
     navigation: any
 }
+
 
 export default function SigninView(props: Props){
 
@@ -33,13 +36,11 @@ export default function SigninView(props: Props){
     const  [errorMsg, setErrorMsg ] = useState("")
     
     const userAuthenticated = (databaseSnapshot:Object, usernameInput:String, passwordInput:String) =>{
-        // Getting key-value-pairs from Firebase snapshot object with val() method.
-        // [RANDOM_ID{username: STRING, password: STRING}]
         const usersArray = databaseSnapshot.val()
         const userIds =  Object.keys(usersArray)
         for (let i = 0; i < userIds.length; i++){
             if(usernameInput == usersArray[userIds[i]].username){
-                if(passwordInput == usersArray[userIds[i]].password){
+                if(passwordInput == CryptoJS.AES.decrypt(usersArray[userIds[i]].password, SUPER_SECRET_CRYPTO_KEY).toString(CryptoJS.enc.Utf8)){
                     return true
                 } else{
                     return false

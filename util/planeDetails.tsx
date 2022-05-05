@@ -1,18 +1,15 @@
+import { SUPER_SECRET_AZURE_KEY } from '../util/keys';
+
 async function fetchPlaneDetails(icao24:String){
     const backendUrl = "http://172.105.80.249"
     const planePromise = await fetch(`${backendUrl}?icao24=${icao24}`)
     let planeDetails = await planePromise.json()
     if(planeDetails.ok != false){
         for (const [key, value] of Object.entries(planeDetails)){
-            console.log(key)
-            console.log(value)
-            console.log(value == "")
             if(value == ""){
                 planeDetails[key] = "Unknown"
             } 
         }
-        console.log("Changed to:")
-        console.log(planeDetails)
         return planeDetails
     } else{
         return false
@@ -25,11 +22,11 @@ async function fetchPlaneImageUrl(manufacturer, model, owner){
     const urlParameterModel = model.replace(" ", "_")
     const urlParameterOwner = owner.replace(" ", "_")
 
-    const robotsAreStupid = (70+4).toString()
-    const totallyNotTheAvainInEnglish = `254b751d30d74101bf6994f${robotsAreStupid}a3c5c34`
+    //const robotsAreStupid = (70+4).toString()
+    //const totallyNotTheAvainInEnglish = `254b751d30d74101bf6994f74a3c5c34`
     const resourceUrl = `https://api.bing.microsoft.com/v7.0/images/search?q=${urlParameterManufacturer}+${urlParameterModel}+${urlParameterOwner}`
 
-    const response = await fetch(resourceUrl, {headers:{"Ocp-Apim-Subscription-Key":totallyNotTheAvainInEnglish}})
+    const response = await fetch(resourceUrl, {headers:{"Ocp-Apim-Subscription-Key":SUPER_SECRET_AZURE_KEY}})
     if(response.status == 200){
         const apiData = await response.json()
         const apiDataValues = apiData.value
