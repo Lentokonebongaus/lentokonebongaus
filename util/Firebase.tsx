@@ -1,5 +1,5 @@
 import{ initializeApp } from "firebase/app";
-import { getDatabase, push, ref, onValue, update, get } from 'firebase/database';
+import { getDatabase, push, ref, onValue, update, get, set } from 'firebase/database';
 import { getPlaneCurrentData } from "./locationFunctions";
 import { getAuth, signInAnonymously, onAuthStateChanged } from "firebase/auth";
 import { SUPER_SECRET_FIREBASE_KEY } from "./keys";
@@ -40,6 +40,15 @@ async function getRandomCard(){
     return card
 }
 
+async function upgradeCardQuality(cardId, existingCard, newCardQuality){
+  const cardDb = ref(database, `cards/${cardId}`)
+  set(cardDb, {...existingCard, cardQuality:newCardQuality});
+  console.log("New card:")
+  console.log({...existingCard, cardQuality:newCardQuality})
+  console.log("Existing card:")
+  console.log(existingCard)
+}
+
 async function authAnonymousUser(){
   
   const auth = getAuth();
@@ -52,4 +61,4 @@ async function authAnonymousUser(){
     });
 }
 
-export { usersDb, cardsDb, authAnonymousUser, getRandomCard }
+export { usersDb, cardsDb, authAnonymousUser, getRandomCard, upgradeCardQuality }
