@@ -11,6 +11,8 @@ class Card {
     planeOwner: string
     planeDistance: number
     planeIcao24: string
+    wins: number
+    losses: number
 
     constructor(plane:any, cardOwner:string="default user", cardUrl:string=""){
         this.cardOwner = cardOwner
@@ -24,6 +26,8 @@ class Card {
         this.planeDistance = plane.distance
         this.planePicture = cardUrl
         this.planeIcao24 = plane["icao24"]
+        this.wins = 0
+        this.losses = 0
     }
 
     getCardQuality(plane:any){

@@ -43,10 +43,16 @@ async function getRandomCard(){
 async function upgradeCardQuality(cardId, existingCard, newCardQuality){
   const cardDb = ref(database, `cards/${cardId}`)
   set(cardDb, {...existingCard, cardQuality:newCardQuality});
-  console.log("New card:")
-  console.log({...existingCard, cardQuality:newCardQuality})
-  console.log("Existing card:")
-  console.log(existingCard)
+}
+
+async function addCardWin(cardId, currentCard){
+  const cardDb = ref(database, `cards/${cardId}`)
+  set(cardDb, {...currentCard, wins:currentCard.wins+1});
+}
+
+async function addCardLoss(cardId, currentCard){
+  const cardDb = ref(database, `cards/${cardId}`)
+  set(cardDb, {...currentCard, losses:currentCard.losses+1});
 }
 
 async function authAnonymousUser(){
@@ -61,4 +67,4 @@ async function authAnonymousUser(){
     });
 }
 
-export { usersDb, cardsDb, authAnonymousUser, getRandomCard, upgradeCardQuality }
+export { usersDb, cardsDb, authAnonymousUser, getRandomCard, upgradeCardQuality, addCardWin, addCardLoss }
