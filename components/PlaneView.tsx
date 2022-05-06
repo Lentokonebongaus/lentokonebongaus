@@ -100,7 +100,6 @@ export default function PlaneView({route, navigation}){
     }
 
     function notDuplicateCard(cardSnapshot:Object, newCard:Card) {
-        
         const cardsArray = cardSnapshot.val()
         const cardIds =  Object.keys(cardsArray)
         for (let i = 0; i < cardIds.length; i++){
@@ -295,7 +294,7 @@ export default function PlaneView({route, navigation}){
                 )
             }
             /* Under construction */
-            else if(icao24InUserCards && cardUpgradable == true ){
+            else if(icao24InUserCards && cardUpgradable == true && plane.distance <= MAX_COLLECTABLE_DISTANCE){
                 if(cardUpgraded == false){
                     return(
                         <KittenButton status='warning' onPress={()=>{
@@ -306,7 +305,7 @@ export default function PlaneView({route, navigation}){
                                 UPGRADE CARD
                         </KittenButton>
                     ) 
-                } else{
+                } else if(cardUpgraded == true){
                     return(
                         <KittenButton status='warning' accessoryRight={StarIcon}>
                                 CARD UPGRADED

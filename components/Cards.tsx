@@ -145,6 +145,10 @@ export default function Cards(Props: Props){
                 <Text style={styles.cardText}>Operator: {item.planeOperator}</Text>
                 <Text style={styles.cardText}>Operator CallSign: {item.planeOperatorCallSign}</Text>
                 <Text style={styles.cardText}>Owner: {item.planeOwner}</Text>
+                <Card.Divider style={{padding: 10}}/>
+                <Text style={styles.cardTextSmall}>Card quality: {item.cardQuality}</Text>
+                <Text style={styles.cardTextSmall}>Wins: {item.wins}</Text>
+                <Text style={styles.cardTextSmall}>Losses: {item.losses}</Text>
                 </View>
 
                 </Card> 
