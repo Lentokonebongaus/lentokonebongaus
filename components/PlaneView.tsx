@@ -3,7 +3,7 @@ import { Alert, Button, StyleSheet, Text, TextInput, View, FlatList, Image, Dime
 // import { SvgUri } from "react-native-svg";
 import Plane from '../util/Plane';
 import Card from '../util/Card';
-import { cardsDb } from "../util/Firebase"
+import { cardsDb, upgradeCardQuality } from "../util/Firebase"
 import { LoggedUsernameContext } from '../util/LoggedUsernameProvider';
 import { UserCardsContext, updateUserCardsContext} from '../util/UserCardsProvider';
 import { getDatabase, push, ref, onValue, update, get } from 'firebase/database';
@@ -27,9 +27,13 @@ export default function PlaneView({route, navigation}){
     const { loggedUsername, setLoggedUsername } = useContext(LoggedUsernameContext)
     const { userCards, setUserCards } = useContext(UserCardsContext)
     const [planeDataLoading, setPlaneDataLoading] = useState(true)
+    const [existingUserCard, setExistingUserCard] = useState(undefined)
+    const [cardUpgradable, setCardUpgradable] = useState(undefined)
+    const [cardUpgraded, setCardUpgraded] = useState(false)
     const [planeAdded, setPlaneAdded] = useState(false)
     const [icao24InUserCards, setIcao24InUserCards] = useState(false)
     const MAX_COLLECTABLE_DISTANCE = 70
+
 
     useEffect(()=>{
         setPlaneBackendDetails()
@@ -39,7 +43,13 @@ export default function PlaneView({route, navigation}){
         icao24NotInUsersCards(plane.icao24)
     },[])
 
-
+    
+    useEffect(()=>{
+        if(existingUserCard!=undefined){
+            compareCards()
+        }
+    },[existingUserCard])
+    
     useEffect(()=>{
 
         if(planeDetailsState.owner || planeDetailsState.manufacturername || planeDetailsState.model){
@@ -52,6 +62,7 @@ export default function PlaneView({route, navigation}){
             } 
         }        
     },[planeDetailsState])
+
 
     async function fetchAndSetPlaneImg(){
 
@@ -109,6 +120,7 @@ export default function PlaneView({route, navigation}){
             for (let i = 0; i < cardIds.length; i++){
                 if(loggedUsername == cardsArray[cardIds[i]].cardOwner){
                     if(cardsArray[cardIds[i]].planeIcao24 == icao24){
+                        setExistingUserCard({card:cardsArray[cardIds[i]], cardId:cardIds[i]})
                         setIcao24InUserCards(true)
                         return true
                     }
@@ -128,6 +140,14 @@ export default function PlaneView({route, navigation}){
                     updateUserCardsContext(setUserCards, loggedUsername)
                 }
             })
+        }
+    }
+
+    const compareCards = () =>{
+        if(existingUserCard.card.cardQuality >= createCard().cardQuality){
+            setCardUpgradable(false)
+        } else{
+            setCardUpgradable(true)
         }
     }
 
@@ -267,12 +287,32 @@ export default function PlaneView({route, navigation}){
     const renderSaveCardButton = () =>{
         if (loggedUsername != "Not logged in"){
 
-            if(icao24InUserCards){
+            if(icao24InUserCards && cardUpgradable == false){
                 return(
                     <KittenButton disabled={true}>
-                        PLANE ALREADY ADDED
+                        NOT UPGRADABLE
                     </KittenButton>
                 )
+            }
+            /* Under construction */
+            else if(icao24InUserCards && cardUpgradable == true ){
+                if(cardUpgraded == false){
+                    return(
+                        <KittenButton status='warning' onPress={()=>{
+                            upgradeCardQuality(existingUserCard.cardId, existingUserCard.card, createCard().cardQuality)
+                            setCardUpgraded(true)
+                            updateUserCardsContext(setUserCards, loggedUsername)
+                            }}>
+                                UPGRADE CARD
+                        </KittenButton>
+                    ) 
+                } else{
+                    return(
+                        <KittenButton status='warning' accessoryRight={StarIcon}>
+                                CARD UPGRADED
+                        </KittenButton>
+                    ) 
+                }
             }
             else if (plane.distance > MAX_COLLECTABLE_DISTANCE){
                 return(
