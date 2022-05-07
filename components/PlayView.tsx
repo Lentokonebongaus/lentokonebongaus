@@ -2,7 +2,7 @@ import { useContext, useState} from "react"
 import { Text, View, SafeAreaView, ScrollView, Button, Image, Alert, ImageBackground } from "react-native";
 import { Button as KittenButton, Icon, Layout, Spinner } from '@ui-kitten/components';
 import { DataTable } from 'react-native-paper';
-import { UserCardsContext } from "../util/UserCardsProvider";
+import { UserCardsContext, updateUserCardsContext } from "../util/UserCardsProvider";
 import { getPlaneCurrentData, getPlaneDistance } from "../util/locationFunctions";
 import Card from "../util/Card";
 import { UserLocationContext } from "../util/UserLocationProvider";
@@ -12,7 +12,9 @@ import { useEffect } from "react";
 import { Card as NativeCard} from "react-native-elements";
 import { AntDesign } from '@expo/vector-icons'; 
 import { styles as utilStyles } from '../util/styles';
-import { getRandomCard } from "../util/Firebase";
+import { getRandomCard, cardsDb, addCardWin, addCardLoss } from "../util/Firebase";
+import { get } from 'firebase/database';
+
 
 
 export default function PlayView (props:any){
@@ -330,6 +332,10 @@ export default function PlayView (props:any){
                                 <AntDesign name="star" size={18} color="white" /></Text>: null
                             }
                         </View>
+                        <View style={{position:"absolute", top: 30, right: 10}}>
+                            <Text style={utilStyles.cardTextSmall}>Card wins: {currentComputerCard.wins}</Text>
+                            <Text style={utilStyles.cardTextSmall}>Card losses: {currentComputerCard.losses}</Text>
+                        </View>
                     </View>
                     <NativeCard.Divider/>
                     <View style={{display:"flex", flexDirection:"row"}}>
@@ -355,46 +361,50 @@ export default function PlayView (props:any){
         if(currentPlayerCard != undefined && currentPlayerCardApiData.distance != undefined){
             return(
                 <NativeCard containerStyle={{backgroundColor: "#333C83", paddingHorizontal: 20, height:"80%"}} wrapperStyle={{backgroundColor: "#333C83"}}>
-                    <View style={{display:"flex", flexDirection:"row"}}>
-                    {currentPlayerCard.planePicture != ""?  <Image source={{uri: currentPlayerCard.planePicture}} style={{width: 200, height: 100, alignSelf: "center"}}/>: null}
-                        <View>
-                            {currentPlayerCard.cardQuality > 10000? 
-                                <Text style={{textAlign: "center", paddingBottom: 10}}>
-                                    {Array.from({ length: 5 }, (_, i) => 
-                                    <AnimatedIcon name="star" size={18} color="gold" style={gold}/>)}
-                                </Text>: null 
-                            }
-                            {currentPlayerCard.cardQuality > 7000 && currentPlayerCard.cardQuality <= 10000?
-                                <Text style={{textAlign: "center", paddingBottom: 10}}>
-                                    {Array.from({ length: 4 }, (_, i) => 
-                                    <AnimatedIcon name="star" size={18} color="orange" style={orange}/>)}
-                                </Text>: null 
-                            }
-                            {currentPlayerCard.cardQuality > 4000 && currentPlayerCard.cardQuality <= 7000? 
-                                <Text style={{textAlign: "center", paddingBottom: 10}}>
-                                    {Array.from({ length: 3 }, (_, i) => 
-                                    <AnimatedIcon name="star" size={18} color="#c4c4c4" style={grey}/>)}
-                                </Text>: null 
-                            }
-                                {currentPlayerCard.cardQuality > 2000 && currentPlayerCard.cardQuality <= 4000? 
-                                <Text style={{textAlign: "center", paddingBottom: 10}}>
-                                {Array.from({ length: 2 }, (_, i) => 
-                                    <AntDesign name="star" size={18} color="#c41c10"/>)}
-                                </Text>
-                                : null 
-                            }
-                                {currentPlayerCard.cardQuality <= 2000? 
-                                <Text style={{textAlign: "center", paddingBottom: 10}}>
-                                <AntDesign name="star" size={18} color="white" /></Text>: null
-                            }
+                        <View style={{display:"flex", flexDirection:"row"}}>
+                        {currentPlayerCard.planePicture != ""?  <Image source={{uri: currentPlayerCard.planePicture}} style={{width: 200, height: 100, alignSelf: "center"}}/>: null}
+                            <View>
+                                {currentPlayerCard.cardQuality > 10000? 
+                                    <Text style={{textAlign: "center", paddingBottom: 10}}>
+                                        {Array.from({ length: 5 }, (_, i) => 
+                                        <AnimatedIcon name="star" size={18} color="gold" style={gold}/>)}
+                                    </Text>: null 
+                                }
+                                {currentPlayerCard.cardQuality > 7000 && currentPlayerCard.cardQuality <= 10000?
+                                    <Text style={{textAlign: "center", paddingBottom: 10}}>
+                                        {Array.from({ length: 4 }, (_, i) => 
+                                        <AnimatedIcon name="star" size={18} color="orange" style={orange}/>)}
+                                    </Text>: null 
+                                }
+                                {currentPlayerCard.cardQuality > 4000 && currentPlayerCard.cardQuality <= 7000? 
+                                    <Text style={{textAlign: "center", paddingBottom: 10}}>
+                                        {Array.from({ length: 3 }, (_, i) => 
+                                        <AnimatedIcon name="star" size={18} color="#c4c4c4" style={grey}/>)}
+                                    </Text>: null 
+                                }
+                                    {currentPlayerCard.cardQuality > 2000 && currentPlayerCard.cardQuality <= 4000? 
+                                    <Text style={{textAlign: "center", paddingBottom: 10}}>
+                                    {Array.from({ length: 2 }, (_, i) => 
+                                        <AntDesign name="star" size={18} color="#c41c10"/>)}
+                                    </Text>
+                                    : null 
+                                }
+                                    {currentPlayerCard.cardQuality <= 2000? 
+                                    <Text style={{textAlign: "center", paddingBottom: 10}}>
+                                    <AntDesign name="star" size={18} color="white" /></Text>: null
+                                }
+                            </View>
+                            <View style={{position:"absolute", top: 30, right: 10}}>
+                                <Text style={utilStyles.cardTextSmall}>Card wins: {currentPlayerCard.wins}</Text>
+                                <Text style={utilStyles.cardTextSmall}>Card losses: {currentPlayerCard.losses}</Text>
+                            </View>
                         </View>
-                    </View>
                     <NativeCard.Divider/>
                     <View style={{display:"flex", flexDirection:"row"}}>
                         <View style={{marginRight: 10, maxWidth:"50%"}}>
-                            <Text style={utilStyles.cardTextSmall}>Manufacturer: {currentPlayerCard.planeManufacturer}</Text>
-                            <Text style={utilStyles.cardTextSmall}>Model: {currentPlayerCard.planeModel}</Text>
-                            <Text style={utilStyles.cardTextSmall}>Owner: {currentPlayerCard.planeOwner}</Text>
+                            <Text style={utilStyles.cardTextSmall}>{currentPlayerCard.planeManufacturer}</Text>
+                            <Text style={utilStyles.cardTextSmall}>{currentPlayerCard.planeModel}</Text>
+                            <Text style={utilStyles.cardTextSmall}>{currentPlayerCard.planeOwner}</Text>
                         </View>
                         <View style={{maxWidth:"50%"}}>
                             <Text style={utilStyles.cardTextSmall}>Card quality: {currentPlayerCard.cardQuality}</Text>
@@ -479,6 +489,8 @@ export default function PlayView (props:any){
             newPoints.computer = points.computer+1
             setPoints(newPoints)
         }
+        updateComputerCardStats()
+        updatePlayerCardStats()
         setRound((round)=>round+1)
         setCurrentPlayerCard(undefined)
         setCurrentComputerCard(undefined)
@@ -487,6 +499,7 @@ export default function PlayView (props:any){
         setCurrentComputerCardApiData({velocity:undefined, geometricAltitude:undefined, distance:undefined})
         setCurrentPlayerCardTotalPoints(undefined)
         setCurrentComputerCardTotalPoints(undefined)
+        updateUserCardsContext(setUserCards, loggedUsername)
     }
 
     const renderScoreModifiersText = () =>{
@@ -544,6 +557,43 @@ export default function PlayView (props:any){
         )
     }
 
+    async function updatePlayerCardStats(){
+        get(cardsDb).then((snapshot)=>{
+            const cardsArray = snapshot.val()
+            const cardIds =  Object.keys(cardsArray)
+            for (let i = 0; i < cardIds.length; i++){
+                if(loggedUsername == cardsArray[cardIds[i]].cardOwner){
+                    if(cardsArray[cardIds[i]].planeIcao24 == currentPlayerCard.planeIcao24){
+                        if(currentPlayerCardTotalPoints>currentComputerCardTotalPoints){
+                            addCardWin(cardIds[i], cardsArray[cardIds[i]])
+                        } 
+                        else if (currentPlayerCardTotalPoints<currentComputerCardTotalPoints){
+                            addCardLoss(cardIds[i], cardsArray[cardIds[i]])
+                        }
+                    }
+                }
+            }
+        })
+    }
+
+    async function updateComputerCardStats(){
+        get(cardsDb).then((snapshot)=>{
+            const cardsArray = snapshot.val()
+            const cardIds =  Object.keys(cardsArray)
+            for (let i = 0; i < cardIds.length; i++){
+                if(loggedUsername == cardsArray[cardIds[i]].cardOwner){
+                    if(cardsArray[cardIds[i]].planeIcao24 == currentComputerCard.planeIcao24){
+                        if(currentComputerCardTotalPoints>currentPlayerCardTotalPoints){
+                            addCardWin(cardIds[i], cardsArray[cardIds[i]])
+                        } 
+                        else if (currentComputerCardTotalPoints<currentPlayerCardTotalPoints){
+                            addCardLoss(cardIds[i], cardsArray[cardIds[i]])
+                        }
+                    }
+                }
+            }
+        })
+    }
 
     return (
         <View style={{flex:1}}>
