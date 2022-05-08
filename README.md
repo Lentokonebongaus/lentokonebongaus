@@ -9,13 +9,14 @@ Airplane GO is an Android and iOS application for surveying nearby planes and co
 
 ## Used technologies and services 
 
-| Technology/service | Use | URL  |
+| Technology/service | Use | URL |
 |:-------------|:-------------:|:-----:|
-| React Native | Framework | reactnative.dev/ |
+| [React Native] | Framework | reactnative.dev/ |
 | Expo | SDK |expo.dev/|
 | Firebase |Database|firebase.google.com/|
 | Azure |Image search|portal.azure.com/|
 | Linode |Backend server|linode.com/|
+[React Native]: reactnative.dev/
 
 ## Features and functionalities in detail 
 
