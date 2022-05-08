@@ -1,11 +1,11 @@
 # Airplane GO ✈
 
 Airplane GO is an Android and iOS application for surveying nearby planes and collecting plane cards. In addition to collecting and upgrading cards, registered users can also play against other user's cards.  
-
+<p float="left">
 <img src="https://github.com/Lentokonebongaus/lentokonebongaus/blob/development/screenshots/Screenshot_20220507-144123.png" alt="home screen" width="200"/>
 <img src="https://github.com/Lentokonebongaus/lentokonebongaus/blob/development/screenshots/Screenshot_20220507-144332.png" alt="plane screen" width="200"/>
 <img src="https://github.com/Lentokonebongaus/lentokonebongaus/blob/development/screenshots/Screenshot_20220507-144148.png" alt="card screen" width="200"/>
-
+</p>
 
 ## Used technologies and services 
 
