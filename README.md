@@ -10,7 +10,7 @@ Airplane GO is an Android and iOS application for surveying nearby planes and co
 ## Used technologies and services 
 
 | Technology/service | Use |
-|:-------------|:-------------:|
+|:-------------|:-------------|
 | [React Native](https://reactnative.dev/) |Framework|
 | [Expo](https://expo.dev/) | SDK |
 | [Firebase](https://firebase.google.com/) |Database|
