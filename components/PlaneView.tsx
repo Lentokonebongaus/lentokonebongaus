@@ -405,17 +405,17 @@ export default function PlaneView({route, navigation}){
             <View style={styles.bottomDivider}/>
             <View style={styles.planeData}>
                 <Text style={styles.planeDataTextBold}>Velocity: </Text>
-                <Text style={styles.planeDataText}>{plane.velocity} m/s</Text>
+                <Text style={styles.planeDataText}>{Math.ceil(plane.velocity)} m/s</Text>
             </View>
             <View style={styles.bottomDivider}/>
             <View style={styles.planeData}>
                 <Text style={styles.planeDataTextBold}>Barometric altitude: </Text>
-                <Text style={styles.planeDataText}>{!plane.onGround?plane.baroAltitude+" m":"landed"}</Text>
+                <Text style={styles.planeDataText}>{!plane.onGround?Math.ceil(plane.baroAltitude)+" m":"landed"}</Text>
             </View>
             <View style={styles.bottomDivider}/>
             <View style={styles.planeData}>
                 <Text style={styles.planeDataTextBold}>Geometric altitude: </Text>
-                <Text style={styles.planeDataText}>{!plane.onGround?plane.geoAltitude+" m":"landed"}</Text>
+                <Text style={styles.planeDataText}>{!plane.onGround?Math.ceil(plane.geoAltitude)+" m":"landed"}</Text>
             </View>
             <View style={styles.bottomDivider}/>
             <View style={styles.planeData}>

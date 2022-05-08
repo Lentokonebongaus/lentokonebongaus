@@ -22,8 +22,6 @@ export default function PlayView (props:any){
     const { userCards, setUserCards } = useContext(UserCardsContext)
     const { userLocation, setUserLocation } = useContext(UserLocationContext)
     const { loggedUsername, setLoggedUsername } = useContext(LoggedUsernameContext)
-    const [cardPlayerDistance, setCardPlayerDistance] = useState("")
-    const [cardComputerDistance, setCardComputerDistance] = useState(0)
     const [dataTableVisible, setDataTableVisible] = useState(true)
     const [scoreModifier1, setScoreModifier1] = useState(undefined)
     const [scoreModifier2, setScoreModifier2] = useState(undefined)
@@ -38,14 +36,12 @@ export default function PlayView (props:any){
     const [planesCurrentDataLoaded, setPlanesCurrentDataLoaded] = useState(false)
     const [playerCards, setPlayerCards] = useState([])
     const [usedCards, setUsedCards] = useState([])
-    const MAX_ROUNDS = 5
     const [round, setRound] = useState(1)
     const [points, setPoints] = useState({player:0, computer:0})
     const [flip, set] = useState(false);
-    //const modifierClasses = ["model", "manufacturer", "owner", "operator", "altitude", "velocity", "distance"]
     const modifierClasses = ["altitude","velocity","distance", "quality"]
-
     const AnimatedIcon = animated(AntDesign); 
+    const MAX_ROUNDS = 5
 
     const PlayIcon = (props) => (
         <Icon {...props} name='play-circle-outline'/>
@@ -114,15 +110,15 @@ export default function PlayView (props:any){
     
 
     useEffect(()=>{
+        fetchPlayerPlanesCurrentData()
+        setRandomScoreModifiers()
+    },[])
+
+    useEffect(()=>{
         if(currentPlayerPlanesData.length > 0){
             setPlanesCurrentDataLoaded(true)
         }
     },[currentPlayerPlanesData])
-
-    useEffect(()=>{
-        fetchPlayerPlanesCurrentData()
-        setRandomScoreModifiers()
-    },[])
 
     useEffect(()=>{
         if(round>MAX_ROUNDS){
@@ -147,15 +143,9 @@ export default function PlayView (props:any){
         let currentDataTmp = []
         for(let i = 0; i < userCards.length; i++){
             let currentPlaneData = await getPlaneCurrentData(userCards[i].planeIcao24, userLocation)
-            
             currentDataTmp.push({icao24:userCards[i].planeIcao24, distance:currentPlaneData.distance, velocity:currentPlaneData.velocity, geometricAltitude:currentPlaneData.geometricAltitude})
         }
         setCurrentPlayerPlanesData(currentDataTmp)
-    }
-
-    async function fetchComputerCardCurrentApiData(){
-        const planeData = await getPlaneCurrentData(currentComputerCard.planeIcao24, userLocation)
-        setCurrentComputerCardApiData(planeData)
     }
 
     const handleCardPick = (index) =>{
@@ -223,7 +213,84 @@ export default function PlayView (props:any){
         setScoreModifier2({type:scoreModifier2Type, multiplier:scoreModifier2Multiplier})
     }
 
-    /* Will crash Expo without any error messages for some reason (╯°□°)╯︵ ┻━┻
+    async function updatePlayerCardStats(){
+        get(cardsDb).then((snapshot)=>{
+            const cardsArray = snapshot.val()
+            const cardIds =  Object.keys(cardsArray)
+            for (let i = 0; i < cardIds.length; i++){
+                if(loggedUsername == cardsArray[cardIds[i]].cardOwner){
+                    if(cardsArray[cardIds[i]].planeIcao24 == currentPlayerCard.planeIcao24){
+                        if(currentPlayerCardTotalPoints>currentComputerCardTotalPoints){
+                            addCardWin(cardIds[i], cardsArray[cardIds[i]])
+                        } 
+                        else if (currentPlayerCardTotalPoints<currentComputerCardTotalPoints){
+                            addCardLoss(cardIds[i], cardsArray[cardIds[i]])
+                        }
+                    }
+                }
+            }
+        })
+    }
+
+    async function updateComputerCardStats(){
+        get(cardsDb).then((snapshot)=>{
+            const cardsArray = snapshot.val()
+            const cardIds =  Object.keys(cardsArray)
+            for (let i = 0; i < cardIds.length; i++){
+                if(loggedUsername == cardsArray[cardIds[i]].cardOwner){
+                    if(cardsArray[cardIds[i]].planeIcao24 == currentComputerCard.planeIcao24){
+                        if(currentComputerCardTotalPoints>currentPlayerCardTotalPoints){
+                            addCardWin(cardIds[i], cardsArray[cardIds[i]])
+                        } 
+                        else if (currentComputerCardTotalPoints<currentPlayerCardTotalPoints){
+                            addCardLoss(cardIds[i], cardsArray[cardIds[i]])
+                        }
+                    }
+                }
+            }
+        })
+    }
+
+    async function setRandomComputerCard(){
+        setFetchingCurrentComputerCard(true)
+        let randomCard = {}
+        let randomCardApiData = {velocity:undefined, geometricAltitude:undefined, distance:undefined}
+        while(randomCardApiData.distance==undefined || randomCard.cardOwner == loggedUsername){
+            randomCard = await getRandomCard()
+            randomCardApiData = await getPlaneCurrentData(randomCard.planeIcao24, userLocation)
+        }
+        setCurrentComputerCard(randomCard)
+        setCurrentComputerCardApiData(randomCardApiData)
+        setFetchingCurrentComputerCard(false)
+    }
+
+    const startNewRound = () =>{
+        if(currentPlayerCardTotalPoints>currentComputerCardTotalPoints){
+            let newPoints = points
+            newPoints.player = points.player+1
+            setPoints(newPoints)
+        }
+        else if(currentPlayerCardTotalPoints<currentComputerCardTotalPoints){
+            let newPoints = points
+            newPoints.computer = points.computer+1
+            setPoints(newPoints)
+        }
+        updateComputerCardStats()
+        updatePlayerCardStats()
+        setRound((round)=>round+1)
+        setCurrentPlayerCard(undefined)
+        setCurrentComputerCard(undefined)
+        setDataTableVisible(true)
+        setCurrentPlayerCardApiData({velocity:undefined, geometricAltitude:undefined, distance:undefined})
+        setCurrentComputerCardApiData({velocity:undefined, geometricAltitude:undefined, distance:undefined})
+        setCurrentPlayerCardTotalPoints(undefined)
+        setCurrentComputerCardTotalPoints(undefined)
+        updateUserCardsContext(setUserCards, loggedUsername)
+    }
+
+    /* 
+    // Will crash Expo without any error messages for some reason (╯°□°)╯︵ ┻━┻ 
+
     const convertQualityToStarSize = (quality:number) =>{
         const CARD_STAR_LIMITS = [
             {stars: 5, maxQuality: 20000, minQuality: 10001},
@@ -251,8 +318,13 @@ export default function PlayView (props:any){
     }
     */
 
-          
 
+    // -------------------------------------- Render Functions ------------------------------------------------------------
+
+    const renderSpinner = () =>{
+        return(<Spinner size='giant'/>)
+    }
+          
     const renderCardsListLoading = () =>{
         return(
             <View style={{height: "100%", width: "100%",  display: "flex", alignItems: "center", justifyContent: "center"}}>
@@ -262,23 +334,7 @@ export default function PlayView (props:any){
         )
     }
 
-    async function setRandomComputerCard(){
-        setFetchingCurrentComputerCard(true)
-        let randomCard = {}
-        let randomCardApiData = {velocity:undefined, geometricAltitude:undefined, distance:undefined}
-        let logTries = 1
-        while(randomCardApiData.distance==undefined || randomCard.cardOwner == loggedUsername){
-            console.log(`Fetching random card on use. Try number ${logTries}`)
-            randomCard = await getRandomCard()
-            randomCardApiData = await getPlaneCurrentData(randomCard.planeIcao24, userLocation)
-            logTries += 1
-        }
-        setCurrentComputerCard(randomCard)
-        setCurrentComputerCardApiData(randomCardApiData)
-        setFetchingCurrentComputerCard(false)
-    }
-
-    const getDataTableRow = (card:Card, index:number) =>{
+    const renderDataTableRow = (card:Card, index:number) =>{
         if(userCards.includes(card.planeIcao24) == false){
             return(
             <DataTable.Row style={currentPlayerPlanesData[index].distance==undefined?styles.tableRowCardUnavailable:undefined} onPress={()=>{handleCardPick(index)}}>
@@ -434,16 +490,12 @@ export default function PlayView (props:any){
                             <DataTable.Title>Model</DataTable.Title>
                             <DataTable.Title>Operator</DataTable.Title>
                         </DataTable.Header>
-                        {userCards.map((card, index)=>getDataTableRow(card, index))}
+                        {userCards.map((card, index)=>renderDataTableRow(card, index))}
                     </DataTable>
                 </ScrollView>
                 </ScrollView>
             </SafeAreaView>
         )
-    }
-
-    const renderSpinner = () =>{
-        return(<Spinner size='giant'/>)
     }
 
     const roundInfoScreen = () =>{
@@ -476,30 +528,6 @@ export default function PlayView (props:any){
                 )
             }
         }
-    }
-
-    const startNewRound = () =>{
-        if(currentPlayerCardTotalPoints>currentComputerCardTotalPoints){
-            let newPoints = points
-            newPoints.player = points.player+1
-            setPoints(newPoints)
-        }
-        else if(currentPlayerCardTotalPoints<currentComputerCardTotalPoints){
-            let newPoints = points
-            newPoints.computer = points.computer+1
-            setPoints(newPoints)
-        }
-        updateComputerCardStats()
-        updatePlayerCardStats()
-        setRound((round)=>round+1)
-        setCurrentPlayerCard(undefined)
-        setCurrentComputerCard(undefined)
-        setDataTableVisible(true)
-        setCurrentPlayerCardApiData({velocity:undefined, geometricAltitude:undefined, distance:undefined})
-        setCurrentComputerCardApiData({velocity:undefined, geometricAltitude:undefined, distance:undefined})
-        setCurrentPlayerCardTotalPoints(undefined)
-        setCurrentComputerCardTotalPoints(undefined)
-        updateUserCardsContext(setUserCards, loggedUsername)
     }
 
     const renderScoreModifiersText = () =>{
@@ -557,43 +585,6 @@ export default function PlayView (props:any){
         )
     }
 
-    async function updatePlayerCardStats(){
-        get(cardsDb).then((snapshot)=>{
-            const cardsArray = snapshot.val()
-            const cardIds =  Object.keys(cardsArray)
-            for (let i = 0; i < cardIds.length; i++){
-                if(loggedUsername == cardsArray[cardIds[i]].cardOwner){
-                    if(cardsArray[cardIds[i]].planeIcao24 == currentPlayerCard.planeIcao24){
-                        if(currentPlayerCardTotalPoints>currentComputerCardTotalPoints){
-                            addCardWin(cardIds[i], cardsArray[cardIds[i]])
-                        } 
-                        else if (currentPlayerCardTotalPoints<currentComputerCardTotalPoints){
-                            addCardLoss(cardIds[i], cardsArray[cardIds[i]])
-                        }
-                    }
-                }
-            }
-        })
-    }
-
-    async function updateComputerCardStats(){
-        get(cardsDb).then((snapshot)=>{
-            const cardsArray = snapshot.val()
-            const cardIds =  Object.keys(cardsArray)
-            for (let i = 0; i < cardIds.length; i++){
-                if(loggedUsername == cardsArray[cardIds[i]].cardOwner){
-                    if(cardsArray[cardIds[i]].planeIcao24 == currentComputerCard.planeIcao24){
-                        if(currentComputerCardTotalPoints>currentPlayerCardTotalPoints){
-                            addCardWin(cardIds[i], cardsArray[cardIds[i]])
-                        } 
-                        else if (currentComputerCardTotalPoints<currentPlayerCardTotalPoints){
-                            addCardLoss(cardIds[i], cardsArray[cardIds[i]])
-                        }
-                    }
-                }
-            }
-        })
-    }
 
     return (
         <View style={{flex:1}}>

@@ -21,9 +21,6 @@ async function fetchPlaneImageUrl(manufacturer, model, owner){
     const urlParameterManufacturer = manufacturer.replace(" ", "_")
     const urlParameterModel = model.replace(" ", "_")
     const urlParameterOwner = owner.replace(" ", "_")
-
-    //const robotsAreStupid = (70+4).toString()
-    //const totallyNotTheAvainInEnglish = `254b751d30d74101bf6994f74a3c5c34`
     const resourceUrl = `https://api.bing.microsoft.com/v7.0/images/search?q=${urlParameterManufacturer}+${urlParameterModel}+${urlParameterOwner}`
 
     const response = await fetch(resourceUrl, {headers:{"Ocp-Apim-Subscription-Key":SUPER_SECRET_AZURE_KEY}})

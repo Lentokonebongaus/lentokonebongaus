@@ -4,7 +4,6 @@ import * as Location from 'expo-location';
 const UserLocationContext = createContext("")
 
 function UserLocationProvider({ children }){
-
     const [userLocation, setUserLocation] = useState({longitude:0, latitude:0})
     return (
       <UserLocationContext.Provider value={{ userLocation, setUserLocation }}>
