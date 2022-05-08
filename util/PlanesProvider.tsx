@@ -4,7 +4,6 @@ import { refreshPlanes } from './locationFunctions';
 const PlanesContext = createContext("")
 
 function PlanesProvider({ children }){
-    // User is the name of the "data" that gets stored in context
     const [planes, setPlanes] = useState([])
     
     return (

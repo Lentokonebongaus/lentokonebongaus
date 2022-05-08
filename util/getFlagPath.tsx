@@ -1,5 +1,6 @@
 import flags from "./flags.json"
 
+// Currently not in use
 export default function getFlagPath(country:String){
     for(let i = 0; i < flags.length; i++){
         if(flags[i].name == country){

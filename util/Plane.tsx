@@ -82,20 +82,11 @@ class Plane {
     }
 
     setBackendDetails(details:any){
-
         this.manufacturerName = details["manufacturername"]
         this.model = details["model"]
         this.operator = details["operator"]
         this.operatorCallsign = details["operatorcallsign"]
         this.owner = details["owner"]
-
-        /*
-        this.manufacturerName = "Airbus"
-        this.model = "A319-115"
-        this.operator = ""  // Not every plane has operator value. Value could be "Iberia Airlines", for example.
-        this.operatorCallsign = "AMERICAN"
-        this.owner = "American Airlines Inc"
-        */
     }
 }
 
