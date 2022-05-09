@@ -57,6 +57,18 @@ User's current card collection is also available to be admired at separately or 
 <img src="https://github.com/Lentokonebongaus/lentokonebongaus/blob/main/assets/plane_icon.png" alt="home screen" width="50"/>
 <img src="https://github.com/Lentokonebongaus/lentokonebongaus/blob/main/assets/plane_icon_collected.png" alt="home screen" width="50"/><p>Hello</p>
 </p> 
+
+<table border="0">
+ <tr>
+    <td><b style="font-size:30px">Title</b></td>
+    <td><b style="font-size:30px">Title 2</b></td>
+ </tr>
+ <tr>
+    <td><img src="https://github.com/Lentokonebongaus/lentokonebongaus/blob/main/screenshots/Screenshot_20220507-144225.png" alt="home screen" width="200"/></td>
+    <td><img src="https://github.com/Lentokonebongaus/lentokonebongaus/blob/main/assets/plane_icon.png" alt="home screen" width="50"/>
+<img src="https://github.com/Lentokonebongaus/lentokonebongaus/blob/main/assets/plane_icon_collected.png" alt="home screen" width="50"/><p>Hello</p></td>
+ </tr>
+</table>
 Grounded planes are colored red in Map View.
 
 
