@@ -51,7 +51,7 @@ In addition to playing, users can increase their card's quality by keeping an ey
 
 User's current card collection is also available to be admired at separately or in two different list views. A plane card displays it's corresponding plane's model, manufacturer and picture, but every card also has their unique card quality and win/lose attributes.
 
-
+Airplane GO mostly uses traditional smartphone application UI design patterns with tabs, stacks, and familiar icons. There are, however, still some areas, such as map view and play view, in which underlying functionalities or features aren’t clearly communicated through user interface. 
 
 ### Map view
 
@@ -63,7 +63,6 @@ User's current card collection is also available to be admired at separately or 
    <td><img src="https://github.com/Lentokonebongaus/lentokonebongaus/blob/main/assets/plane_icon_collected_upgradable.png" alt="plane_collected_upgradable" width="50"/><p>Collected. Upgradable</p></td>
     <td><img src="https://github.com/Lentokonebongaus/lentokonebongaus/blob/main/assets/plane_icon_grounded.png" alt="plane_grounded_normal" width="50"/><p>Landed. Not collected</p></td>
    <td><img src="https://github.com/Lentokonebongaus/lentokonebongaus/blob/main/assets/plane_icon_grounded_collected.png" alt="plane_grounded_collected" width="50"/><p>Landed. Collected</p></td>
-   
  </tr>
 </table>
 
