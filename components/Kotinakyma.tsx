@@ -118,8 +118,7 @@ export default function Kotinakyma(Props: Props) {
               }}
               containerStyle={{
                 width: 200,
-                marginHorizontal: 80,
-                marginVertical: 10,
+                alignSelf: "center"
               }}
               icon={{
                 name: 'user',
@@ -149,8 +148,7 @@ export default function Kotinakyma(Props: Props) {
                 }}
                 containerStyle={{
                   width: 200,
-                  marginHorizontal: 80,
-                  marginVertical: 10,
+                  alignSelf: "center"
                 }}
                 icon={{
                   name: 'plane',
@@ -181,8 +179,7 @@ export default function Kotinakyma(Props: Props) {
                 }}
                 containerStyle={{
                   width: 200,
-                  marginHorizontal: 80,
-                  marginVertical: 10,
+                  alignSelf: "center"
                 }}
                 icon={{
                   name: 'gamepad',
