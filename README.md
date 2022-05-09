@@ -86,5 +86,5 @@ Like map view, play view still has an issue ([#38](https://github.com/Lentokoneb
 
 ## Security and API keys
 
-In addition to making API calls to The OpenSky Network and lentokonebongaus-backend, Airplane GO uses Azure Bing Search API and Google Firebase for image search and database functionalities, respectively. Keys for Azure, Firebase and user password encryption/decryption are stored in */util/keys.ts*. 
+In addition to making API calls to The OpenSky Network and lentokonebongaus-backend, Airplane GO uses Azure Bing Search API and Google Firebase for image search and database functionalities, respectively. Keys for Azure, Firebase, and user password encryption/decryption are stored in */util/keys.ts*. 
 
