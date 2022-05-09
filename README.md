@@ -72,7 +72,7 @@ The categorization isn’t apparent to the user before (or possibly even after) 
 
 Before designing a more sophisticated user interface, precedence should be given to an open issue [#37](https://github.com/Lentokonebongaus/lentokonebongaus/issues/37), though.
 
-## Play view
+### Play view
 
 <img src="https://github.com/Lentokonebongaus/lentokonebongaus/blob/main/screenshots/Screenshot_20220507-144400.png" alt="play_view" width="200"/>
 
@@ -84,7 +84,7 @@ In it’s current form play view doesn’t require much strategy from the user. 
 
 Like map view, play view still has an issue ([#38](https://github.com/Lentokonebongaus/lentokonebongaus/issues/38)) to solve regarding usable cards. 
 
+## Security and API keys
 
-
-
+In addition to making API calls to The OpenSky Network and lentokonebongaus-backend, Airplane GO uses Azure Bing Search API and Google Firebase for image search and database functionalities, respectively. Keys for Azure, Firebase and user password encryption/decryption are stored in */util/keys.ts*. 
 
