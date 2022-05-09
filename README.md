@@ -53,12 +53,12 @@ User's current card collection is also available to be admired at separately or 
 
 <table border="0">
  <tr>
-    <td><img src="https://github.com/Lentokonebongaus/lentokonebongaus/blob/main/screenshots/Screenshot_20220507-144225.png" alt="map_screen" width="200"/></td>
+    <td><img src="https://github.com/Lentokonebongaus/lentokonebongaus/blob/main/screenshots/Screenshot_20220507-144225.png" alt="map_screen" width="200"/>Not collected</td>
     <td><img src="https://github.com/Lentokonebongaus/lentokonebongaus/blob/main/assets/plane_icon.png" alt="plane_normal" width="50"/></td>
     <td><img src="https://github.com/Lentokonebongaus/lentokonebongaus/blob/main/assets/plane_icon_collected.png" alt="plane_collected" width="50"/><p>Collected. Not upgradable</p></td>
    <td><img src="https://github.com/Lentokonebongaus/lentokonebongaus/blob/main/assets/plane_icon_collected_upgradable.png" alt="plane_collected_upgradable" width="50"/><p>Collected. Upgradable</p></td>
     <td><img src="https://github.com/Lentokonebongaus/lentokonebongaus/blob/main/assets/plane_icon_grounded.png" alt="plane_grounded_normal" width="50"/><p>Landed. Not collected</p></td>
-   <td><img src="https://github.com/Lentokonebongaus/lentokonebongaus/blob/main/assets/plane_icon_grounded_collected.png" alt="plane_grounded_collected" width="50"/><p>Grounded. Collected</p></td>
+   <td><img src="https://github.com/Lentokonebongaus/lentokonebongaus/blob/main/assets/plane_icon_grounded_collected.png" alt="plane_grounded_collected" width="50"/><p>Landed. Collected</p></td>
    
  </tr>
 </table>
