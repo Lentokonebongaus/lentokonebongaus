@@ -66,7 +66,11 @@ Airplane GO mostly uses traditional smartphone application UI design patterns wi
  </tr>
 </table>
 
-In map view, like in plane list view, nearby planes are updated every 7 seconds. An update consists of an api call to [The OpenSky Network's Live API](https://openskynetwork.github.io/opensky-api/), comparison of surrounding planes’ icao24 to user’s current card’s icao24, creation of temporary cards for every surrounding plane that the user has created a card of, and comparison of cardQuality value of every temporary card to that of the corresponding current card. This way all the surrounding planes can be categorized to one of the six different categories.
+In map view, like in plane list view, nearby planes are updated every 7 seconds. An update consists of an api call to [The OpenSky Network's Live API](https://openskynetwork.github.io/opensky-api/), comparison of surrounding planes’ icao24 to user’s current card’s icao24, creation of temporary cards for every surrounding plane that the user has created a card from, and comparison of cardQuality value of every temporary card to that of the corresponding current card. This way all the surrounding planes can be categorized to one of the six different categories.
+
 The categorization isn’t apparent to the user before (or possibly even after) moving to a plane view from map view. Therefore one possible development aspect could be to add a sidebar displaying the icons and their explanation, for example. For airplanes enthusiasts and experienced smartphone users current GitHub documentation could suffice, though.
+
+## Play view
+<img src="https://github.com/Lentokonebongaus/lentokonebongaus/blob/main/screenshots/Screenshot_20220507-144400.png" alt="map_screen" width="200"/>
 
 
