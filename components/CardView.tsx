@@ -1,139 +1,118 @@
-import { Text, View, FlatList, Image, Dimensions} from "react-native";
-import {useEffect, useRef, useState} from "react";
-import testCard from '../testCard';
+import { Text, View, Image, Dimensions } from "react-native";
+import { useState } from "react";
 import { styles } from '../util/styles';
 //import {useSpring, to, animated} from "react-spring"
-import { AntDesign } from '@expo/vector-icons'; 
+import { AntDesign } from '@expo/vector-icons';
 import Draggable from "react-native-draggable";
 import { Card } from 'react-native-elements';
-import { useSpring, easings, animated, config} from "react-spring";
+import { useSpring, easings, animated } from "react-spring";
 
 type Props = {
-    // card id 
+  // card id 
 }
 
-const AnimatedIcon = animated(AntDesign); 
+const AnimatedIcon = animated(AntDesign);
 
-export default function CardView(Props: Props){
+export default function CardView(Props: Props) {
 
-  const [flip, set] = useState(false);
+  const [glowFlip, setGlowFlip] = useState(false);
 
+  // glow animaatio
+  function glow(start: number, end: number, color: string) {
 
-    // Text doesn't show without Flatlist
+    const { textShadowColor, shadowOpacity, textShadowRadius, textShadowOffset } = useSpring({
+      from: {
+        textShadowColor: color,
+        shadowOpacity: 0.8,
+        textShadowRadius: start,
+        textShadowOffset: { width: 0, height: 1 }
+      },
+      to: {
+        textShadowColor: color,
+        shadowOpacity: 0.8,
+        textShadowRadius: end,
+        textShadowOffset: { width: 0, height: 1 }
+      },
+      config: {
+        duration: 2000,
+        easing: easings.easeInOutQuart,
+      },
+      delay: 200,
+      reset: true,
+      reverse: glowFlip,
+      onRest: () => setGlowFlip(!glowFlip),
+    })
+    return { textShadowColor, shadowOpacity, textShadowRadius, textShadowOffset };
+  }
 
-    /*
-    //testcard broke rip
-    let tester = {
-      "cardId": "1648568469955A321-21211618.58",
-      "cardQuality": 100000.58,
-      "planeManufacturer": "Airbus",
-      "planeModel": "A321-212",
-      "planeOperator": "Iberia Airlines",
-      "planeOperatorCallSign": "IBERIA",
-      "planeOwner": "Iberia",
-      "planePicture": "",
-    }; 
-    
-    let manyCardsTest = [tester]; 
-    
-    useEffect(() => {
-        console.log(Props.route.params);
-      }, [])
-  */
-
-      // glow animaatio
-    function glow(start: number, end: number, color: string){
-  
-      const { textShadowColor, shadowOpacity, textShadowRadius, textShadowOffset } = useSpring({
-        from: {
-          textShadowColor: color,
-          shadowOpacity: 0.8,
-          textShadowRadius: start,
-          textShadowOffset:{width: 0,height: 1}
-        },
-        to: {
-          textShadowColor: color,
-          shadowOpacity: 0.8,
-          textShadowRadius: end,
-          textShadowOffset:{width: 0,height: 1}
-        },
-        config: {
-          duration: 2000,
-          easing: easings.easeInOutQuart,
-        },
-        delay: 200,
-        reset: true,
-        reverse: flip,
-        onRest: () => set(!flip),
-      })
-      return { textShadowColor, shadowOpacity, textShadowRadius, textShadowOffset };
-     }
-  
-     let gold = glow(10, 40, "gold"); 
-     let orange = glow(10, 30, "orange"); 
-     // weird flicker, no problem with 5 start tho?
-     let grey = glow(10, 15, "#c4c4c4");
-
-     let item = Props.route.params;
-
-     //image width height scaling
-   //og width 300 height 200
-  let width = Dimensions.get('window').width; 
+  //image width height scaling
+  //og width 300 height 200
+  let width = Dimensions.get('window').width;
   let height = Dimensions.get("window").height;
-  let imgWidth = width * 0.72992; 
-  let imgHeight = height * 0.24660;
-    
+  //let imgWidth = width * 0.72992; 
+  //let imgHeight = height * 0.24660;
 
-    return (
-        <View style={{padding: 20}}>
+  let gold = glow(10, 40, "gold");
+  let orange = glow(10, 30, "orange");
+  let grey = glow(10, 15, "#c4c4c4");
 
-        <Draggable x={20} y={150}>
+  let item = Props.route.params;
 
-          <Card containerStyle={{backgroundColor: "#333C83", paddingHorizontal: 20}}
-            wrapperStyle={{backgroundColor: "#333C83"}}>
+  return (
+    <View style={{ padding: 20 }}>
 
-                <Card.Title style={styles.cardTextHeader}>{item.planeModel}</Card.Title>
+      <Draggable x={20} y={150}>
 
-                {item.cardQuality < 5? 
-                <Text style={{textAlign: "center", paddingBottom: 10}}>
-                     {Array.from({ length: 5 }, (_, i) => 
-                    <AnimatedIcon name="star" size={24} color="gold" style={gold}/>)}
-                </Text>: null }
-                {item.cardQuality < 100 && item.cardQuality > 5? 
-                <Text style={{textAlign: "center", paddingBottom: 10}}>
-                     {Array.from({ length: 4 }, (_, i) => 
-                    <AnimatedIcon name="star" size={24} color="orange" style={orange}/>)}
-                </Text>: null }
-                {item.cardQuality < 500 && item.cardQuality > 100? 
-                <Text style={{textAlign: "center", paddingBottom: 10}}>
-                    {Array.from({ length: 3 }, (_, i) => 
-                    <AnimatedIcon name="star" size={24} color="#c4c4c4" style={grey}/>)}
-                </Text>: null }
-                {item.cardQuality < 1000 && item.cardQuality > 500? 
-                <Text style={{textAlign: "center", paddingBottom: 10}}>
-                 {Array.from({ length: 2 }, (_, i) => 
-                    <AntDesign name="star" size={24} color="#c41c10"/>)}
-                </Text>
-                : null }
-                {item.cardQuality > 1000? 
-                <Text style={{textAlign: "center", paddingBottom: 10}}>
-                <AntDesign name="star" size={24} color="white" /></Text>: null }
-                
-                <Card.Divider/>
+        <Card containerStyle={{ backgroundColor: "#333C83", paddingHorizontal: 20 }}
+          wrapperStyle={{ backgroundColor: "#333C83" }}>
 
-                {item.planePicture != ""?  <Image
-                source={{uri: item.planePicture}} style={{width: imgWidth, height: imgHeight, alignSelf: "center"}}/>: null }
+          <Card.Title style={styles.cardTextHeader}>{item.planeModel}</Card.Title>
 
-                <Card.Divider style={{padding: 10}}/>
-                <Text style={styles.cardText}>Manufacturer: {item.planeManufacturer}</Text>
-                <Text style={styles.cardText}>Model: {item.planeModel}</Text>
-                <Text style={styles.cardText}>Operator: {item.planeOperator}</Text>
-                <Text style={styles.cardText}>Operator CallSign: {item.planeOperatorCallSign}</Text>
-                <Text style={styles.cardText}>Owner: {item.planeOwner}</Text>
+          {item.cardQuality > 10000 ?
+            <Text style={styles.cardStar}>
+              {Array.from({ length: 5 }, (_, i) =>
+                <AnimatedIcon name="star" size={24} color="gold" style={gold} />)}
+            </Text> : null}
+          {item.cardQuality > 7000 && item.cardQuality <= 10000 ?
+            <Text style={styles.cardStar}>
+              {Array.from({ length: 4 }, (_, i) =>
+                <AnimatedIcon name="star" size={24} color="orange" style={orange} />)}
+            </Text> : null}
+          {item.cardQuality > 4000 && item.cardQuality <= 7000 ?
+            <Text style={styles.cardStar}>
+              {Array.from({ length: 3 }, (_, i) =>
+                <AnimatedIcon name="star" size={24} color="#c4c4c4" style={grey} />)}
+            </Text> : null}
+          {item.cardQuality > 2000 && item.cardQuality <= 4000 ?
+            <Text style={styles.cardStar}>
+              {Array.from({ length: 2 }, (_, i) =>
+                <AntDesign name="star" size={24} color="#c41c10" />)}
+            </Text>
+            : null}
+          {item.cardQuality <= 2000 ?
+            <Text style={styles.cardStar}>
+              <AntDesign name="star" size={24} color="white" /></Text> : null}
 
-                </Card> 
-           </Draggable>
-        </View>
-      );
+          <Card.Divider />
+
+          {item.planePicture != "" ? <Image
+            source={{ uri: item.planePicture }} style={{ width: 300, height: 200, alignSelf: "center" }} /> : null}
+
+          <Card.Divider style={{ padding: 10 }} />
+          <Text style={styles.cardText}>Manufacturer: {item.planeManufacturer}</Text>
+          <Text style={styles.cardText}>Model: {item.planeModel}</Text>
+          <Text style={styles.cardText}>Operator: {item.planeOperator}</Text>
+          <Text style={styles.cardText}>Operator CallSign: {item.planeOperatorCallSign}</Text>
+          <Text style={styles.cardText}>Owner: {item.planeOwner}</Text>
+          <Card.Divider />
+          <Text style={styles.cardTextSmall}>Card quality {item.cardQuality}</Text>
+          <Text style={styles.cardTextSmall}>Wins: {item.wins}</Text>
+          <Text style={styles.cardTextSmall}>Losses: {item.losses}</Text>
+
+
+        </Card>
+      </Draggable>
+    </View>
+  );
 
 }
