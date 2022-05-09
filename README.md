@@ -17,6 +17,19 @@ Airplane GO is an Android and iOS application for surveying nearby planes and co
 | [Azure](https://portal.azure.com/) |Image search|
 | [Linode](https://www.linode.com/) |Backend server|
 
+## Front-end libraries
+
+| Library | Use |
+|:-------------|:-------------|
+| [UI Kitten](https://akveo.github.io/react-native-ui-kitten/) |Buttons and icons|
+| [React Native Paper](https://reactnativepaper.com/) | Lists and grids |
+| [React Native Animated SpinKit](https://www.npmjs.com/package/react-native-animated-spinkit) |Loading animations|
+| [React Native Firebase](https://rnfirebase.io/) |Firebase connectivity|
+| [react-native-maps](https://www.npmjs.com/package/react-native-maps) |Google Maps for React Native|
+| [react-spring/native](https://www.npmjs.com/package/@react-spring/native) |Animations|
+| [react-native-draggable](https://www.npmjs.com/package/react-native-draggable) |Draggable cards|
+| [react-native-draggable](https://www.npmjs.com/package/react-native-draggable) |Draggable cards|
+
 ## Features and functionalities in detail 
 
 The application has surveying features available to both registered and unregistered users. Users can view the location and properties of every nearby plane on a map or on a sortable list. Users can also see more details such as picture, model and manufacturer when viewing a single plane.
