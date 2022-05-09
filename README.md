@@ -28,7 +28,13 @@ Airplane GO is an Android and iOS application for surveying nearby planes and co
 | [react-native-maps](https://www.npmjs.com/package/react-native-maps) |Google Maps for React Native|
 | [react-spring/native](https://www.npmjs.com/package/@react-spring/native) |Animations|
 | [react-native-draggable](https://www.npmjs.com/package/react-native-draggable) |Draggable cards|
-| [react-native-draggable](https://www.npmjs.com/package/react-native-draggable) |Draggable cards|
+
+## Back-end libraries
+
+| Library | Use |
+|:-------------|:-------------|
+| [Flask](https://flask.palletsprojects.com/en/2.1.x/) |Web framework|
+| [Beautiful Soup](https://www.crummy.com/software/BeautifulSoup/) | Text (and image) scraping |
 
 ## Features and functionalities in detail 
 
