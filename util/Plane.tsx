@@ -22,7 +22,7 @@ class Plane {
     spi: boolean
     positionSource: number
     // ----------- From Backend -------------------
-    manufacturerName: string 
+    manufacturerName: string
     model: string
     operator: string
     operatorCallsign: string
@@ -51,7 +51,7 @@ class Plane {
     categoryDescription: string
     */
 
-    constructor(planeData:any, userLocation:any) {
+    constructor(planeData: any, userLocation: any) {
         this.icao24 = planeData[0]
         this.callsign = planeData[1]
         this.originCountry = planeData[2]
@@ -59,9 +59,9 @@ class Plane {
         this.lastContact = planeData[4] // timestamp
         this.longitude = planeData[5]
         this.latitude = planeData[6]
-        if(userLocation!=undefined){
+        if (userLocation != undefined) {
             this.distance = distanceBetween(this.longitude, this.latitude, userLocation.longitude, userLocation.latitude)
-        } else{
+        } else {
             this.distance = -1
         }
         this.baroAltitude = planeData[7] // meters 
@@ -81,7 +81,7 @@ class Plane {
         this.owner = ""
     }
 
-    setBackendDetails(details:any){
+    setBackendDetails(details: any) {
         this.manufacturerName = details["manufacturername"]
         this.model = details["model"]
         this.operator = details["operator"]
