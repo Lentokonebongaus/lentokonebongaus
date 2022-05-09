@@ -51,7 +51,7 @@ In addition to playing, users can increase their card's quality by keeping an ey
 
 User's current card collection is also available to be admired at separately or in two different list views. A plane card displays it's corresponding plane's model, manufacturer and picture, but every card also has their unique card quality and win/lose attributes.
 
-Airplane GO mostly uses traditional smartphone application UI design patterns with tabs, stacks, and familiar icons. There are, however, still some areas, such as map view and play view, in which underlying functionalities or features aren’t clearly communicated through user interface. 
+Airplane GO mostly uses traditional smartphone application UI design patterns with tabs, stacks, and familiar icons. There are, however, still some areas, such as map view and play view, in which underlying functionalities or features aren’t especially clearly communicated through user interface. 
 
 ### Map view
 
@@ -66,6 +66,7 @@ Airplane GO mostly uses traditional smartphone application UI design patterns wi
  </tr>
 </table>
 
-
+In map view, like in plane list view, nearby planes are updated every 7 seconds. An update consists of an api call to [The OpenSky Network's Live API](https://openskynetwork.github.io/opensky-api/), comparison of surrounding planes’ icao24 to user’s current card’s icao24, creation of temporary cards for every surrounding plane that the user has created a card of, and comparison of cardQuality value of every temporary card to that of the corresponding current card. This way all the surrounding planes can be categorized to one of the six different categories.
+The categorization isn’t apparent to the user before (or possibly even after) moving to a plane view from map view. Therefore one possible development aspect could be to add a sidebar displaying the icons and their explanation, for example. For airplanes enthusiasts and experienced smartphone users current GitHub documentation could suffice, though.
 
 
