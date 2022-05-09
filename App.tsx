@@ -1,21 +1,13 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Image} from 'react-native';
 import RegisterView from './components/RegisterView';
-import{ initializeApp } from "firebase/app";
-import { getDatabase, push, ref, onValue, update } from 'firebase/database';
-import { useEffect, useState, createContext, useContext } from 'react';
-import Kotinakyma from "./components/Kotinakyma";
+import { useEffect, useContext } from 'react';
 import { NavigationContainer} from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Map from "./components/Map"
 import HomeScreenTabs from './components/HomeScreenTabs';
 import SigninView from './components/SigninView';
 import Cards from './components/Cards';
 import PlayView from './components/PlayView';
-import planesData from './util/planesData';
 import PlaneView from './components/PlaneView';
 import CardView from './components/CardView';
-import { styles } from './util/styles';
 import {LoggedUsernameProvider} from './util/LoggedUsernameProvider';
 import { UserCardsProvider } from './util/UserCardsProvider';
 import { PlanesProvider } from './util/PlanesProvider';
@@ -23,7 +15,6 @@ import { UserLocationProvider, UserLocationContext, refreshUserLocationContext }
 import * as eva from '@eva-design/eva';
 import { ApplicationProvider, IconRegistry } from '@ui-kitten/components';
 import { EvaIconsPack } from '@ui-kitten/eva-icons';
-import { setGPSlocation } from './util/locationFunctions';
 import CardscreenTabs from './components/CardsScreenTabs';
 
 const Stack = createNativeStackNavigator();
