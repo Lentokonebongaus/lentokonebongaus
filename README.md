@@ -52,11 +52,7 @@ In addition to playing, users can increase their card's quality by keeping an ey
 User's current card collection is also available to be admired at separately or in two different list views. A plane card displays it's corresponding plane's model, manufacturer and picture, but every card also has their unique card quality and win/lose attributes.
 
 ### Map view
-<p float="left">
-<img src="https://github.com/Lentokonebongaus/lentokonebongaus/blob/main/screenshots/Screenshot_20220507-144225.png" alt="home screen" width="200"/>
-<img src="https://github.com/Lentokonebongaus/lentokonebongaus/blob/main/assets/plane_icon.png" alt="home screen" width="50"/>
-<img src="https://github.com/Lentokonebongaus/lentokonebongaus/blob/main/assets/plane_icon_collected.png" alt="home screen" width="50"/><p>Hello</p>
-</p> 
+
 
 <table border="0">
  <tr>
