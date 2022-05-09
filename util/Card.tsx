@@ -14,7 +14,7 @@ class Card {
     wins: number
     losses: number
 
-    constructor(plane:any, cardOwner:string="default user", cardUrl:string=""){
+    constructor(plane: any, cardOwner: string = "default user", cardUrl: string = "") {
         this.cardOwner = cardOwner
         this.cardQuality = this.getCardQuality(plane)
         this.planeManufacturer = plane["manufacturerName"]
@@ -22,7 +22,7 @@ class Card {
         this.planeOperator = plane["operator"]
         this.planeOperatorCallSign = plane["operatorCallsign"]
         this.planeOwner = plane["owner"]
-        this.cardId = Date.now().toString()+this.planeModel+this.cardQuality
+        this.cardId = Date.now().toString() + this.planeModel + this.cardQuality
         this.planeDistance = plane.distance
         this.planePicture = cardUrl
         this.planeIcao24 = plane["icao24"]
@@ -30,11 +30,11 @@ class Card {
         this.losses = 0
     }
 
-    getCardQuality(plane:any){
-        const distance:number = plane["distance"]
-        const velocity:number = plane["velocity"]
-        const geoAltitude:number = plane["geoAltitude"]
-        return Math.floor(geoAltitude+velocity*2-distance)
+    getCardQuality(plane: any) {
+        const distance: number = plane["distance"]
+        const velocity: number = plane["velocity"]
+        const geoAltitude: number = plane["geoAltitude"]
+        return Math.floor(geoAltitude + velocity * 2 - distance)
     }
 }
 
