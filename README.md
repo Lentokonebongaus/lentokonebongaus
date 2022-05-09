@@ -28,9 +28,11 @@ Airplane GO is an Android and iOS application for surveying nearby planes and co
 | [React Native Paper](https://reactnativepaper.com/) | Lists and grids |
 | [React Native Animated SpinKit](https://www.npmjs.com/package/react-native-animated-spinkit) |Loading animations|
 | [React Native Firebase](https://rnfirebase.io/) |Firebase connectivity|
+| [React Native CryptoJS](https://www.npmjs.com/package/react-native-crypto-js) |User password AES encryption and decryption|
 | [react-native-maps](https://www.npmjs.com/package/react-native-maps) |Google Maps for React Native|
 | [react-spring/native](https://www.npmjs.com/package/@react-spring/native) |Animations|
 | [react-native-draggable](https://www.npmjs.com/package/react-native-draggable) |Draggable cards|
+
 
 ### Back-end libraries
 
@@ -49,6 +51,8 @@ In addition to playing, users can increase their card's quality by keeping an ey
 
 User's current card collection is also available to be admired at separately or in two different list views. A plane card displays it's corresponding plane's model, manufacturer and picture, but every card also has their unique card quality and win/lose attributes.
 
+
+
 ### Map view
 
 <table border="0">
@@ -63,6 +67,6 @@ User's current card collection is also available to be admired at separately or 
  </tr>
 </table>
 
-Grounded planes are colored red in Map View.
+
 
 
