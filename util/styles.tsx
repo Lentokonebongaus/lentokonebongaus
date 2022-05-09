@@ -148,6 +148,7 @@ export const styles = {
     width: 200,
     marginHorizontal: 80,
     marginVertical: 10,
+    alignSelf: "center"
   },
   homescreenIconContainerStyle: {
     marginLeft: 10,
