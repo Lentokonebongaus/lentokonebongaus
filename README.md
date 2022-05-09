@@ -74,10 +74,11 @@ The categorization isn’t apparent to the user before (or possibly even after) 
 <img src="https://github.com/Lentokonebongaus/lentokonebongaus/blob/main/screenshots/Screenshot_20220507-144400.png" alt="map_screen" width="200"/>
 
 In play view users can use their collected cards to play against random cards from other users, but only planes that are in use (i.e. have their transponder active and are available from The OpenSky Network) can be used as cards. 
-A game in play view consists of 5 rounds, at the beginning of which the user will choose one card from their collection. A random card will then be fetched from Firebase and, if the plane represented in the card is in use, will be set as the opposing card. 
-When both the user’s card and the opposing card are set, total scores for both cards are calculate. Total score for a card can be roughly summed as card quality + current plane velocity + current plane altitude – current plane distance from the user. Every round a changing score modifier is also added to two of the scores in the calculation. 
+
+A game in play view consists of 5 rounds, at the beginning of which the user will choose one card from their collection. A random card will then be fetched from Firebase and, if the plane represented in the card is in use, will be set as the opposing card. When both the user’s card and the opposing card are set, total scores for both cards are calculated. Total score for a card can be roughly summed as **card quality** + **current plane velocity** + **current plane altitude** – **current plane distance from the user**. Every round a changing score modifier is also added to two of the scores in the calculation. 
+
 In it’s current form play view doesn’t require much strategy from the user. This is partly intentional as developing an AI or a multiplayer functionality would require considerable effort for a relatively non-essential part of the application. Still, if the scope of the application were to be expanded in the future, a multiplayer component or an AI could be applicable features. 
-Like map view, play view also has an issue #38 to solve regarding usable cards. 
+Like map view, play view still has an issue ([#38](https://github.com/Lentokonebongaus/lentokonebongaus/issues/38)) to solve regarding usable cards. 
 
 
 
