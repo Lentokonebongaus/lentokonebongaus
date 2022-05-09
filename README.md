@@ -41,7 +41,7 @@ Airplane GO is an Android and iOS application for surveying nearby planes and co
 
 ## Features and functionalities in detail 
 
-The application has surveying features available to both registered and unregistered users. Users can view the location and properties of every nearby plane on a map or on a sortable list. Users can also see more details such as picture, model and manufacturer when viewing a single plane.
+The application has surveying features available to both registered and unregistered users. Users can view the location and properties of every nearby plane on a map or on a sortable list. Users can also see more details such as picture, model and manufacturer when viewing a single plane. Grounded planes are colored red in Map View.
 
 Registered and logged users can transform nearby planes into plane cards, which can then be upgraded and used to play against other users' cards. By playing against other user's cards, user's can increase their card's stats, but a card's stats are also increased passively by having them being played by an AI against other users. 
 
