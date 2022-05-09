@@ -210,7 +210,6 @@ export default function PlaneView({ route, navigation }) {
                     </KittenButton>
                 )
             }
-            /* Under construction */
             else if (icao24InUserCards && cardUpgradable == true && plane.distance <= MAX_COLLECTABLE_DISTANCE) {
                 if (cardUpgraded == false) {
                     return (
