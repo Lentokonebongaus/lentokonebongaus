@@ -17,7 +17,9 @@ Airplane GO is an Android and iOS application for surveying nearby planes and co
 | [Azure](https://portal.azure.com/) |Image search|
 | [Linode](https://www.linode.com/) |Backend server|
 
-## Front-end libraries
+## Notable external libraries
+
+### Front-end libraries
 
 | Library | Use |
 |:-------------|:-------------|
@@ -29,7 +31,7 @@ Airplane GO is an Android and iOS application for surveying nearby planes and co
 | [react-spring/native](https://www.npmjs.com/package/@react-spring/native) |Animations|
 | [react-native-draggable](https://www.npmjs.com/package/react-native-draggable) |Draggable cards|
 
-## Back-end libraries
+### Back-end libraries
 
 | Library | Use |
 |:-------------|:-------------|
