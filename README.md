@@ -1,6 +1,6 @@
 # Airplane GO ✈
 
-Airplane GO is an Android and iOS application for surveying nearby planes and collecting plane cards. In addition to collecting and upgrading cards, registered users can play against other user's cards. *Gotta Fly 'Em All!* 
+Airplane GO is an Android and iOS application for surveying nearby planes and collecting plane cards. In addition to collecting and upgrading cards, registered users can play against other user's cards. *Gotta Fly 'Em All!*<br>
 Expo application available at: https://expo.dev/@eelii/lentokonebongaus
 <p float="left">
 <img src="https://github.com/Lentokonebongaus/lentokonebongaus/blob/development/screenshots/Screenshot_20220507-144123.png" alt="home screen" width="200"/>
